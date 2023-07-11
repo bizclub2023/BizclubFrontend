@@ -6,14 +6,14 @@ import * as Yup from 'yup';
 import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+
 import {useState} from "react"
 
 const Page = () => {
   const router = useRouter();
-  const [textSuccess,setTextSuccess]=useState("") 
-   const [loading,setLoading]=useState(false)
-
   const auth = useAuth();
+  
+  const [textSuccess,setTextSuccess]=useState("")
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -38,16 +38,11 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        if(!loading){
-
-     setLoading(true)
-         await auth.signUp(values.email, values.name, values.password);
-         setTextSuccess("Exito! Revisa tu correo y haz click en el enlace enviado para confirmalo.")
+        await auth.recoverPassword(values.email);
+        setTextSuccess("Revisa tu correo y haz click en el enlace enviado para recuperar la cuenta.")
  
-         await setTimeout(()=>router.push('/'),5000)
-         setLoading(false)
-
-        } 
+        setTimeout(()=>router.push('/'),5000) 
+       
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -60,7 +55,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Registrarse | Bizclub
+          Recover Login | Bizclub
         </title>
       </Head>
       <Box
@@ -85,7 +80,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Registrarse
+                Recupera tu Cuenta
               </Typography>
               <Typography
                 color="text.secondary"
@@ -109,16 +104,7 @@ const Page = () => {
               onSubmit={formik.handleSubmit}
             >
               <Stack spacing={3}>
-                <TextField
-                  error={!!(formik.touched.name && formik.errors.name)}
-                  fullWidth
-                  helperText={formik.touched.name && formik.errors.name}
-                  label="Nombre de Usuario"
-                  name="name"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                />
+              
                 <TextField
                   error={!!(formik.touched.email && formik.errors.email)}
                   fullWidth
@@ -129,17 +115,6 @@ const Page = () => {
                   onChange={formik.handleChange}
                   type="email"
                   value={formik.values.email}
-                />
-                <TextField
-                  error={!!(formik.touched.password && formik.errors.password)}
-                  fullWidth
-                  helperText={formik.touched.password && formik.errors.password}
-                  label="Contraseña"
-                  name="password"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="password"
-                  value={formik.values.password}
                 />
               </Stack>
               
@@ -163,7 +138,7 @@ const Page = () => {
                 style={{color:"black",borderColor:"black"}}
                 variant="outlined"
               >
-                Registrarse
+                Recuperar
               </Button>
             </form>
           </div>

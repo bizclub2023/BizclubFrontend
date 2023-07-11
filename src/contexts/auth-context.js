@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {Moralis} from "moralis-v1"
+import { set } from 'nprogress';
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -70,12 +71,14 @@ export const AuthProvider = (props) => {
       return;
     }
 
-    initialized.current = true;
+    initialized.current = false;
+    window.sessionStorage.setItem('authenticated', 'false');
 
-    let isAuthenticated = false;
 
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+   
+   
+    
     } catch (err) {
       console.error(err);
     }
@@ -111,8 +114,7 @@ export const AuthProvider = (props) => {
     }
 
     try {
-     
-
+   
     await Moralis.User.logIn(email, password)
     .then(async function (user) {
 
@@ -122,6 +124,9 @@ export const AuthProvider = (props) => {
       });
       
       window.sessionStorage.setItem('authenticated', 'true');
+      return true
+ 
+    
     })
 
   } catch (err) {
@@ -130,29 +135,52 @@ export const AuthProvider = (props) => {
   };
   const signUp = async (email, name, password) => {
     try {
+    let currentUser=email
+
     const user = new Moralis.User();
     user.set("username", name);
     user.set("email", email);
     user.set("password", password);
-    await user.signUp();
-    console.log("entro")
-  await Moralis.Cloud.run(
+     Moralis.Cloud.run(
       "sendVerificationEmail",
-      { user }
+      { currentUser }
     );
     
-    window.sessionStorage.setItem('authenticated', 'true');
+    await user.signUp();
+
     } catch (error) {
       
-      console.log(error);
+      throw new Error(error);
+    }
+    
+  };
+  const recoverPassword = async (email, password) => {
+    try {
+      let currentUser=email;
+     await Moralis.Cloud.run(
+        "requestPasswordReset",
+        { currentUser }
+      );
+     
+      throw new Error("Revisa tu correo the ha llegado un link para recuperar tu clave");
+
+    } catch (error) {
+      
       throw new Error(error);
     }
   };
+  const signOut = async() => {
+    
+    await Moralis.User.logOut()
+    .then(async function (user) {
 
-  const signOut = () => {
-    dispatch({
-      type: HANDLERS.SIGN_OUT
-    });
+ 
+      dispatch({
+        type: HANDLERS.SIGN_OUT
+      });
+      
+      window.sessionStorage.setItem('authenticated', 'false');
+    })
   };
 
   return (
@@ -162,7 +190,8 @@ export const AuthProvider = (props) => {
         skip,
         signIn,
         signUp,
-        signOut
+        signOut,
+        recoverPassword
       }}
     >
       {children}

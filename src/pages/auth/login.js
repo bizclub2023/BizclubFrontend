@@ -42,8 +42,12 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.email, values.password);
-        router.push('/');
+      let res=  await auth.signIn(values.email, values.password);
+     
+     if(res){
+
+      router.push('/');
+     }
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -176,7 +180,7 @@ const Page = () => {
                   ¿Olvido Contraseña? &nbsp;
                 <Link
                   component={NextLink}
-                  href="/auth/register"
+                  href="/auth/recoverPassword"
                   underline="hover"
                   variant="subtitle2"
                   color={"black"}
