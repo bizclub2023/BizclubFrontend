@@ -101,7 +101,7 @@ const Page = () => {
                   error={!!(formik.touched.name && formik.errors.name)}
                   fullWidth
                   helperText={formik.touched.name && formik.errors.name}
-                  label="Nombre"
+                  label="Nombre de Usuario"
                   name="name"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}

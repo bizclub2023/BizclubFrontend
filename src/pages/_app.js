@@ -10,6 +10,7 @@ import { createTheme } from 'src/theme';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
 import 'simplebar-react/dist/simplebar.min.css';
 
+import { MoralisProvider } from "react-moralis";
 const clientSideEmotionCache = createEmotionCache();
 
 const SplashScreen = () => null;
@@ -23,11 +24,14 @@ const App = (props) => {
 
   const theme = createTheme();
 
-  return (
+  return ( <MoralisProvider
+    serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL }
+    appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID }
+  > 
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          Devias Kit
+          Bizclub
         </title>
         <meta
           name="viewport"
@@ -49,6 +53,7 @@ const App = (props) => {
         </AuthProvider>
       </LocalizationProvider>
     </CacheProvider>
+    </MoralisProvider>
   );
 };
 

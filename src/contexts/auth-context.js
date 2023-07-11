@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
-
+import {Moralis} from "moralis-v1"
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -80,13 +80,8 @@ export const AuthProvider = (props) => {
       console.error(err);
     }
 
-    if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+    if (false) {
+     
 
       dispatch({
         type: HANDLERS.INITIALIZE,
@@ -108,51 +103,50 @@ export const AuthProvider = (props) => {
   );
 
   const skip = () => {
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
+   
   };
-
   const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
+    if (email == '' || password == '') {
+      throw new Error('Please check  email and password');
     }
 
     try {
+     
+
+    await Moralis.User.logIn(email, password)
+    .then(async function (user) {
+
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: user
+      });
+      
       window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
+    })
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
+  } catch (err) {
+    console.error(err);
+  }
   };
-
   const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
+    try {
+    const user = new Moralis.User();
+    user.set("username", name);
+    user.set("email", email);
+    user.set("password", password);
+    await user.signUp();
+    console.log("entro")
+  await Moralis.Cloud.run(
+      "sendVerificationEmail",
+      { user }
+    );
+    
+    window.sessionStorage.setItem('authenticated', 'true');
+    } catch (error) {
+      
+      console.log(error);
+      throw new Error(error);
+    }
   };
 
   const signOut = () => {
