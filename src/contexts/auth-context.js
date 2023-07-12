@@ -162,7 +162,6 @@ export const AuthProvider = (props) => {
         { currentUser }
       );
      
-      throw new Error("Revisa tu correo the ha llegado un link para recuperar tu clave");
 
     } catch (error) {
       

@@ -6,19 +6,17 @@ import * as Yup from 'yup';
 import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+
 import {useState} from "react"
 
 const Page = () => {
   const router = useRouter();
-  const [textSuccess,setTextSuccess]=useState("") 
-   const [loading,setLoading]=useState(false)
-
   const auth = useAuth();
+  
+  const [textSuccess,setTextSuccess]=useState("")
   const formik = useFormik({
     initialValues: {
       email: '',
-      name: '',
-      password: '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -27,10 +25,16 @@ const Page = () => {
         .email('Must be a valid email')
         .max(255)
         .required('Email is required'),
-     
+      name: Yup
+        .string()
+        .max(255)
+        .required('Name is required'),
+      password: Yup
+        .string()
+        .max(255)
+        .required('Password is required')
     }),
     onSubmit: async (values, helpers) => {
-    
       
       console.log("test")
       try {
@@ -53,7 +57,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Registrarse | Bizclub
+          Recover Login | Bizclub
         </title>
       </Head>
       <Box
@@ -78,7 +82,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Registrarse
+                Recupera tu Cuenta
               </Typography>
               <Typography
                 color="text.secondary"
@@ -102,7 +106,7 @@ const Page = () => {
               onSubmit={formik.handleSubmit}
             >
               <Stack spacing={3}>
-                
+              
                 <TextField
                   error={!!(formik.touched.email && formik.errors.email)}
                   fullWidth
@@ -114,7 +118,6 @@ const Page = () => {
                   type="email"
                   value={formik.values.email}
                 />
-                
               </Stack>
               
               <Typography style={{marginTop:20}} variant="h6">
@@ -128,17 +131,18 @@ const Page = () => {
                 >
                   {formik.errors.submit}
                 </Typography>
-              )}
-              <Button
-                fullWidth
-                size="large"
-                sx={{ mt: 3 }}
-                type="submit"
-                style={{color:"black",borderColor:"black"}}
-                variant="outlined"
-              >
-                Recuperar Cuenta
-              </Button>
+              )}   
+                 <Button
+              fullWidth
+              size="large"
+              sx={{ mt: 3 }}
+              type="submit"
+              style={{color:"black",borderColor:"black"}}
+              variant="outlined"
+            >
+              Recuperar Cuenta
+            </Button> 
+              
             </form>
           </div>
         </Box>

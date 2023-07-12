@@ -44,10 +44,8 @@ const Page = () => {
       try {
       let res=  await auth.signIn(values.email, values.password);
      
-     if(res){
 
       router.push('/');
-     }
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -160,6 +158,7 @@ const Page = () => {
                     {formik.errors.submit}
                   </Typography>
                 )}
+                
                 <Button
                   fullWidth
                   size="large"
