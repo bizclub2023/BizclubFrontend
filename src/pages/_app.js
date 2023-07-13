@@ -24,11 +24,11 @@ const App = (props) => {
 
   const theme = createTheme();
 
-  return (   <MoralisProvider
+  return (  
+    <CacheProvider value={emotionCache}> <MoralisProvider
     serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL }
     appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID }
   > 
-    <CacheProvider value={emotionCache}>
       <Head>
         <title>
           Bizclub
@@ -54,8 +54,8 @@ const App = (props) => {
         </AuthProvider>
       </LocalizationProvider>
       
-    </CacheProvider>
     </MoralisProvider>
+    </CacheProvider>
   );
 };
 
