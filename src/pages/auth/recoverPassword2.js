@@ -36,16 +36,13 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       
-      console.log("test")
       try {
-        console.log(values.email)
-         auth.recoverPassword(values.email);
+        await auth.recoverPassword(values.email);
         setTextSuccess("Revisa tu correo y haz click en el enlace enviado para recuperar la cuenta.")
  
         setTimeout(()=>router.push('/'),5000) 
        
       } catch (err) {
-        console.log(err)
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);

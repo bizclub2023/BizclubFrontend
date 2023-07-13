@@ -32,7 +32,6 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
     
       
-      console.log("test")
       try {
         console.log(values.email)
          auth.recoverPassword(values.email);
@@ -53,7 +52,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Registrarse | Bizclub
+          Recuperar Cuenta | Bizclub
         </title>
       </Head>
       <Box

@@ -66,6 +66,8 @@ export const AuthProvider = (props) => {
   const initialized = useRef(false);
 
   const initialize = async () => {
+    await Moralis.start()
+
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {
       return;
@@ -130,7 +132,8 @@ export const AuthProvider = (props) => {
     })
 
   } catch (err) {
-    console.error(err);
+    throw new Error(err);
+
   }
   };
   const signUp = async (email, name, password) => {
@@ -169,7 +172,6 @@ export const AuthProvider = (props) => {
     }
   };
   const signOut = async() => {
-    
     await Moralis.User.logOut()
     .then(async function (user) {
 
