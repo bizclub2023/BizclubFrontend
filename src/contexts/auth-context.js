@@ -66,7 +66,7 @@ export const AuthProvider = (props) => {
   const initialized = useRef(false);
 
   const initialize = async () => {
-    await Moralis.start()
+   
 
     // Prevent from calling twice in development mode with React.StrictMode enabled
     if (initialized.current) {

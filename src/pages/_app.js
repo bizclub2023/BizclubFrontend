@@ -24,7 +24,7 @@ const App = (props) => {
 
   const theme = createTheme();
 
-  return ( <MoralisProvider
+  return (   <MoralisProvider
     serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL }
     appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID }
   > 
@@ -38,6 +38,7 @@ const App = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
+    
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
           <ThemeProvider theme={theme}>
@@ -52,6 +53,7 @@ const App = (props) => {
           </ThemeProvider>
         </AuthProvider>
       </LocalizationProvider>
+      
     </CacheProvider>
     </MoralisProvider>
   );
