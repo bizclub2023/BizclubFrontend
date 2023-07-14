@@ -3,9 +3,17 @@ import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { AccountProfile } from 'src/sections/account/account-profile';
 import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
+import { useMoralis } from 'react-moralis';
+import { useEffect,useState } from 'react';
 
-const Page = () => (
-  <>
+const Page = () => {
+  const {user}=useMoralis()
+  const [name,setName]=useState()
+  useEffect(()=>{
+
+
+  },[user])
+  return <>
     <Head>
       <title>
         Account | Bizclub
@@ -50,7 +58,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

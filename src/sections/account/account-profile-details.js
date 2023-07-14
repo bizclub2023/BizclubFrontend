@@ -30,7 +30,31 @@ const states = [
   }
 ];
 
+import { useMoralis } from 'react-moralis';
+import { useEffect } from 'react';
+
 export const AccountProfileDetails = () => {
+  var currentUser={}
+  var {user}=useMoralis()
+  const [name,setName]=useState()
+  const [email,setEmail]=useState()
+  const [phone,setPhone]=useState()
+  useEffect(()=>{
+    console.log(user)
+    setName(user.get("username"))  
+      setEmail(user.get("email"))
+      setPhone(user.get("phone"))
+
+    currentUser= {
+      avatar: '/assets/avatars/avatar-anika-visser.png',
+      city: 'Los Angeles',
+      country: 'USA',
+      jobTitle: 'Senior Developer',
+      name: user.get("username"),
+      timezone: 'GTM-7'
+    };
+
+  },[user])
   const [values, setValues] = useState({
     firstName: 'Anika',
     lastName: 'Visser',
@@ -81,26 +105,14 @@ export const AccountProfileDetails = () => {
                 <TextField
                   fullWidth
                   helperText="Please specify the first name"
-                  label="First name"
-                  name="firstName"
+                  label="Nombre"
+                  name="Name"
                   onChange={handleChange}
                   required
-                  value={values.firstName}
+                  value={name}
                 />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Last name"
-                  name="lastName"
-                  onChange={handleChange}
-                  required
-                  value={values.lastName}
-                />
-              </Grid>
+             
               <Grid
                 xs={12}
                 md={6}
@@ -109,9 +121,8 @@ export const AccountProfileDetails = () => {
                   fullWidth
                   label="Email Address"
                   name="email"
-                  onChange={handleChange}
-                  required
-                  value={values.email}
+                  
+                  value={email}
                 />
               </Grid>
               <Grid
@@ -124,46 +135,11 @@ export const AccountProfileDetails = () => {
                   name="phone"
                   onChange={handleChange}
                   type="number"
-                  value={values.phone}
+                  value={phone}
                 />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Country"
-                  name="country"
-                  onChange={handleChange}
-                  required
-                  value={values.country}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Select State"
-                  name="state"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.state}
-                >
-                  {states.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
+             
+            
             </Grid>
           </Box>
         </CardContent>

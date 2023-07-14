@@ -8,18 +8,28 @@ import {
   Divider,
   Typography
 } from '@mui/material';
+import { useMoralis } from 'react-moralis';
+import { useEffect,useState } from 'react';
 
-const user = {
-  avatar: '/assets/avatars/avatar-anika-visser.png',
-  city: 'Los Angeles',
-  country: 'USA',
-  jobTitle: 'Senior Developer',
-  name: 'Anika Visser',
-  timezone: 'GTM-7'
-};
 
-export const AccountProfile = () => (
-  <Card>
+export const AccountProfile = () =>{
+  var currentUser={}
+  var {user}=useMoralis()
+  const [name,setName]=useState()
+  useEffect(()=>{
+    console.log(user)
+    setName(user.get("username"))
+    currentUser= {
+      avatar: '/assets/avatars/avatar-anika-visser.png',
+      city: 'Los Angeles',
+      country: 'USA',
+      jobTitle: 'Senior Developer',
+      name: user.get("username"),
+      timezone: 'GTM-7'
+    };
+
+  },[user])
+  return  <Card>
     <CardContent>
       <Box
         sx={{
@@ -29,7 +39,7 @@ export const AccountProfile = () => (
         }}
       >
         <Avatar
-          src={user.avatar}
+          src={"/assets/avatars/avatar-anika-visser.png"}
           sx={{
             height: 80,
             mb: 2,
@@ -40,20 +50,9 @@ export const AccountProfile = () => (
           gutterBottom
           variant="h5"
         >
-          {user.name}
+          {name}
         </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.city} {user.country}
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.timezone}
-        </Typography>
+     
       </Box>
     </CardContent>
     <Divider />
@@ -66,4 +65,4 @@ export const AccountProfile = () => (
       </Button>
     </CardActions>
   </Card>
-);
+};

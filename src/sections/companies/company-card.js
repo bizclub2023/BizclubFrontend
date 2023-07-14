@@ -19,10 +19,12 @@ export const CompanyCard = (props) => {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            pb: 3
+            pb: 3,
           }}
         >
           <Avatar
+          style={{
+            width:50,height:50}}
             src={company.logo}
             variant="square"
           />
@@ -50,44 +52,8 @@ export const CompanyCard = (props) => {
         spacing={2}
         sx={{ p: 2 }}
       >
-        <Stack
-          alignItems="center"
-          direction="row"
-          spacing={1}
-        >
-          <SvgIcon
-            color="action"
-            fontSize="small"
-          >
-            <ClockIcon />
-          </SvgIcon>
-          <Typography
-            color="text.secondary"
-            display="inline"
-            variant="body2"
-          >
-            Updated 2hr ago
-          </Typography>
-        </Stack>
-        <Stack
-          alignItems="center"
-          direction="row"
-          spacing={1}
-        >
-          <SvgIcon
-            color="action"
-            fontSize="small"
-          >
-            <ArrowDownOnSquareIcon />
-          </SvgIcon>
-          <Typography
-            color="text.secondary"
-            display="inline"
-            variant="body2"
-          >
-            {company.downloads} Downloads
-          </Typography>
-        </Stack>
+     
+      
       </Stack>
     </Card>
   );

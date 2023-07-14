@@ -5,10 +5,14 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Typography,
   Divider,
-  Stack,
-  TextField
 } from '@mui/material';
+import { useAuth } from 'src/hooks/use-auth';
+
+
+import { useMoralis } from 'react-moralis';
+import { useEffect } from 'react';
 
 export const SettingsPassword = () => {
   const [values, setValues] = useState({
@@ -16,6 +20,18 @@ export const SettingsPassword = () => {
     confirm: ''
   });
 
+  const auth = useAuth();
+  var {user}=useMoralis()
+  const [name,setName]=useState()
+  const [email,setEmail]=useState()
+  const [phone,setPhone]=useState()
+  useEffect(()=>{
+    console.log(user)
+    setName(user.get("username"))  
+      setEmail(user.get("email"))
+      setPhone(user.get("phone"))
+
+  },[user])
   const handleChange = useCallback(
     (event) => {
       setValues((prevState) => ({
@@ -25,9 +41,23 @@ export const SettingsPassword = () => {
     },
     []
   );
+  const [textSuccess,setTextSuccess]=useState("")
 
   const handleSubmit = useCallback(
-    (event) => {
+  async  (event) => {
+    console.log("entro"+user.get("email"))
+
+      
+      try {      
+          
+        await auth.recoverPassword(user.get("email"));
+      
+        setTextSuccess("Revisa tu correo y haz click en el enlace enviado para cambiar la contraseña.")
+
+       
+      } catch (err) {
+      }
+      
       event.preventDefault();
     },
     []
@@ -41,34 +71,18 @@ export const SettingsPassword = () => {
           title="Password"
         />
         <Divider />
-        <CardContent>
-          <Stack
-            spacing={3}
-            sx={{ maxWidth: 400 }}
-          >
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              onChange={handleChange}
-              type="password"
-              value={values.password}
-            />
-            <TextField
-              fullWidth
-              label="Password (Confirm)"
-              name="confirm"
-              onChange={handleChange}
-              type="password"
-              value={values.confirm}
-            />
-          </Stack>
-        </CardContent>
+        
+        <Typography style={{marginTop:20}} variant="h6">
+                {textSuccess}
+              </Typography>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
-            Update
+          
+          <Button 
+                type="submit" variant="contained">
+          Cambiar Contraseña
           </Button>
+          
         </CardActions>
       </Card>
     </form>
