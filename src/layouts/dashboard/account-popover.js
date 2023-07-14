@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 
+
+import { useMoralis } from 'react-moralis';
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const auth = useAuth();
-
+ 
+  var {user}=useMoralis()
   const handleSignOut = useCallback(
     () => {
       onClose?.();
@@ -42,7 +45,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          Anika Visser
+          {user.get("username")}
         </Typography>
       </Box>
       <Divider />
