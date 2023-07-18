@@ -17,7 +17,7 @@ import {
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 
-export const CustomersTable = (props) => {
+export const Notifications = (props) => {
   const {
     count = 0,
     items = [],
@@ -36,14 +36,14 @@ export const CustomersTable = (props) => {
   const selectedAll = (items.length > 0) && (selected.length === items.length);
 
   return (
-    <Box>
+    <Box style={{marginTop:50}}>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Name
+                  Notifications
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -54,7 +54,8 @@ export const CustomersTable = (props) => {
 
                 return (
                   <TableRow
-                  key={"tabla123465"}
+                  
+                  key={"tabla1234asdasd65"}
                   >
                    
                     <TableCell>
@@ -82,7 +83,7 @@ export const CustomersTable = (props) => {
   );
 };
 
-CustomersTable.propTypes = {
+Notifications.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
