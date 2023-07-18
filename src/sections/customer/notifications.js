@@ -55,7 +55,7 @@ export const Notifications = (props) => {
                 return (
                   <TableRow
                   
-                  key={"tabla1234asdasd65"}
+                  key={"tabla12xcv34asdasd65"}
                   >
                    
                     <TableCell>

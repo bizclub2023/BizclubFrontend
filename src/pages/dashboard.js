@@ -9,9 +9,9 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { RightBar } from 'src/sections/account/right-bar';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import { Notifications } from 'src/sections/customer/notifications';
 
 import { useCallback, useMemo, useState } from 'react';
+import { Notifications } from 'src/sections/customer/Notifications';
 const now = new Date();
 
 const data = [
