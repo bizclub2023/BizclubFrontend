@@ -11,7 +11,7 @@ import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 
 import { useCallback, useMemo, useState } from 'react';
-import { Notifications } from 'src/sections/customer/Notifications';
+import { Notifications } from 'src/sections/customer/notifications';
 const now = new Date();
 
 const data = [
@@ -131,13 +131,12 @@ const Page = () => {
                 md={6}
                 lg={4}
               >  
-              <Notifications
+ <Notifications
               count={data.length}
               items={customers}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-            />
-              </Grid>
+            />              </Grid>
               <Grid
                 xs={12}
                 md={6}
