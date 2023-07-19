@@ -38,12 +38,12 @@ export const Notifications = (props) => {
   return (
     <Box style={{marginTop:50}}>
       <Scrollbar>
-        <Box sx={{ minWidth: 800 }}>
+        <Box sx={{ minWidth: "40%" }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Notifications
+                  Notificaciones
                 </TableCell>
               </TableRow>
             </TableHead>

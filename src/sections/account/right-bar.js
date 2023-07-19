@@ -16,7 +16,8 @@ import { Reservations } from 'src/sections/customer/reservations';
 import { useSelection } from 'src/hooks/use-selection';
 import { applyPagination } from 'src/utils/apply-pagination';
 import { subDays, subHours } from 'date-fns';
-
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 const now = new Date();
 
 const data = [
@@ -208,8 +209,8 @@ export const RightBar = () => {
         />
         
         <CardActions sx={{ marginTop:2,justifyContent: 'flex-start' }}>
-          <Button  variant="contained">
-            CAMBIAR PLAN
+          <Button startIcon={<EditIcon />} variant="contained">
+            CAMBIAR 
           </Button>
         </CardActions>
           </Stack>
@@ -226,8 +227,8 @@ export const RightBar = () => {
         />        
         <CardActions sx={{ marginTop:2,alignItems:"center",justifyContent: 'center' }}>
 
-        <Button variant="contained">
-           + RESERVAR
+        <Button startIcon={<AddIcon />}  variant="contained">
+           RESERVAR
           </Button>
           
         </CardActions>
