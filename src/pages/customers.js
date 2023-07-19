@@ -15,6 +15,7 @@ import {
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { CompanyCard } from 'src/sections/companies/company-card2';
 import { CompaniesSearch } from 'src/sections/companies/companies-search';
+import StripeCheckout from 'react-stripe-checkout';
 
 const companies = [
   {
@@ -75,8 +76,8 @@ const companies = [
   }
 ];
 
-const Page = () => (
-  <>
+const Page = () => {
+  return   <>
     <Head>
       <title>
         Companies | Bizclub
@@ -124,7 +125,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

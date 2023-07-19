@@ -2,10 +2,21 @@ import PropTypes from 'prop-types';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 import { Avatar, Box, Button, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
+import StripeCheckout from 'react-stripe-checkout';
 
 export const CompanyCard = (props) => {
   const { company } = props;
 
+  const onToken = (token) => {
+    fetch('/save-stripe-token', {
+      method: 'POST',
+      body: JSON.stringify(token),
+    }).then(response => {
+      response.json().then(data => {
+        alert(`We are in business, ${data.email}`);
+      });
+    });
+  }
   return (
     <Card
       sx={{
@@ -51,16 +62,16 @@ export const CompanyCard = (props) => {
         >
           {company.price}
         </Typography>
-        <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3 }}
-                  type="submit"
-                  style={{color:"black",borderColor:"black"}}
-                  variant="outlined"
-                >
-                  Subscribirse
-                </Button>
+        <StripeCheckout
+        token={onToken}
+        bitcoin 
+        style={{alignSelf:"center", width:"100%", marginTop:20}}
+        name="Bizclub."
+        description="Coworkers" 
+        image="https://www.vidhub.co/assets/logos/vidhub-icon-2e5c629f64ced5598a56387d4e3d0c7c.png" // the pop-in header image (default none)
+        panelLabel="SUBSCRIBIRSE"
+        stripeKey="price_1JYGKYLfVewAaHPMX9P0lWjs"
+      />
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
