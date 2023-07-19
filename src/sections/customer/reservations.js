@@ -38,7 +38,7 @@ export const Reservations = (props) => {
   return (
     <Box>
       <Scrollbar>
-        <Box sx={{ minWidth: 800 }}>
+        <Box sx={{ minWidth: "60%" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -62,9 +62,6 @@ export const Reservations = (props) => {
                         direction="row"
                         spacing={2}
                       >
-                        <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
-                        </Avatar>
                         <Typography variant="subtitle2">
                           {customer.name}
                         </Typography>

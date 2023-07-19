@@ -20,7 +20,7 @@ export const items = [
     )
   },
   {
-    title: 'Dashboard',
+    title: 'Panel de control',
     path: '/dashboard',
     icon: (
       <SvgIcon fontSize="small">
