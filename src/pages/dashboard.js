@@ -130,13 +130,9 @@ const Page = () => {
                 xs={12}
                 md={6}
                 lg={4}
-              >  
- <Notifications
-              count={data.length}
-              items={customers}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />              </Grid>
+              > 
+              
+              <Notifications />          </Grid>
               <Grid
                 xs={12}
                 md={6}
