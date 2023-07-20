@@ -25,9 +25,9 @@ const App = (props) => {
 
   const theme = createTheme();
 
-  return (   <MoralisProvider
+  return (    <MoralisProvider
     serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL }
-    appId={"001" }
+    appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID }
   > 
     <CacheProvider value={emotionCache}>
       <Head>
@@ -39,24 +39,25 @@ const App = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
-    
+     
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <AuthProvider>
+       
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AuthConsumer>
+            <AuthProvider>
+  <AuthConsumer>
               {
                 (auth) => auth.isLoading
                   ? <SplashScreen />
                   : getLayout(<Component {...pageProps} />)
               }
-            </AuthConsumer>
-          </ThemeProvider>
+              </AuthConsumer>
         </AuthProvider>
+          </ThemeProvider>
       </LocalizationProvider>
       
     </CacheProvider>
-    </MoralisProvider>
+              </MoralisProvider>
   );
 };
 

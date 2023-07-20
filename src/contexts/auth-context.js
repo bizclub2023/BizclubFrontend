@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
-import {Moralis} from "moralis-v1"
 import { set } from 'nprogress';
+import { useMoralis } from 'react-moralis';
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
   SIGN_IN: 'SIGN_IN',
@@ -63,6 +63,7 @@ export const AuthContext = createContext({ undefined });
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {Moralis,isInitialized} = useMoralis();
   const initialized = useRef(false);
 
   const initialize = async () => {
@@ -73,7 +74,6 @@ export const AuthProvider = (props) => {
       return;
     }
 
-    initialized.current = false;
 
 
     try {
@@ -83,12 +83,13 @@ export const AuthProvider = (props) => {
 
    
     if (auth) {
-     await Moralis.start()
 let user=await Moralis.User.current()
       dispatch({
         type: HANDLERS.INITIALIZE,
         payload: user
       });
+      initialized.current = true;
+
     } else {
       dispatch({
         type: HANDLERS.INITIALIZE
@@ -103,10 +104,14 @@ let user=await Moralis.User.current()
 
   useEffect(
     () => {
+      
+      if(isInitialized){
+
       initialize();
+    }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [isInitialized ]
   );
 
   const skip = () => {
