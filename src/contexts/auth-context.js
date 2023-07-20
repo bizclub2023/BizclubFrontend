@@ -83,7 +83,7 @@ export const AuthProvider = (props) => {
 
    
     if (auth) {
-     
+     await Moralis.start()
 let user=await Moralis.User.current()
       dispatch({
         type: HANDLERS.INITIALIZE,
