@@ -27,7 +27,7 @@ const App = (props) => {
 
   return (   <MoralisProvider
     serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL }
-    appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID }
+    appId={"001" }
   > 
     <CacheProvider value={emotionCache}>
       <Head>
