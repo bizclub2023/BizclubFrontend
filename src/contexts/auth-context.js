@@ -74,20 +74,17 @@ export const AuthProvider = (props) => {
     }
 
     initialized.current = false;
-    window.sessionStorage.setItem('authenticated', 'false');
 
 
     try {
    
+      
+    let auth=  window.sessionStorage.getItem('authenticated');
+
    
-    
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (false) {
+    if (auth) {
      
-
+let user=await Moralis.User.current()
       dispatch({
         type: HANDLERS.INITIALIZE,
         payload: user
@@ -97,6 +94,11 @@ export const AuthProvider = (props) => {
         type: HANDLERS.INITIALIZE
       });
     }
+    
+    } catch (err) {
+      console.error(err);
+    }
+
   };
 
   useEffect(

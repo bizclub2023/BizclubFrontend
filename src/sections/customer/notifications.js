@@ -52,8 +52,7 @@ export const Notifications = (props) => {
                 const isSelected = selected.includes(customer.id);
                 const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
-                return (
-                  <TableRow
+                return (  <TableRow
                   
                   key={"tabla12xcv34asdasd65"}
                   >
