@@ -239,12 +239,6 @@ if(object){
 async function handleReserva(){
 
       
-
-    if(values.areaName===""){
-      
-      setError("Falta el area a reservar")
-      return
-    }
     if(values.title===""){
       
       setError("Falta el titulo de la reserva")
@@ -273,7 +267,13 @@ console.log("res "+JSON.stringify(res))
    console.log("myevents "+myevents)
 
    reserve.set("user",user.get("email"))  
-  reserve.set("areaName",values.areaName)       
+   if(values.areaName!==""){
+
+    reserve.set("areaName",values.areaName)     
+   } else{
+    reserve.set("areaName",areas[0].label)     
+
+   } 
   reserve.set("title",values.title)       
   reserve.set("comentary",values.comentary) 
   reserve.set("events",myevents) 
@@ -398,7 +398,7 @@ Area de Interes
                   name="areaName"
                   onChange={handleChange}
                   required
-                  defaultValue={lenguages[0]}
+                  defaultValue={areas[0]}
                   select
                   style={{
                   }}
@@ -493,8 +493,6 @@ Area de Interes
                   )}
                   onClick={handleReserva}
                   variant="contained"
-                  component={NextLink}
-                  href="/dashboard"
                 >
                   Reservar
                 </Button>
