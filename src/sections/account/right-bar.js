@@ -119,7 +119,7 @@ const useCustomerIds = (customers) => {
   );
 };
 
-export const RightBar = () => {
+export const RightBar = (props) => {
   var currentUser={}
   var {user}=useMoralis()
   const [name,setName]=useState()
@@ -189,7 +189,7 @@ export const RightBar = () => {
 
   return (
     <form
-    style={{marginLeft:10,marginRight:10,width:"60%"}}
+    style={{marginLeft:10,marginTop:40,marginRight:10,width:"60%"}}
       autoComplete="off"
       noValidate
       onSubmit={handleSubmit}
@@ -227,7 +227,7 @@ export const RightBar = () => {
         />        
         <CardActions sx={{ marginTop:2,alignItems:"center",justifyContent: 'center' }}>
 
-        <Button startIcon={<AddIcon />}  variant="contained">
+        <Button onClick={props.onClick} startIcon={<AddIcon />}  variant="contained">
            RESERVAR
           </Button>
           

@@ -29,6 +29,15 @@ export const items = [
     )
   },
   {
+    title: 'Reservaciones',
+    path: '/reservas',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Coworking',
     path: '/customers',
     icon: (

@@ -38,7 +38,7 @@ export const Notifications = (props) => {
   return (
     <Box style={{marginTop:50}}>
       <Scrollbar>
-        <Box sx={{ minWidth: "40%" }}>
+        <Box sx={{ minWidth: "60%" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -47,16 +47,9 @@ export const Notifications = (props) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody sx={{ minWidth: "60%" }}>
               {items.map((customer) => {
-                const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-
-                return (  <TableRow
-                  
-                  key={"tabla12xcv34asdasd65"}
-                  >
-                   
+                return (  <TableRow key={"tabla12xcv34asdasd65"} >
                     <TableCell>
                       <Stack
                         alignItems="center"

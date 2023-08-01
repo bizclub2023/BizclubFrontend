@@ -38,7 +38,7 @@ export const Reservations = (props) => {
   return (
     <Box>
       <Scrollbar>
-        <Box sx={{ minWidth: "60%" }}>
+        <Box sx={{ minWidth: "40%" }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -47,7 +47,7 @@ export const Reservations = (props) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody sx={{ minWidth: "40%" }}>
               {items.map((customer) => {
             
                 return (
