@@ -187,7 +187,31 @@ let eventos=[]
   const query = new Moralis.Query("Reserves");
   
   console.log(JSON.stringify(values.areaName))
-  await query.equalTo("areaName",values.areaName)     
+  if(values.areaName!==""){
+
+    await query.equalTo("areaName",values.areaName)     
+    let object= await query.find()
+  if(object){
+    
+    for(let i=0;i<object.length;i++){ 
+      
+    for(let j=0;j<object[i].attributes.events.length;j++){ 
+      eventos=[...eventos,{
+        event_id: null,
+        title: object[i].attributes.title,
+        start: object[i].attributes.events[j].start,
+        end: object[i].attributes.events[j].end,
+        admin_id: 1,
+        editable: false,
+        deletable: false,
+        color: "#50b500"
+      },]
+    }
+    }
+    calendarRef.current.scheduler.handleState([...eventos], "events")
+  }
+}else{
+  await query.equalTo("areaName",areas[0].label)     
   let object= await query.find()
 if(object){
   
@@ -207,6 +231,7 @@ if(object){
   }
   }
   calendarRef.current.scheduler.handleState([...eventos], "events")
+}
 }
 
 
@@ -293,7 +318,7 @@ setError("")
 
   },[values.areaName])
 
-  const lenguages = [
+  const areas = [
     {
       value: 'Salon1',
       label: 'Salon1'
@@ -380,7 +405,7 @@ Area de Interes
                   SelectProps={{ native: true }}
                   value={values.areaName}
                 >
-                  {lenguages.map((option) => (
+                  {areas.map((option) => (
                     <option
                       key={option.value}
                       value={option.value}
