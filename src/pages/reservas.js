@@ -9,6 +9,8 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import {  useMoralis } from 'react-moralis';
 import NextLink from 'next/link';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Alert from '@mui/material/Alert';
 import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
 const now = new Date();
@@ -166,6 +168,7 @@ const {Moralis}=useMoralis()
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
 
+  const [title,setTitle]=useState([])
   var [rowsDate,setRowsDate]=useState([]) 
   const [date, setDate] = useState(null);
   const [open, setOpen] = useState(false);
@@ -181,12 +184,13 @@ const {Moralis}=useMoralis()
  }
  const [error,setError]=useState('')
 let eventos=[]
+const notify = () => toast("Elige la fecha de hoy o dias futuros");
+
  async function getEvents(){
 
 
   const query = new Moralis.Query("Reserves");
   
-  console.log(JSON.stringify(values.areaName))
   if(values.areaName!==""){
 
     await query.equalTo("areaName",values.areaName)     
@@ -205,7 +209,7 @@ let eventos=[]
         editable: false,
         deletable: false,
         color: "#50b500"
-      },]
+      }]
     }
     }
     calendarRef.current.scheduler.handleState([...eventos], "events")
@@ -239,14 +243,9 @@ if(object){
 async function handleReserva(){
 
       
-    if(values.title===""){
+    if(title===""){
       
-      setError("Falta el titulo de la reserva")
-      return
-    }
-    if(values.comentary===""){
-      
-      setError("Falta los Comentarios")
+      setError("Falta la reserva")
       return
     }
     
@@ -268,14 +267,11 @@ console.log("res "+JSON.stringify(res))
 
    reserve.set("user",user.get("email"))  
    if(values.areaName!==""){
-
     reserve.set("areaName",values.areaName)     
    } else{
     reserve.set("areaName",areas[0].label)     
-
    } 
-  reserve.set("title",values.title)       
-  reserve.set("comentary",values.comentary) 
+  reserve.set("title",title)       
   reserve.set("events",myevents) 
   await reserve.save()
 
@@ -285,7 +281,6 @@ console.log("res "+JSON.stringify(res))
 
 
 setError("")
-
 
 
 }
@@ -341,6 +336,7 @@ setError("")
     { field: 'date', headerName: 'date', width: 500 },
    
   ];
+  
   const [myevents,setMyEvents]=useState([])
 
     const calendarRef = useRef(null);
@@ -352,12 +348,29 @@ setError("")
         } else if (action === "create") {
           console.log("Created");
         }
+        console.log(JSON.stringify(event))
+
+        console.log(event.start)
+        console.log(event.end)
+        
+        var currentDate=new Date()
+            
+        console.log(currentDate)
+        if(currentDate<=event.start&&currentDate<=event.end){
+          console.log("cerrado")
+
+            
+      console.log("entro")
 
         // Make it slow just for testing
         setTimeout(async () => {
-            console.log("event "+JSON.stringify(event));
-            setMyEvents([...myevents,event])
-  calendarRef.current.scheduler.triggerDialog(true, event
+           /*  await setValues({
+              title:JSON.stringify(event.title),
+            }) */
+
+            setTitle(event.title)
+           await setMyEvents([...myevents,event])
+           await calendarRef.current.scheduler.triggerDialog(true, event
   )
           await  res({
               ...event,
@@ -365,6 +378,16 @@ setError("")
             });
        
         }, 5000);
+        
+ 
+      }else{
+        notify()
+           rej();
+      
+      
+      }
+      
+      return
       });
     }
   return (
@@ -414,34 +437,7 @@ Area de Interes
                     </option>
                   ))}
                 </TextField>
-          <Typography id="keep-mounted-modal-description" sx={{ mt: 1 }}>
-            Titulo
-          </Typography>
-          <TextField
-                  fullWidth
-                  label="Ejemplo: Reunion del equipo"
-                  name="title"
-                  onChange={handleChange}
-                  required
-                  style={{
-                  }}
-                  value={values.title}
-                />
-          <Typography id="keep-mounted-modal-description" sx={{ mt: 1 }}>
-            Comentarios
-          </Typography>
-          <TextField
-                  fullWidth
-                  label="Agrega algun comentario"
-                  name="comentary"
-                  onChange={handleChange}
-                  required
-                  style={{
-                    marginTop:10,
-                    marginBottom:10
-                  }}
-                  value={values.comentary}
-                />
+        
         <Scheduler
       events={eventos}
       ref={calendarRef}
@@ -453,6 +449,8 @@ Area de Interes
       onConfirm={handleConfirm}
 
       eventRenderer={(event) => {
+       
+        
         if (+event.event_id % 2 === 0) {
 
           return (
@@ -484,18 +482,14 @@ Area de Interes
         return null;
       }}
     />
-     <Button 
-    style={{marginTop:5,marginLeft:5,height:70,width:120}}
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
+                <Button 
+                 style={{marginTop:15,marginLeft:5,height:70,width:120}}
                   onClick={handleReserva}
                   variant="contained"
                 >
-                  Reservar
+                  Confirmar Reserva
                 </Button>
+        <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
         </Stack>
