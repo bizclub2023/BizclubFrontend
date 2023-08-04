@@ -186,63 +186,10 @@ const {Moralis}=useMoralis()
 let eventos=[]
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 
- async function getEvents(){
+async function handleReserva(event){
 
+  console.log("Falta la reserva"+event.title)
 
-  const query = new Moralis.Query("Reserves");
-  
-  if(values.areaName!==""){
-
-    await query.equalTo("areaName",values.areaName)     
-    let object= await query.find()
-  if(object){
-    
-    for(let i=0;i<object.length;i++){ 
-      
-    for(let j=0;j<object[i].attributes.events.length;j++){ 
-      eventos=[...eventos,{
-        event_id: null,
-        title: object[i].attributes.title,
-        start: object[i].attributes.events[j].start,
-        end: object[i].attributes.events[j].end,
-        admin_id: 1,
-        editable: false,
-        deletable: false,
-        color: "#50b500"
-      }]
-    }
-    }
-    calendarRef.current.scheduler.handleState([...eventos], "events")
-  }
-}else{
-  await query.equalTo("areaName",areas[0].label)     
-  let object= await query.find()
-if(object){
-  
-  for(let i=0;i<object.length;i++){ 
-    
-  for(let j=0;j<object[i].attributes.events.length;j++){ 
-    eventos=[...eventos,{
-      event_id: null,
-      title: object[i].attributes.title,
-      start: object[i].attributes.events[j].start,
-      end: object[i].attributes.events[j].end,
-      admin_id: 1,
-      editable: false,
-      deletable: false,
-      color: "#50b500"
-    },]
-  }
-  }
-  calendarRef.current.scheduler.handleState([...eventos], "events")
-}
-}
-
-
-  }
-async function handleReserva(){
-
-      
     if(title===""){
       
       setError("Falta la reserva")
@@ -263,7 +210,6 @@ console.log("res "+JSON.stringify(res))
    let uniqueID=parseInt((Date.now()+ Math.random()).toString())
    reserve.set("uid",uniqueID)       
    console.log("email "+user.get("email"))
-   console.log("myevents "+myevents)
 
    reserve.set("user",user.get("email"))  
    if(values.areaName!==""){
@@ -271,8 +217,22 @@ console.log("res "+JSON.stringify(res))
    } else{
     reserve.set("areaName",areas[0].label)     
    } 
-  reserve.set("title",title)       
-  reserve.set("events",myevents) 
+  reserve.set("title",JSON.stringify(event.title)  )   
+ let eventitos=[]
+ console.log("myevent "+(JSON.stringify(event)))
+ console.log("myevent "+(JSON.stringify(event.start)))
+
+
+  console.log("myevents "+(eventitos))
+  let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+
+  reserve.set("event",{
+  
+    event_id: uniqueID2,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+  }) 
   await reserve.save()
 
     setValues({   areaName: '',
@@ -306,12 +266,10 @@ setError("")
     },
     []
   );
-
-  useEffect(()=>{
-
+  useEffect(() => {
       getEvents()
 
-  },[values.areaName])
+  }, [values.areaName]);
 
   const areas = [
     {
@@ -337,7 +295,7 @@ setError("")
    
   ];
   
-  const [myevents,setMyEvents]=useState([])
+  var [myEvents,setMyEvents] = useState([]);
 
     const calendarRef = useRef(null);
     const handleConfirm = async (event, action) => {
@@ -348,6 +306,13 @@ setError("")
         } else if (action === "create") {
           console.log("Created");
         }
+        /* 
+  const query = new Moralis.Query("Reserves");
+  
+
+     query.equalTo("areaName",values.areaName)     
+    let object=  query.find() */
+
         console.log(JSON.stringify(event))
 
         console.log(event.start)
@@ -355,7 +320,8 @@ setError("")
         
         var currentDate=new Date()
             
-        console.log(currentDate)
+        console.log(currentDate) 
+        
         if(currentDate<=event.start&&currentDate<=event.end){
           console.log("cerrado")
 
@@ -368,8 +334,10 @@ setError("")
               title:JSON.stringify(event.title),
             }) */
 
-            setTitle(event.title)
-           await setMyEvents([...myevents,event])
+          await  setTitle(event.title)
+          await setMyEvents([...myEvents,event])
+          
+  await handleReserva(event)
            await calendarRef.current.scheduler.triggerDialog(true, event
   )
           await  res({
@@ -377,7 +345,7 @@ setError("")
               event_id: event.event_id || Math.random()
             });
        
-        }, 5000);
+        }, 2000);
         
  
       }else{
@@ -390,6 +358,60 @@ setError("")
       return
       });
     }
+    
+ async function getEvents(){
+
+
+  const query = new Moralis.Query("Reserves");
+  
+  if(values.areaName!==""){
+
+    await query.equalTo("areaName",values.areaName)     
+    let object= await query.find()
+    eventos=[]
+  if(object){
+    
+    for(let i=0;i<object.length;i++){ 
+      
+      eventos=[...eventos,{
+        event_id: null,
+        title: object[i].attributes.title,
+        start: object[i].attributes.event.start,
+        end: object[i].attributes.event.end,
+        admin_id: 1,
+        editable: false,
+        deletable: false,
+        color: "#50b500"
+      }]
+   
+    }
+    calendarRef.current.scheduler.handleState([...eventos], "events")
+  }
+}else{
+  await query.equalTo("areaName",areas[0].label)     
+  let object= await query.find()
+if(object){
+  for(let i=0;i<object.length;i++){ 
+    eventos=[...eventos,{
+      event_id: null,
+      title: object[i].attributes.title,
+      start: object[i].attributes.event.start,
+      end: object[i].attributes.event.end,
+      admin_id: 1,
+      editable: false,
+      deletable: false,
+      color: "#50b500"
+    },]
+
+      
+
+  }
+  calendarRef.current.scheduler.handleState([...eventos], "events")
+}
+}
+
+
+  }
   return (
     <>
       <Head>
@@ -482,13 +504,7 @@ Area de Interes
         return null;
       }}
     />
-                <Button 
-                 style={{marginTop:15,marginLeft:5,height:70,width:120}}
-                  onClick={handleReserva}
-                  variant="contained"
-                >
-                  Confirmar Reserva
-                </Button>
+             
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
