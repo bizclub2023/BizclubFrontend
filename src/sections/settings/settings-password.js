@@ -45,46 +45,45 @@ export const SettingsPassword = () => {
 
   const handleSubmit = useCallback(
   async  (event) => {
-    console.log("entro"+user.get("email"))
 
       
       try {      
           
         await auth.recoverPassword(user.get("email"));
       
-        setTextSuccess("Revisa tu correo y haz click en el enlace enviado para cambiar la contraseña.")
+        setTextSuccess("Revisa tu correo y haz click en el enlace enviado.")
+        console.log("Revisa tu correo")
 
        
       } catch (err) {
+        console.log(err.message)
       }
       
-      event.preventDefault();
     },
     []
   );
 
   return (
-    <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader
-          subheader="Update password"
-          title="Password"
+          subheader="Actualizar Contraseña"
+          title="Contraseña"
         />
         <Divider />
         
-        <Typography style={{marginTop:20}} variant="h6">
-                {textSuccess}
-              </Typography>
-        <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
           
           <Button 
-                type="submit" variant="contained">
+          onClick={handleSubmit}
+                 variant="contained">
           Cambiar Contraseña
           </Button>
           
         </CardActions>
+        
+        <Typography style={{textAlign:"center",alignSelf:"center",marginTop:10,marginBottom:10}} variant="h6">
+                {textSuccess}
+              </Typography>
       </Card>
-    </form>
   );
 };

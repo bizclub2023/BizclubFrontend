@@ -4,6 +4,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import CardIcon from "./images/credit-card.svg";
 import ProductImage from "./images/product-image.jpg";
 
+import {
+  Typography,
+} from '@mui/material';
 
 let stripePromise;
 
@@ -54,11 +57,13 @@ const Checkout = () => {
       >
         <div className="grey-circle">
           <div className="purple-circle">
-            <img className="icon" src={CardIcon} alt="credit-card-icon" />
+            <img className="icon" src={"https://bafkreibrxdw7vkfljus6emn45nbks2e4n3ge2h3dxki4dvhchhaap5eymi.ipfs.nftstorage.link/"} alt="credit-card-icon" />
           </div>
         </div>
         <div className="text-container">
-          <p className="text">{isLoading ? "Loading..." : "Buy"}</p>
+        <Typography variant="h6">
+        {isLoading ? "Cargando..." : "Comprar"}
+              </Typography>
         </div>
       </button>
     </div>

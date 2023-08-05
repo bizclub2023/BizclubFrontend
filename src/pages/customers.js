@@ -80,7 +80,7 @@ const Page = () => {
   return   <>
     <Head>
       <title>
-        Companies | Bizclub
+      Coworking | Bizclub
       </title>
     </Head>
     <Box
@@ -99,7 +99,7 @@ const Page = () => {
           >
             <Stack spacing={1}>
               <Typography variant="h4">
-                Servicios Profesionales
+               Coworking
               </Typography>
            
             </Stack>

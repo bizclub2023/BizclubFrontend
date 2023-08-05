@@ -439,7 +439,6 @@ Area de Interes
           </Typography>
           <TextField
                   fullWidth
-                  label="Selecciona un espacio"
                   name="areaName"
                   onChange={handleChange}
                   required

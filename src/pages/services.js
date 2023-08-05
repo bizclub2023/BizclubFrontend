@@ -112,7 +112,7 @@ const Page = () => (
             justifyContent="space-between"
             spacing={4}
           >
-            <Stack spacing={1}>
+            <Stack  spacing={1}>
               <Typography variant="h4">
                 Servicios Profesionales
               </Typography>
@@ -127,8 +127,8 @@ const Page = () => (
             {companies.map((company) => (
               <Grid
                 xs={12}
-                md={6}
-                lg={4}
+                md={5}
+                lg={3}
                 key={company.id}
               >
                 <CompanyCard company={company} />

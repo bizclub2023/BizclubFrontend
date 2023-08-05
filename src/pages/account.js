@@ -5,6 +5,7 @@ import { AccountProfile } from 'src/sections/account/account-profile';
 import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
 import { useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
+import { SettingsPassword } from 'src/sections/settings/settings-password';
 
 const Page = () => {
   const {user}=useMoralis()
@@ -26,7 +27,7 @@ const Page = () => {
         py: 8
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" style={{marginBottom:20}}>
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
@@ -53,9 +54,12 @@ const Page = () => {
                 <AccountProfileDetails />
               </Grid>
             </Grid>
+            
           </div>
         </Stack>
       </Container>
+      
+      <SettingsPassword />
     </Box>
   </>
 };

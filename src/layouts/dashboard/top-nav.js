@@ -16,7 +16,9 @@ import {
 import { alpha } from '@mui/material/styles';
 import { usePopover } from 'src/hooks/use-popover';
 import { AccountPopover } from './account-popover';
+import { useEffect,useState } from 'react';
 
+import { useMoralis } from 'react-moralis';
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
 
@@ -24,6 +26,37 @@ export const TopNav = (props) => {
   const { onNavOpen } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
+  var [avatar,setAvatar]=useState()
+  var {user}=useMoralis()
+
+  async function fetchAvatar(){
+    let name=""
+    let description=""
+    let image=""
+    await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
+            .then(function (response) {
+  
+              return response.json();
+            }).then(function (data) {
+              name = data.name
+  
+              description = data.description
+              image = data.image
+            })
+            
+            console.log("image "+image)
+   let newimage = image.replace("ipfs://", "https://")
+   let final=newimage.replace( "/avatar.png",".ipfs.dweb.link/avatar.png")
+   setAvatar(final)
+  
+  console.log(final)
+  
+  
+  }
+  useEffect(() => {
+    fetchAvatar()
+
+}, [user?.get("avatar")]);
 
   return (
     <>
@@ -96,7 +129,7 @@ export const TopNav = (props) => {
                     <BellIcon />
                   </SvgIcon>
                 </Badge>
-              </IconButton>
+              </IconButton> 
             </Tooltip>
             <Avatar
               onClick={accountPopover.handleOpen}
@@ -106,8 +139,8 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40
               }}
-              src="/assets/avatars/avatar-anika-visser.png"
-            />
+              src={user?.get("avatar").ipnft?avatar:"/assets/avatars/avatar-anika-visser.png"}
+              />
           </Stack>
         </Stack>
       </Box>
