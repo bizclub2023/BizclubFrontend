@@ -58,8 +58,10 @@ const Page = () => {
           </div>
         </Stack>
       </Container>
-      
+      <Container maxWidth="lg" style={{marginBottom:20}}>
+
       <SettingsPassword />
+      </Container>
     </Box>
   </>
 };

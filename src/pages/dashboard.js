@@ -183,7 +183,7 @@ const Page = () => {
               <Grid
                 xs={12}
                 md={5}
-                lg={5}
+                lg={8}
               > 
                
  <Notifications
@@ -193,14 +193,7 @@ const Page = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
             />   
                      </Grid>
-              <Grid
-                xs={12}
-                md={5}
-                lg={7}
-
-              >
-                <RightBar onClick={handleOpen}/>
-              </Grid>
+        
             </Grid>
           </div>
         </Stack>
