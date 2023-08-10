@@ -435,17 +435,15 @@ if(object){
           </div>
         <Stack spacing={0}>
         <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
-Area de Interes
+            Area de Interes
           </Typography>
           <TextField
                   fullWidth
                   name="areaName"
                   onChange={handleChange}
                   required
-                  defaultValue={areas[0]}
                   select
-                  style={{
-                  }}
+                  hiddenLabel
                   SelectProps={{ native: true }}
                   value={values.areaName}
                 >

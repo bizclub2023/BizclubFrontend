@@ -1,25 +1,93 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { RightBar } from 'src/sections/account/right-bar';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DataGrid } from '@mui/x-data-grid';
-import { TimeField } from '@mui/x-date-pickers/TimeField';
-import dayjs from 'dayjs';
+import { Scheduler } from "@aldabil/react-scheduler";
+import {  useMoralis } from 'react-moralis';
+import NextLink from 'next/link';
 
-import Modal from '@mui/material/Modal';
-import { useCallback, useMemo, useState } from 'react';
-import { Notifications } from 'src/sections/customer/notifications';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Alert from '@mui/material/Alert';
+import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
+import { OverviewSales } from 'src/sections/overview/overview-sales';
+import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
+import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
+import { OverviewBudget } from 'src/sections/overview/overview-budget';
 const now = new Date();
+const EVENTS = [
+  {
+    event_id: 1,
+    title: "Event 1",
+    start: new Date(new Date(new Date().setHours(9)).setMinutes(0)),
+    end: new Date(new Date(new Date().setHours(10)).setMinutes(0)),
+    disabled: true,
+    admin_id: [1, 2, 3, 4]
+  },
+  {
+    event_id: 2,
+    title: "Event 2",
+    start: new Date(new Date(new Date().setHours(10)).setMinutes(0)),
+    end: new Date(new Date(new Date().setHours(12)).setMinutes(0)),
+    admin_id: 2,
+    color: "#50b500"
+  },
+  {
+    event_id: 3,
+    title: "Event 3",
+    start: new Date(new Date(new Date().setHours(11)).setMinutes(0)),
+    end: new Date(new Date(new Date().setHours(12)).setMinutes(0)),
+    admin_id: 1,
+    editable: false,
+    deletable: false
+  },
+  {
+    event_id: 4,
+    title: "Event 4",
+    start: new Date(
+      new Date(new Date(new Date().setHours(9)).setMinutes(30)).setDate(
+        new Date().getDate() - 2
+      )
+    ),
+    end: new Date(
+      new Date(new Date(new Date().setHours(11)).setMinutes(0)).setDate(
+        new Date().getDate() - 2
+      )
+    ),
+    admin_id: 2,
+    color: "#900000"
+  },
+  {
+    event_id: 5,
+    title: "Event 5",
+    start: new Date(
+      new Date(new Date(new Date().setHours(10)).setMinutes(30)).setDate(
+        new Date().getDate() - 2
+      )
+    ),
+    end: new Date(
+      new Date(new Date(new Date().setHours(14)).setMinutes(0)).setDate(
+        new Date().getDate() - 2
+      )
+    ),
+    admin_id: 2,
+    editable: true
+  },
+  {
+    event_id: 6,
+    title: "Event 6",
+    start: new Date(
+      new Date(new Date(new Date().setHours(10)).setMinutes(30)).setDate(
+        new Date().getDate() - 4
+      )
+    ),
+    end: new Date(new Date(new Date().setHours(14)).setMinutes(0)),
+    admin_id: 2
+  }
+];
 
 const data = [
   {
@@ -96,12 +164,15 @@ const useCustomerIds = (customers) => {
 };
 
 const Page = () => {
+  
+const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const customers = useCustomers(page, rowsPerPage);
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
 
+  const [title,setTitle]=useState([])
   var [rowsDate,setRowsDate]=useState([]) 
   const [date, setDate] = useState(null);
   const [open, setOpen] = useState(false);
@@ -113,9 +184,87 @@ const Page = () => {
     },
     []
   );
-
   function handleDate(){  
  }
+ const [reserves,setTotalReserves]=useState('')
+ const [users,setTotalUsers]=useState('')
+ const [profits,setTotalProfits]=useState(0)
+
+ const [error,setError]=useState('')
+let eventos=[]
+const notify = () => toast("Elige la fecha de hoy o dias futuros");
+const fetchData=async ()=>{
+  const query = new Moralis.Query("Reserves");
+
+  let res=await query.find()
+  console.log("res "+res.length)
+  setTotalReserves(res.length)
+
+  const query2 = new Moralis.Query("User");
+  let res2=await query2.find()
+  setTotalUsers(res2.length)
+
+  console.log("res1 "+res2.length)
+
+}
+async function handleReserva(event){
+
+  console.log("Falta la reserva"+event.title)
+
+    if(title===""){
+      
+      setError("Falta la reserva")
+      return
+    }
+    
+
+/* 
+const query = new Moralis.Query("Reserves");
+await query.equalTo("areaName",values.areaName)
+let res=await query.first()
+console.log("res "+JSON.stringify(res))
+ */
+  const Reserves=Moralis.Object.extend("Reserves")
+  let user=await Moralis.User.current()
+
+   const reserve=new Reserves() 
+   let uniqueID=parseInt((Date.now()+ Math.random()).toString())
+   reserve.set("uid",uniqueID)       
+   console.log("email "+user.get("email"))
+
+   reserve.set("user",user.get("email"))  
+   if(values.areaName!==""){
+    reserve.set("areaName",values.areaName)     
+   } else{
+    reserve.set("areaName",areas[0].label)     
+   } 
+  reserve.set("title",JSON.stringify(event.title)  )   
+ let eventitos=[]
+ console.log("myevent "+(JSON.stringify(event)))
+ console.log("myevent "+(JSON.stringify(event.start)))
+
+
+  console.log("myevents "+(eventitos))
+  let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+
+  reserve.set("event",{
+  
+    event_id: uniqueID2,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+  }) 
+  await reserve.save()
+
+    setValues({   areaName: '',
+    title: '',
+    comentary: '',})
+
+
+setError("")
+
+
+}
   const handleRowsPerPageChange = useCallback(
     (event) => {
       setRowsPerPage(event.target.value);
@@ -124,12 +273,26 @@ const Page = () => {
   );
 
   const [values, setValues] = useState({
-    courseName: '',
-    
-  });
-  
+    areaName: '',
+    title: '',
+    comentary: '',
 
-  const lenguages = [
+  });
+  const handleChange = useCallback(
+    (event) => {
+      setValues((prevState) => ({
+        ...prevState,
+        [event.target.name]: event.target.value
+      }));
+    },
+    []
+  );
+  useEffect(() => {
+      getEvents()
+      fetchData()
+  }, [values.areaName]);
+
+  const areas = [
     {
       value: 'Salon1',
       label: 'Salon1'
@@ -152,11 +315,138 @@ const Page = () => {
     { field: 'date', headerName: 'date', width: 500 },
    
   ];
+  
+  var [myEvents,setMyEvents] = useState([]);
+
+    const calendarRef = useRef(null);
+    const handleConfirm = async (event, action) => {
+
+      return new Promise((res, rej) => {
+        if (action === "edit") {
+         console.log("Edited");
+        } else if (action === "create") {
+          console.log("Created");
+        }
+        /* 
+  const query = new Moralis.Query("Reserves");
+  
+
+     query.equalTo("areaName",values.areaName)     
+    let object=  query.find() */
+
+        console.log(JSON.stringify(event))
+
+        console.log(event.start)
+        console.log(event.end)
+        
+        var currentDate=new Date()
+            
+        console.log(currentDate) 
+        
+        if(currentDate<=event.start&&currentDate<=event.end){
+          console.log("cerrado")
+
+            
+      console.log("entro")
+
+        // Make it slow just for testing
+        setTimeout(async () => {
+           /*  await setValues({
+              title:JSON.stringify(event.title),
+            }) */
+
+          await  setTitle(event.title)
+          await setMyEvents([...myEvents,event])
+          
+  await handleReserva(event)
+           await calendarRef.current.scheduler.triggerDialog(true, event
+  )
+          await  res({
+              ...event,
+              event_id: event.event_id || Math.random()
+            });
+       
+        }, 2000);
+        
+ 
+      }else{
+        notify()
+           rej();
+      
+      
+      }
+      
+      return
+      });
+    }
+    function diff_hours(dt2, dt1) 
+ {
+
+  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return Math.abs(Math.round(diff));
+  
+ }
+ 
+ async function getEvents(){
+
+  let dt1 = new Date("October 13, 2014 08:11:00");
+  let dt2 = new Date("October 13, 2014 11:13:00");
+  console.log("dt1 "+diff_hours(dt1,dt2))
+
+  const query = new Moralis.Query("Reserves");
+  
+  if(values.areaName!==""){
+
+    await query.equalTo("areaName",values.areaName)     
+    let object= await query.find()
+    eventos=[]
+  if(object){
+    
+    for(let i=0;i<object.length;i++){ 
+      
+      eventos=[...eventos,{
+        event_id: null,
+        title: object[i].attributes.title,
+        start: object[i].attributes.event.start,
+        end: object[i].attributes.event.end,
+        admin_id: 1,
+        editable: false,
+        deletable: false,
+        color: "#50b500"
+      }]
+   
+    }
+    calendarRef.current.scheduler.handleState([...eventos], "events")
+  }
+}else{
+  await query.equalTo("areaName",areas[0].label)     
+  let object= await query.find()
+if(object){
+  for(let i=0;i<object.length;i++){ 
+    eventos=[...eventos,{
+      event_id: null,
+      title: object[i].attributes.title,
+      start: object[i].attributes.event.start,
+      end: object[i].attributes.event.end,
+      admin_id: 1,
+      editable: false,
+      deletable: false,
+      color: "#50b500"
+    },]
+
+  }
+  calendarRef.current.scheduler.handleState([...eventos], "events")
+}
+}
+
+
+  }
   return (
     <>
       <Head>
         <title>
-          Dasboard | Bizclub
+          Reservaciones | Bizclub
         </title>
       </Head>
       <Box
@@ -170,83 +460,111 @@ const Page = () => {
         
       <div >
             <Typography alignSelf={"center"} variant="h4">
-              PANEL DE CONTROL
+              Panel de Control
             </Typography>
           </div>
+          
         <Stack spacing={0}>
-          <div>
-            <Grid
-              container
-              spacing={3}
-              style={{marginLeft:10,marginBottom:20,marginRight:10}}
-            >
-              <Grid
-                xs={12}
-                md={5}
-                lg={8}
-              > 
-               
- <Notifications
-              count={data.length}
-              items={customers}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />   
-                     </Grid>
+        <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          >
+            <OverviewTotalCustomers  positive={false}
+          sx={{ height: '100%' }}
+          value={users}/>
+          </Grid>
+        <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          > 
+           <OverviewTotalProfit difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={profits}/>
+           <OverviewBudget difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={reserves}/>
+          </Grid>
+           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+               Area de Interes
+           </Typography>
+           
+          <TextField
+                  fullWidth
+                  
+                  name="areaName"
+                  onChange={handleChange}
+                  required
+                  hiddenLabel
+                  defaultValue={areas[0]}
+                  select
+                  SelectProps={{ native: true }}
+                  value={values.areaName}
+                >
+                  {areas.map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
         
-            </Grid>
-          </div>
+        <Scheduler
+      events={eventos}
+      ref={calendarRef}
+
+      view="week"
+      day={null}
+      month={null}
+
+      onConfirm={handleConfirm}
+
+      eventRenderer={(event) => {
+       
+        
+        if (+event.event_id % 2 === 0) {
+
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+                background: "#757575"
+              }}
+            >
+              <div
+                style={{ height: 20, background: "#ffffffb5", color: "black" }}
+              >
+                {event.start.toLocaleTimeString("en-US", {
+                  timeStyle: "short"
+                })}
+              </div>
+              <div>{event.title}</div>
+              <div
+                style={{ height: 20, background: "#ffffffb5", color: "black" }}
+              >
+                {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }}
+    />
+             
+        <ToastContainer />
+                {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
+
         </Stack>
       </Container>
-      <Modal
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="keep-mounted-modal-title"
-        aria-describedby="keep-mounted-modal-description"
-      >
-        <Box sx={style}>
-          <Typography style={{textAlign:"center"}} id="keep-mounted-modal-title" variant="h6" component="h2">
-            Reservaciones
-          </Typography>
-          
-                
-                <Grid container  style={{direction:"row",width:"100%",marginTop:10,marginBottom:10}}>
-               
-                <Grid container  style={{direction:"row",width:"100%",marginTop:0,marginBottom:10}}>
-           
-          <Typography style={{marginBottom:10}} variant="h6">
-                Add Dates
-        
-              </Typography>
-
-
-                     <LocalizationProvider style={{width:150}} dateAdapter={AdapterDayjs}>
-
-                     <DatePicker
-                        label="Time Picker"
-                        value={date}
-                        style={{width:150}} 
-                        onChange={(newValue) => setDate(newValue)}
-                      />   
-                <Grid container  style={{direction:"row",width:"100%",marginTop:10,marginBottom:10}}>
-
-<TimeField label="Empieza" style={{marginRight:5,width:'40%'}} defaultValue={dayjs('2023-04-17T15:30')} />
-                    <TimeField  label="Termina" style={{width:'40%'}} defaultValue={dayjs('2023-04-17T15:30')} />
      
-                    </Grid>
-                    </LocalizationProvider>
-   
-               
-</Grid>
-<div style={{ height: 200, }}>
-              
-           
-            </div>
-                  
-</Grid>
-        </Box>
-      </Modal>
       </Box>
     </>
   );
