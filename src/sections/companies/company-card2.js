@@ -62,7 +62,15 @@ export const CompanyCard = (props) => {
         >
           {company.price}
         </Typography>
-        <Checkout/>
+        <Typography
+          align="center"
+          gutterBottom
+          variant="h6"
+          marginTop={4}
+        >
+          {company.avaliable.toString().concat(company.title=="Explorador"?"/5":company.title=="Emprendedor Express"?"/5":company.title=="Visionario Flexible"?"/5":company.title=="Innovador Dedicado"?"/6":company.title=="Líder Elite"?"/2":company.title=="Corporativo Vanguardista"?"/1":company.title=="Titán del Éxito"?"/3":"/5"+" Disponibles")}
+        </Typography>
+        <Checkout title={company.title}/>
         
             </CardContent>
       <Box sx={{ flexGrow: 1 }} />

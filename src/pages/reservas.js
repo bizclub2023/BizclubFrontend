@@ -185,7 +185,11 @@ const {Moralis}=useMoralis()
  const [error,setError]=useState('')
 let eventos=[]
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
+const notify2 = () => toast("No tienes Horas de Reserva");
 
+const fetchData=()=>{
+  
+}
 async function handleReserva(event){
 
   console.log("Falta la reserva"+event.title)
@@ -195,8 +199,64 @@ async function handleReserva(event){
       setError("Falta la reserva")
       return
     }
-    
+       
+    let user=await Moralis.User.current()
+let active=await user.get("planActive")
 
+let planName=await user.get("planName");
+      if(active){
+        if(planName=="Explorador"){
+          setError("No tienes Horas de Reserva")
+
+            return
+        }
+        if(planName=="Emprendedor Express"){
+          if(user.get("meetingRoomHours")<=0){
+            setError("No tienes Horas de Reserva")
+
+            return
+          }else{
+            let hoursCalculated=await diff_hours(event.start,event.end)
+            console.log("hoursCalculated "+hoursCalculated)   
+                     console.log("meetingRoomHours "+user.get("meetingRoomHours"))
+
+            user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
+          }
+          
+      }
+      if(planName=="Visionario Flexible"){
+        if(user.get("meetingRoomHours")<=0){
+          console.log("no puede")
+          return
+        }
+    }
+    if(planName=="Innovador Dedicado"){
+      if(user.get("meetingRoomHours")<=0){
+        console.log("no puede")
+        return
+      }
+  }
+  if(planName=="Líder Elite"){
+    if(user.get("meetingRoomHours")<=0){
+      console.log("no puede")
+      return
+    }
+}
+if(planName=="Corporativo Vanguardista"){
+  if(user.get("meetingRoomHours")<=0){
+    console.log("no puede")
+    return
+  }
+}
+if(planName=="Titán del Éxito"){
+  if(user.get("meetingRoomHours")<=0){
+    console.log("no puede")
+    return
+  }
+}
+  await user.save()
+
+      }
 /* 
 const query = new Moralis.Query("Reserves");
 await query.equalTo("areaName",values.areaName)
@@ -204,7 +264,6 @@ let res=await query.first()
 console.log("res "+JSON.stringify(res))
  */
   const Reserves=Moralis.Object.extend("Reserves")
-  let user=await Moralis.User.current()
 
    const reserve=new Reserves() 
    let uniqueID=parseInt((Date.now()+ Math.random()).toString())
@@ -265,81 +324,68 @@ setError("")
       }));
     },
     []
-  );
-  useEffect(() => {
-      getEvents()
+    );
+    useEffect(() => {
+        getEvents()
 
-  }, [values.areaName]);
+    }, [values.areaName]);
 
-  const areas = [
-    {
-      value: 'Salon1',
-      label: 'Salon1'
-    },
-    {
-      value: 'Salon2',
-      label: 'Salon2'
-    },
-    {
-      value: 'Salon3',
-      label: 'Salon3'
-    },
-    {
-      value: 'Salon4',
-      label: 'Salon4'
-    }
-  ];
-  const columnsDate = [
-    { field: 'id', headerName: 'id', width: 70 },
-    { field: 'date', headerName: 'date', width: 500 },
-   
-  ];
+    const areas = [
+      {
+        value: 'meetingRoom',
+        label: 'Salon de Reuniones'
+      },
+      {
+        value: 'commonRoom',
+        label: 'Salon Comun'
+      }
+    ];
+    const columnsDate = [
+      { field: 'id', headerName: 'id', width: 70 },
+      { field: 'date', headerName: 'date', width: 500 },
+    
+    ];
   
-  var [myEvents,setMyEvents] = useState([]);
+     var [myEvents,setMyEvents] = useState([]);
 
+    function diff_hours(dt2, dt1) 
+    {
+    var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+    diff /= (60 * 60);
+    return Math.abs(Math.round(diff));
+    }
+  
     const calendarRef = useRef(null);
     const handleConfirm = async (event, action) => {
 
-      return new Promise((res, rej) => {
+      return new Promise(async (res, rej) => {
         if (action === "edit") {
          console.log("Edited");
         } else if (action === "create") {
           console.log("Created");
         }
-        /* 
-  const query = new Moralis.Query("Reserves");
-  
 
-     query.equalTo("areaName",values.areaName)     
-    let object=  query.find() */
-
-        console.log(JSON.stringify(event))
-
-        console.log(event.start)
-        console.log(event.end)
-        
         var currentDate=new Date()
             
-        console.log(currentDate) 
+        let user=await Moralis.User.current()
+
+        if(currentDate<=event.start&&currentDate<=event.end&&user){
         
-        if(currentDate<=event.start&&currentDate<=event.end){
-          console.log("cerrado")
-
             
-      console.log("entro")
-
-        // Make it slow just for testing
+      
         setTimeout(async () => {
-           /*  await setValues({
-              title:JSON.stringify(event.title),
-            }) */
-
           await  setTitle(event.title)
           await setMyEvents([...myEvents,event])
-          
-  await handleReserva(event)
+          if(user?.get("meetingRoomHours")<=0){
+
+            notify2()
+            rej();
+            return
+          }
+
+           await handleReserva(event)
            await calendarRef.current.scheduler.triggerDialog(true, event
-  )
+        )
           await  res({
               ...event,
               event_id: event.event_id || Math.random()
@@ -434,7 +480,8 @@ if(object){
             </Typography>
           </div>
         <Stack spacing={0}>
-        <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+
+          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
             Area de Interes
           </Typography>
           <TextField
@@ -456,15 +503,20 @@ if(object){
                     </option>
                   ))}
                 </TextField>
-        
+        {values.areaName=="Salon Comun"?
         <Scheduler
       events={eventos}
       ref={calendarRef}
 
-      view="week"
-      day={null}
-      month={null}
-
+      view="month"
+      month={{
+        weekDays: [0, 1, 2, 3, 4, 5], 
+        weekStartOn: 6, 
+        startHour: 7, 
+        endHour: 19,
+        navigation: true,
+        disableGoToDay: false
+        }}
       onConfirm={handleConfirm}
 
       eventRenderer={(event) => {
@@ -500,7 +552,60 @@ if(object){
         }
         return null;
       }}
-    />
+    />:
+
+<Scheduler
+events={eventos}
+ref={calendarRef}
+
+view="week"
+
+week={{ 
+weekDays: [0, 1, 2, 3, 4, 5,6], 
+weekStartOn: 6, 
+startHour: 7, 
+endHour: 19,
+step: 60,
+navigation: true,
+disableGoToDay: false
+}}
+onConfirm={handleConfirm}
+
+eventRenderer={(event) => {
+ 
+  
+  if (+event.event_id % 2 === 0) {
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "100%",
+          background: "#757575"
+        }}
+      >
+        <div
+          style={{ height: 20, background: "#ffffffb5", color: "black" }}
+        >
+          {event.start.toLocaleTimeString("en-US", {
+            timeStyle: "short"
+          })}
+        </div>
+        <div>{event.title}</div>
+        <div
+          style={{ height: 20, background: "#ffffffb5", color: "black" }}
+        >
+          {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+        </div>
+      </div>
+    );
+  }
+  return null;
+}}
+/>
+        }
              
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}

@@ -16,22 +16,34 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { CompanyCard } from 'src/sections/companies/company-card2';
 import { CompaniesSearch } from 'src/sections/companies/companies-search';
 import StripeCheckout from 'react-stripe-checkout';
+import { useEffect,useState } from 'react';
+import { useMoralis } from "react-moralis";
 
-const companies = [
+
+const Page = () => {
+
+var [companies,setCompanies]=useState([])
+  const {Moralis}=useMoralis()
+
+  const fetchData=async ()=>{
+let empty=[]
+let list = [
   {
     id: '2569ce0d517a7f06d3ea1f24',
     createdAt: '27/03/2019',
     description: 'Acceso a espacios de coworking compartidos y servicios básicos por un día. Ideal para profesionales en viajes de negocioso visitantes ocasionales.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/public-service.png',
-    title: 'Explorador.',
-    price: '200.000 COP/MES'
+    title: 'Explorador',
+    price: '200.000 COP/MES',
+    avaliable: '200.000 COP/MES'
+
   },
   {
     id: 'ed2b900870ceba72d203ec15',
     createdAt: '31/03/2019',
     description: 'Acceso a espacios de coworking compartidos durante el horario comercial, con serviciosbásicos y conexión a intemet de alta velocidad.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/tecnologia.png',
-    title: 'Emprendedor Express.',
+    title: 'Emprendedor Express',
     price: '250.000 COP/MES'
   },
   {
@@ -39,7 +51,7 @@ const companies = [
     createdAt: '03/04/2019',
     description: 'Acceso 12/6 a espacios de coworking compartidos, con servicios básicos y conexión a intenet de alta velocidad. Incluye un número limitado de horas en salas de reuniones y acceso a eventos de networking.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/logistic.png',
-    title: 'Visionario Flexible.',
+    title: 'Visionario Flexible',
     price: '380.000 COP/MES'
   },
   {
@@ -47,7 +59,7 @@ const companies = [
     createdAt: '04/04/2019',
     description: 'Escritorio dedicado y acceso 12/6 a espacios de coworking, con servicios básicos y conexión a intenet de alta velocidad. Incluye un número mayor de horas en salas de reuniones, acceso a eventos de networking y descuentos en servicios adicionales.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/money-management.png',
-    title: 'Innovador Dedicado.',
+    title: 'Innovador Dedicado',
     price: '650.000 COP/MES'
   },
   {
@@ -55,7 +67,7 @@ const companies = [
     createdAt: '04/04/2019',
     description: 'Oficina privada con acceso 12/6, servicios básicos y conexión a intenet de alta velocidad. Incluye un número ilimitado de horas en salas de reuniones, acceso a eventos de networking, descuentos en servicios adicionales y asesoría en áreas de negocio.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/reunion.png',
-    title: 'Líder Elite.',
+    title: 'Líder Elite',
     price: '900.000 COP/MES'
   },
   {
@@ -71,12 +83,38 @@ const companies = [
     createdAt: '04/04/2019',
     description: 'Acceso a todas las instalaciones y servicios del club, incluyendo áreas de trabajo exclusivas, salas de reuniones premium, eventos de networking, asesoría en áreas de negocio, mentorías y acceso a instalaciones y servicios de lujo.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/megafono.png',
-    title: 'Titán del Éxito.',
+    title: 'Titán del Éxito',
     price: '1.500.000 COP/MES'
   }
 ];
 
-const Page = () => {
+    for(let i=0;i<list.length;i++){
+
+      const query = new Moralis.Query("_User");
+
+      await query.equalTo("planName",list[i].title)     
+     await query.equalTo("planActive",true)     
+     let object= await query.find()
+let numberSusbcription=object.length
+
+empty=[...empty,{
+        
+  id: i,
+  createdAt: list[i].createdAt,
+  description: list[i].description,
+  logo: list[i].logo,
+  title: list[i].title,
+  price: list[i].price,
+  avaliable:numberSusbcription,
+    }]
+    }
+
+    setCompanies(empty)
+
+  }
+  useEffect(()=>{
+ fetchData()
+  },[])
   return   <>
     <Head>
       <title>
