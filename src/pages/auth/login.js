@@ -97,7 +97,34 @@ const Page = () => {
             <Stack
               spacing={1}
               sx={{ mb: 3 }}
-            >
+            > <Box >
+            <Typography
+           align="flex-start"
+           color="inherit"
+           sx={{
+             fontSize: '34px',
+             lineHeight: '32px',
+             mb: 1,
+           }}
+           variant="h1"
+         >
+           Welcome to{' '}
+           <Box
+             component="a"
+             sx={{ color: 'black' }}
+             target="_blank"
+           >
+            Bizclub
+           </Box>
+         </Typography>
+         <Typography
+           align="flex-start"
+           sx={{ mb: 3 }}
+           variant="subtitle1"
+         >
+          Espacio de trabajo colaborativo.
+         </Typography>
+          </Box>
               <Typography variant="h4">
                 Ingresar
               </Typography>
@@ -130,8 +157,9 @@ const Page = () => {
                     error={!!(formik.touched.email && formik.errors.email)}
                     fullWidth
                     helperText={formik.touched.email && formik.errors.email}
-                    label="Correo"
                     name="email"
+                    placeholder='Correo Electronico'
+                    hiddenLabel
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     type="email"
@@ -141,8 +169,10 @@ const Page = () => {
                     error={!!(formik.touched.password && formik.errors.password)}
                     fullWidth
                     helperText={formik.touched.password && formik.errors.password}
-                    label="Password"
                     name="password"
+                    placeholder='Contraseña'
+
+                    hiddenLabel
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     type="password"

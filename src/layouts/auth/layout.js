@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import NextLink from 'next/link';
-import { Box, Typography, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Typography,CardMedia, Unstable_Grid2 as Grid } from '@mui/material';
 import { Logo } from 'src/components/logo';
 
 // TODO: Change subtitle text
@@ -62,47 +62,26 @@ export const Layout = (props) => {
           lg={6}
           sx={{
             alignItems: 'center',
-            background: 'radial-gradient(50% 50% at 50% 50%, #122647 0%, white 100%)',
             color: 'white',
             display: 'flex',
             justifyContent: 'center',
             '& img': {
-              maxWidth: '100%'
+              maxWidth: '100%',
+              maxHeight: '100%'
             }
           }}
         >
-          <Box sx={{ p: 3 }}>
-            <Typography
-              align="center"
-              color="inherit"
-              sx={{
-                fontSize: '24px',
-                lineHeight: '32px',
-                mb: 1
-              }}
-              variant="h1"
-            >
-              Welcome to{' '}
-              <Box
-                component="a"
-                sx={{ color: 'black' }}
-                target="_blank"
-              >
-               Bizclub
-              </Box>
-            </Typography>
-            <Typography
-              align="center"
-              sx={{ mb: 3 }}
-              variant="subtitle1"
-            >
-             Espacio de trabajo colaborativo.
-            </Typography>
-            <img
-              alt=""
-              src="https://bafybeidl772ksrgukbz3sgkxikjrhrpfxinxmzu76q3idui5dyy6yzdla4.ipfs.nftstorage.link/Artboard-1-skjdfasdfb-copy-1024x155.png"
-            />
-          </Box>
+          <CardMedia
+            component="div"
+            height="100%"
+
+            style={{flex:1,height:'100%',justifyContent:"center",alignItems:'center',textAlign:"center",width:"100%"}}
+            image="https://bafybeidvpvjd3dw7eugiundb5nptk5ooahyxsei7d2jteufecdyjkrjdqy.ipfs.nftstorage.link/image%2012%20(1).webp"
+
+            alt="Bizclub"
+           >
+          
+            </CardMedia>
         </Grid>
       </Grid>
     </Box>
