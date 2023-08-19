@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -18,10 +19,12 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-
+import LoadingButton from '@mui/lab/LoadingButton';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
+  const [isLoading,setLoading]= useState(false)
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
@@ -42,14 +45,18 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
+        setLoading(true)
       let res=  await auth.signIn(values.email, values.password);
      
 
       router.push('/services');
+      setLoading(false)
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
+        helpers.setSubmitting(false); 
+             setLoading(false)
+
       }
     }
   });
@@ -188,17 +195,19 @@ const Page = () => {
                     {formik.errors.submit}
                   </Typography>
                 )}
+                      <LoadingButton
+                         fullWidth
+                         size="large"
+                         sx={{ mt: 3 }}
+                         
+        loadingPosition="start"
+        startIcon={<ArrowRightIcon />}
+                         type="submit"
+                         style={{color:"black",borderColor:"black"}}
+                         loading={isLoading} variant="outlined">
+                      Continuar
+      </LoadingButton>
                 
-                <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3 }}
-                  type="submit"
-                  style={{color:"black",borderColor:"black"}}
-                  variant="outlined"
-                >
-                  Continuar
-                </Button>
                 
                 <Alert
                   severity="info"

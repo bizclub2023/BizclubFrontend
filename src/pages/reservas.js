@@ -8,6 +8,7 @@ import { applyPagination } from 'src/utils/apply-pagination';
 import { Scheduler } from "@aldabil/react-scheduler";
 import {  useMoralis } from 'react-moralis';
 import NextLink from 'next/link';
+import { OverviewPlan } from 'src/sections/overview/overview-plan';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -480,6 +481,7 @@ if(object){
             </Typography>
           </div>
         <Stack spacing={0}>
+        <OverviewPlan difference={16}/>
 
           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
             Area de Interes

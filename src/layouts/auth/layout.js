@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import NextLink from 'next/link';
 import { Box, Typography,CardMedia, Unstable_Grid2 as Grid } from '@mui/material';
 import { Logo } from 'src/components/logo';
-
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 // TODO: Change subtitle text
-
+import { useMediaQuery } from 'react-responsive'
 export const Layout = (props) => {
   const { children } = props;
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1200px)' })
 
   return (
     <Box
@@ -57,7 +58,7 @@ export const Layout = (props) => {
           </Box>
           {children}
         </Grid>
-        <Grid
+    {isTabletOrMobile?null:<Grid
           xs={12}
           lg={6}
           sx={{
@@ -82,7 +83,8 @@ export const Layout = (props) => {
            >
           
             </CardMedia>
-        </Grid>
+        </Grid>}
+        
       </Grid>
     </Box>
   );
