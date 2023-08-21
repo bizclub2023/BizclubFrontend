@@ -18,18 +18,6 @@ const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
 
 
-const getColor = (props) => {
-  if (props.isDragAccept) {
-      return '#00e676';
-  }
-  if (props.isDragReject) {
-      return '#ff1744';
-  }
-  if (props.isFocused) {
-      return '#2196f3';
-  }
-  return '#eeeeee';
-}
 const Container2 = styled.div`
   flex: 1;
   display: flex;
@@ -38,7 +26,7 @@ const Container2 = styled.div`
   padding: 20px;
   border-width: 2px;
   border-radius: 2px;
-  border-color: ${props => getColor(props)};
+  border-color: #00e676;
   border-style: dashed;
   background-color: #fafafa;
   color: #bdbdbd;
@@ -54,9 +42,6 @@ export const AccountProfile = () =>{
 
   const {
     acceptedFiles,
-    isFocused,
-    isDragAccept,
-    isDragReject,
     fileRejections,
     getRootProps,
     getInputProps
@@ -65,6 +50,8 @@ async function fetchAvatar(){
   let name=""
   let description=""
   let image=""
+  if(user?.get("avatar").ipnft){
+
   await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
           .then(function (response) {
 
@@ -81,7 +68,10 @@ async function fetchAvatar(){
  let final=newimage.replace( "/avatar.png",".ipfs.dweb.link/avatar.png")
  setAvatar(final)
 
-console.log(final)
+ return
+}
+
+setAvatar("")
 
 
 }
@@ -127,7 +117,7 @@ useEffect(()=>{
   }
 
     console.log(user)
-    setName(user.get("username"))
+    setName(user?.get("username"))
     
     currentUser= {
       avatar: '/assets/avatars/avatar-anika-visser.png',
@@ -186,7 +176,7 @@ useEffect(()=>{
     <CardActions> 
       <section className="container">
               <div className="container">
-               <Container2 {...getRootProps({isFocused, isDragAccept, isDragReject})}>
+               <Container2 {...getRootProps()}>
                <input {...getInputProps()} />
                <p>Arrasta una foto o haz click para seleccionarla</p>
              </Container2>

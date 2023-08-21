@@ -17,7 +17,7 @@ const Page = () => (
   <>
     <Head>
       <title>
-        Overview | Bizclub
+         Bizclub
       </title>
     </Head>
     <Box
