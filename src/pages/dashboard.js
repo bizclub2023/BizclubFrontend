@@ -333,6 +333,7 @@ setError("")
   const columnsCourse = [
     { field: 'id', headerName: 'id', width: 70 },
     { field: 'email', headerName: 'correo', width: 200 },
+    { field: 'username', headerName: 'Nombre', width: 200 },
 
     { field: 'planName', headerName: 'nombrePlan', width: 200 },
 
@@ -349,13 +350,14 @@ setError("")
      let courses=[]
      console.log(JSON.stringify(object))
     for(let i=0;i<object.length;i++){
-      console.log(JSON.stringify(object[i].attributes.planActive))
+      console.log(JSON.stringify(object[i].attributes.email))
 
       courses=[...courses,{
         id:i,
         planName:object[i].attributes.planName?object[i].attributes.planName:"No plan", 
-        email:object[i].attributes.username,
-  
+        email:object[i].attributes.email??"No Verificado",
+        username:object[i].attributes.username,
+
         meetingRoomHours:object[i].attributes.meetingRoomHours??0,
         planActive:object[i].attributes.planActive??false,
 
@@ -437,6 +439,12 @@ setError("")
                     </option>
                   ))}
                 </TextField> */}
+                
+      <div >
+            <Typography alignSelf={"center"} variant="h4">
+              Todos los usuarios
+            </Typography>
+          </div>
                   <Box         style={{marginTop:30,height:300}}
 >
       <DataGrid
