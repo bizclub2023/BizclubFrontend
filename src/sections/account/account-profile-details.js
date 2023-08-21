@@ -10,7 +10,9 @@ import {
   TextField,
   Unstable_Grid2 as Grid
 } from '@mui/material';
-
+import {  useMoralis } from 'react-moralis';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Save from '@mui/icons-material/Save';
 const states = [
   {
     value: 'alabama',
@@ -30,63 +32,61 @@ const states = [
   }
 ];
 
-import { useMoralis } from 'react-moralis';
 import { useEffect } from 'react';
 
 export const AccountProfileDetails = () => {
-  var currentUser={}
-  var {user}=useMoralis()
-  const [name,setName]=useState()
-  const [email,setEmail]=useState()
-  const [phone,setPhone]=useState()
-  useEffect(()=>{
-    console.log(user)
-    setName(user.get("username"))  
-      setEmail(user.get("email"))
-      setPhone(user.get("phone"))
+  const [isLoading,setLoading]= useState(false)
 
-    currentUser= {
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      city: 'Los Angeles',
-      country: 'USA',
-      jobTitle: 'Senior Developer',
-      name: user.get("username"),
-      timezone: 'GTM-7'
-    };
-
-  },[user])
   const [values, setValues] = useState({
-    firstName: 'Anika',
-    lastName: 'Visser',
-    email: 'demo@devias.io',
+    username: '',
+    email: '',
     phone: '',
-    state: 'los-angeles',
-    country: 'USA'
   });
 
+  const {Moralis}=useMoralis()
+  var {user}=useMoralis()
+  useEffect(()=>{
+    console.log(user)
+    setValues((prevState) => ({
+      ...prevState,
+      ["username"]: user.get("username")
+    }));
+    setValues((prevState) => ({
+      ...prevState,
+      ["email"]: user.get("email")
+    }));
+    
+    setValues((prevState) => ({
+      ...prevState,
+      ["phone"]: user.get("phone")
+    }));
+
+
+  },[user])
   const handleChange = useCallback(
-    (event) => {
-      setValues((prevState) => ({
+   async (event) => {
+     await setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
       }));
     },
     []
-  );
-
+    );
   const handleSubmit = useCallback(
-    (event) => {
-      event.preventDefault();
+   async (event) => {
+    setLoading(true)
+      console.log(values.username)
+    let user=await Moralis.User.current()
+    user.set("username",values.username)
+    user.set("phone",values.phone)
+await user.save()
+setLoading(false)
+
     },
     []
   );
 
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit}
-    >
       <Card>
         <CardHeader
           subheader="The information can be edited"
@@ -104,12 +104,13 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify the first name"
-                  label="Nombre"
-                  name="Name"
-                  onChange={handleChange}
+                  name="username"
+                  label="Nombre de Usuario"
                   required
-                  value={name}
+                  
+                  value={values.username}
+
+                  onChange={handleChange}
                 />
               </Grid>
              
@@ -119,10 +120,12 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Email Address"
+                  InputLabelProps={{ shrink: true }} 
+                  label="Correo Electronico"
                   name="email"
-                  
-                  value={email}
+
+                  value={values.email}
+                  required
                 />
               </Grid>
               <Grid
@@ -132,10 +135,11 @@ export const AccountProfileDetails = () => {
                 <TextField
                   fullWidth
                   label="Phone Number"
+                  type="number"
                   name="phone"
                   onChange={handleChange}
-                  type="number"
-                  value={phone}
+                  value={values.phone}
+
                 />
               </Grid>
              
@@ -144,12 +148,22 @@ export const AccountProfileDetails = () => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
-            Save details
-          </Button>
-        </CardActions>
+          <Grid justifyContent={"center"} style={{flex:1}} alignItems={"center"}>
+        <LoadingButton
+variant="contained"
+                         size="large"
+                         sx={{ mt: 3,alignSelf:"center" }}
+                         
+        loadingPosition="start"
+        onClick={handleSubmit}
+        startIcon={<Save />}
+                         style={{color:"white",alignSelf:"center",borderColor:"black"}}
+                         loading={isLoading} >
+                      Guardar Cambios
+      </LoadingButton>
+                
+          </Grid>
+          
       </Card>
-    </form>
   );
 };

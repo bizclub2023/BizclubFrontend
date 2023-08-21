@@ -24,7 +24,7 @@ export const OverviewPlan = (props) => {
   const {Moralis}=useMoralis()
 useEffect(()=>{
 init()
-},[])
+},[props.rebuild])
   return (
     <Card sx={sx}>
       <CardContent>

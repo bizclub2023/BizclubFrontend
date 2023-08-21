@@ -186,7 +186,8 @@ const {Moralis}=useMoralis()
  const [error,setError]=useState('')
 let eventos=[]
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
-const notify2 = () => toast("No tienes Horas de Reserva");
+const notify2 = () => toast("No tienes Horas de reserva");
+const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
 const fetchData=()=>{
   
@@ -357,6 +358,8 @@ setError("")
     }
   
     const calendarRef = useRef(null);
+    const [rebuild,setRebuild]=useState(false)
+    
     const handleConfirm = async (event, action) => {
 
       return new Promise(async (res, rej) => {
@@ -371,9 +374,41 @@ setError("")
         let user=await Moralis.User.current()
 
         if(currentDate<=event.start&&currentDate<=event.end&&user){
-        
+          let hoursCalculated=await diff_hours(event.start,event.end)
+
+          if(user?.get("meetingRoomHours")<hoursCalculated){
+              
+            notify2()
+            rej();
+            return
+          }
+          
+  const query = new Moralis.Query("Reserves");
+  
+
+       let object= await query.find()
+          for(let i=0;i<object.length;i++){
             
-      
+
+console.log(i)
+              var dFecha1 = new Date(event.start.valueOf());
+              var dFecha2 = new Date(event.end.valueOf());
+              var dRangoInicio = new Date(object[i].attributes.event.start);
+              var dRangoFin = new Date(object[i].attributes.event.end);
+            
+              // Verificar si las fechas están dentro del rango
+              if ((dFecha1 > dRangoInicio && dFecha1 < dRangoFin) ||
+                 ( dFecha2 > dRangoInicio && dFecha2 < dRangoFin)) {
+            
+                    console.log("entro mal ")
+                    notify3()
+                    rej();
+                    return
+                
+              }
+
+        
+          }
         setTimeout(async () => {
           await  setTitle(event.title)
           await setMyEvents([...myEvents,event])
@@ -386,7 +421,9 @@ setError("")
 
            await handleReserva(event)
            await calendarRef.current.scheduler.triggerDialog(true, event
-        )
+            )
+            setRebuild(!rebuild)
+
           await  res({
               ...event,
               event_id: event.event_id || Math.random()
@@ -459,6 +496,7 @@ if(object){
 
 
   }
+
   return (
     <>
       <Head>
@@ -481,7 +519,7 @@ if(object){
             </Typography>
           </div>
         <Stack spacing={0}>
-        <OverviewPlan difference={16}/>
+        <OverviewPlan rebuild={rebuild} difference={16}/>
 
           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
             Area de Interes
@@ -509,7 +547,36 @@ if(object){
         <Scheduler
       events={eventos}
       ref={calendarRef}
-
+      translations={{
+        navigation: {
+        month: "Mes",
+        week: "Semana",
+        day: "Dia",
+        today: "Hoy"
+        },
+        form: {
+        addTitle: "Haz una reservacion",
+        editTitle: "Edit Event",
+        confirm: "Confirm",
+        delete: "Delete",
+        cancel: "Cancel"
+        },
+        event: {
+        title: "Title",
+        start: "Start",
+        end: "End",
+        allDay: "All Day"
+       },
+        validation: {
+        required: "Required",
+        invalidEmail: "Invalid Email",
+        onlyNumbers: "Only Numbers Allowed",
+        min: "Minimum {{min}} letters",
+        max: "Maximum {{max}} letters"
+        },
+        moreEvents: "More...",
+        loading: "Loading..."
+       }}
       view="month"
       month={{
         weekDays: [0, 1, 2, 3, 4, 5], 
@@ -519,6 +586,7 @@ if(object){
         navigation: true,
         disableGoToDay: false
         }}
+        disableViewNavigator={true}
       onConfirm={handleConfirm}
 
       eventRenderer={(event) => {
@@ -561,7 +629,36 @@ events={eventos}
 ref={calendarRef}
 
 view="week"
-
+translations={{
+  navigation: {
+  month: "Mes",
+  week: "Semana",
+  day: "Dia",
+  today: "Hoy"
+  },
+  form: {
+  addTitle: "Haz una reservacion",
+  editTitle: "Edit Event",
+  confirm: "Confirm",
+  delete: "Delete",
+  cancel: "Cancel"
+  },
+  event: {
+  title: "Title",
+  start: "Start",
+  end: "End",
+  allDay: "All Day"
+ },
+  validation: {
+  required: "Required",
+  invalidEmail: "Invalid Email",
+  onlyNumbers: "Only Numbers Allowed",
+  min: "Minimum {{min}} letters",
+  max: "Maximum {{max}} letters"
+  },
+  moreEvents: "More...",
+  loading: "Loading..."
+ }}
 week={{ 
 weekDays: [0, 1, 2, 3, 4, 5,6], 
 weekStartOn: 6, 

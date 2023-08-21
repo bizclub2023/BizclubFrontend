@@ -113,7 +113,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40
               }}
-              src={user?.get("avatar").ipnft?avatar:"/assets/avatars/avatar-anika-visser.png"}
+              src={user?.get("avatar")?.ipnft?avatar:"/assets/avatars/avatar-anika-visser.png"}
               />
           </Stack>
         </Stack>

@@ -8,6 +8,7 @@ import { applyPagination } from 'src/utils/apply-pagination';
 import { Scheduler } from "@aldabil/react-scheduler";
 import {  useMoralis } from 'react-moralis';
 import NextLink from 'next/link';
+import { DataGrid } from '@mui/x-data-grid';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -288,8 +289,8 @@ setError("")
     []
   );
   useEffect(() => {
-      getEvents()
-      fetchData()
+    fetchData()
+    fetchUsuarios()
   }, [values.areaName]);
 
   const areas = [
@@ -319,66 +320,6 @@ setError("")
   var [myEvents,setMyEvents] = useState([]);
 
     const calendarRef = useRef(null);
-    const handleConfirm = async (event, action) => {
-
-      return new Promise((res, rej) => {
-        if (action === "edit") {
-         console.log("Edited");
-        } else if (action === "create") {
-          console.log("Created");
-        }
-        /* 
-  const query = new Moralis.Query("Reserves");
-  
-
-     query.equalTo("areaName",values.areaName)     
-    let object=  query.find() */
-
-        console.log(JSON.stringify(event))
-
-        console.log(event.start)
-        console.log(event.end)
-        
-        var currentDate=new Date()
-            
-        console.log(currentDate) 
-        
-        if(currentDate<=event.start&&currentDate<=event.end){
-          console.log("cerrado")
-
-            
-      console.log("entro")
-
-        // Make it slow just for testing
-        setTimeout(async () => {
-           /*  await setValues({
-              title:JSON.stringify(event.title),
-            }) */
-
-          await  setTitle(event.title)
-          await setMyEvents([...myEvents,event])
-          
-  await handleReserva(event)
-           await calendarRef.current.scheduler.triggerDialog(true, event
-  )
-          await  res({
-              ...event,
-              event_id: event.event_id || Math.random()
-            });
-       
-        }, 2000);
-        
- 
-      }else{
-        notify()
-           rej();
-      
-      
-      }
-      
-      return
-      });
-    }
     function diff_hours(dt2, dt1) 
  {
 
@@ -386,62 +327,45 @@ setError("")
   diff /= (60 * 60);
   return Math.abs(Math.round(diff));
   
- }
- 
- async function getEvents(){
+ } 
+   var [rowsCourse,setRowsCourse]=useState([])
 
-  let dt1 = new Date("October 13, 2014 08:11:00");
-  let dt2 = new Date("October 13, 2014 11:13:00");
-  console.log("dt1 "+diff_hours(dt1,dt2))
+  const columnsCourse = [
+    { field: 'id', headerName: 'id', width: 70 },
+    { field: 'email', headerName: 'correo', width: 200 },
 
-  const query = new Moralis.Query("Reserves");
+    { field: 'planName', headerName: 'nombrePlan', width: 200 },
+
+    { field: 'meetingRoomHours', headerName: 'horasReuniones', width: 200 },
+    { field: 'planActive', headerName: 'planActive', width: 200 },
+
+  ];
   
-  if(values.areaName!==""){
+  const fetchUsuarios = async () => {
+ 
+    const query = new Moralis.Query("User");
 
-    await query.equalTo("areaName",values.areaName)     
-    let object= await query.find()
-    eventos=[]
-  if(object){
-    
-    for(let i=0;i<object.length;i++){ 
-      
-      eventos=[...eventos,{
-        event_id: null,
-        title: object[i].attributes.title,
-        start: object[i].attributes.event.start,
-        end: object[i].attributes.event.end,
-        admin_id: 1,
-        editable: false,
-        deletable: false,
-        color: "#50b500"
-      }]
-   
+    const object = await query.find();
+     let courses=[]
+     console.log(JSON.stringify(object))
+    for(let i=0;i<object.length;i++){
+      console.log(JSON.stringify(object[i].attributes.planActive))
+
+      courses=[...courses,{
+        id:i,
+        planName:object[i].attributes.planName?object[i].attributes.planName:"No plan", 
+        email:object[i].attributes.username,
+  
+        meetingRoomHours:object[i].attributes.meetingRoomHours??0,
+        planActive:object[i].attributes.planActive??false,
+
+       }]
+  
+        
     }
-    calendarRef.current.scheduler.handleState([...eventos], "events")
-  }
-}else{
-  await query.equalTo("areaName",areas[0].label)     
-  let object= await query.find()
-if(object){
-  for(let i=0;i<object.length;i++){ 
-    eventos=[...eventos,{
-      event_id: null,
-      title: object[i].attributes.title,
-      start: object[i].attributes.event.start,
-      end: object[i].attributes.event.end,
-      admin_id: 1,
-      editable: false,
-      deletable: false,
-      color: "#50b500"
-    },]
+    setRowsCourse([...courses])
 
-  }
-  calendarRef.current.scheduler.handleState([...eventos], "events")
 }
-}
-
-
-  }
   return (
     <>
       <Head>
@@ -488,7 +412,7 @@ if(object){
           sx={{ height: '100%' }}
           value={reserves}/>
           </Grid>
-           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+         {/*   <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
                Area de Interes
            </Typography>
            
@@ -512,8 +436,15 @@ if(object){
                       {option.label}
                     </option>
                   ))}
-                </TextField>
-        
+                </TextField> */}
+                  <Box         style={{marginTop:30,height:300}}
+>
+      <DataGrid
+        rows={rowsCourse}
+        columns={columnsCourse}
+
+      />
+      </Box>{/* 
         <Scheduler
       events={eventos}
       ref={calendarRef}
@@ -558,7 +489,7 @@ if(object){
         return null;
       }}
     />
-             
+              */}
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
