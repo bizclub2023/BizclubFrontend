@@ -36,7 +36,6 @@ const Container2 = styled.div`
 
 export const AccountProfile = () =>{
   var currentUser={}
-  var {user}=useMoralis()
   const [name,setName]=useState()
   var [avatar,setAvatar]=useState()
 
@@ -50,6 +49,8 @@ async function fetchAvatar(){
   let name=""
   let description=""
   let image=""
+  const user=await Moralis.User.current()
+
   if(user?.get("avatar").ipnft){
 
   await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
@@ -75,15 +76,16 @@ setAvatar("")
 
 
 }
+var {Moralis}=useMoralis()
 
 useEffect(()=>{
-
   fetchAvatar()
 },[])
+
   useEffect(()=>{
-    
   var imageFile=""
   
+  const user= Moralis.User.current()
   if(acceptedFiles.length>0){
       
     acceptedFiles.forEach(async (file) => {
@@ -107,26 +109,25 @@ useEffect(()=>{
 
    await user.save()
     
-   fetchAvatar()
+   await fetchAvatar()
               }
         
       }
       reader.readAsArrayBuffer(file)
     })
     
-  }
 
-    console.log(user)
-    setName(user?.get("username"))
-    
-    currentUser= {
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      city: 'Los Angeles',
-      country: 'USA',
-      jobTitle: 'Senior Developer',
-      name: user.get("username"),
-      timezone: 'GTM-7'
-    };
+  setName(user?.get("username"))
+  
+  currentUser= {
+    avatar: '/assets/avatars/avatar-anika-visser.png',
+    city: 'Los Angeles',
+    country: 'USA',
+    jobTitle: 'Senior Developer',
+    name: user?.get("username"),
+    timezone: 'GTM-7'
+  };
+  }
 
   },[acceptedFiles])
   
@@ -156,7 +157,7 @@ useEffect(()=>{
         }}
       >
         <Avatar
-          src={user?.get("avatar").ipnft?avatar:"/assets/avatars/avatar-anika-visser.png"}
+          src={avatar?avatar:"/assets/avatars/avatar-anika-visser.png"}
           sx={{
             height: 80,
             mb: 2,

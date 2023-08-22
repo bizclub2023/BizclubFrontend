@@ -46,7 +46,7 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
       try {
         setLoading(true)
-      let res=  await auth.signIn(values.email, values.password);
+     await auth.signIn(values.email, values.password);
      
 
       router.push('/services');

@@ -27,12 +27,13 @@ export const TopNav = (props) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
   var [avatar,setAvatar]=useState()
-  var {user}=useMoralis()
+  var {Moralis}=useMoralis()
 
   async function fetchAvatar(){
     let name=""
     let description=""
     let image=""
+    let user=await Moralis.User.current()
     await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
             .then(function (response) {
   
@@ -56,7 +57,7 @@ export const TopNav = (props) => {
   useEffect(() => {
     fetchAvatar()
 
-}, [user?.get("avatar")]);
+}, []);
 
   return (
     <>
@@ -113,7 +114,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40
               }}
-              src={user?.get("avatar")?.ipnft?avatar:"/assets/avatars/avatar-anika-visser.png"}
+              src={avatar?avatar:"/assets/avatars/avatar-anika-visser.png"}
               />
           </Stack>
         </Stack>

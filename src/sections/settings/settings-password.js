@@ -27,9 +27,9 @@ export const SettingsPassword = () => {
   const [phone,setPhone]=useState()
   useEffect(()=>{
     console.log(user)
-    setName(user.get("username"))  
-      setEmail(user.get("email"))
-      setPhone(user.get("phone"))
+    setName(user?.get("username"))  
+      setEmail(user?.get("email"))
+      setPhone(user?.get("phone"))
 
   },[user])
   const handleChange = useCallback(

@@ -43,26 +43,22 @@ export const AccountProfileDetails = () => {
     phone: '',
   });
 
-  const {Moralis}=useMoralis()
-  var {user}=useMoralis()
-  useEffect(()=>{
-    console.log(user)
-    setValues((prevState) => ({
-      ...prevState,
-      ["username"]: user.get("username")
-    }));
-    setValues((prevState) => ({
-      ...prevState,
-      ["email"]: user.get("email")
-    }));
+  var {Moralis,isAuthenticated}=useMoralis()
+ async  function init(){
+    let user=await Moralis.User.current()
+    console.log()
     
-    setValues((prevState) => ({
-      ...prevState,
-      ["phone"]: user.get("phone")
-    }));
+    setValues({   username: user?.get("username"),
+    email: user?.get("email"),
+    phone: user?.get("phone"),})
 
+  }
+  useEffect(()=>{
+    init()
 
-  },[user])
+     
+
+  },[isAuthenticated])
   const handleChange = useCallback(
    async (event) => {
      await setValues((prevState) => ({
