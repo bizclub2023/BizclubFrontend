@@ -33,92 +33,94 @@ const Checkout1 = (props) => {
 if(!user){
   return
 }
-    console.log("redirectToCheckout "+props.title);
 
-    /* if(props.title){
-      const user = await Moralis.User.current();
-      
-      user.set("planName",props.title);
-      
-  
-      const query = new Moralis.Query("_User");
-
-      query.equalTo("planName",props.title)     
-      query.equalTo("planActive",true)     
-     let object= await query.find()
-let numberSusbcription=object.length
-      if(props.title=="Explorador"){
-
-        if(numberSusbcription>=5){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        user.set("meetingRoomHours",0);
-        user.set("planActive",true);
-      } 
-      if(props.title=="Emprendedor Express"){
-
-        if(numberSusbcription>=5){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-
-        user.set("meetingRoomHours",3);
-        user.set("planActive",true);
-      }
-
-      if(props.title=="Visionario Flexible"){
-        
-        if(numberSusbcription>=5){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        
-        user.set("meetingRoomHours",5);
-        user.set("planActive",true);
-      } 
-      if(props.title=="Innovador Dedicado"){
-        if(numberSusbcription>=6){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        user.set("meetingRoomHours",8);
-        user.set("planActive",true);
-      }
-      if(props.title=="Líder Elite"){
-        if(numberSusbcription>=2){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        user.set("meetingRoomHours",8);
-        user.set("planActive",true);
-      }
-      if(props.title=="Corporativo Vanguardista"){
-        if(numberSusbcription>=1){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        user.set("meetingRoomHours",10);
-        user.set("planActive",true);
-      }
-      
-      if(props.title=="Titán del Éxito"){
-        if(numberSusbcription>=3){
-          console.log("Maximas Subscripciones")
-          return 
-        }
-        user.set("meetingRoomHours",10);
-        user.set("planActive",true);
-      }
-      
-      await user.save() 
-    } */
 
     const stripe = await getStripe();
-    const { error } = await stripe.redirectToCheckout({
+    const { error,  } = await stripe.redirectToCheckout({
       lineItems:item ,
-      mode: "subscription",
-      successUrl: `${window.location.origin}/reservas`,
+      mode: 'payment',
+      successUrl: async()=>{
+        console.log("entro en successUrl")
+        if(props.title){
+          const user = await Moralis.User.current();
+          
+          user.set("planName",props.title);
+          
+      
+          const query = new Moralis.Query("_User");
+    
+          query.equalTo("planName",props.title)     
+          query.equalTo("planActive",true)     
+         let object= await query.find()
+    let numberSusbcription=object.length
+          if(props.title=="Explorador"){
+    
+            if(numberSusbcription>=5){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("meetingRoomHours",0);
+            user.set("planActive",true);
+          } 
+          if(props.title=="Emprendedor Express"){
+    
+            if(numberSusbcription>=5){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+    
+            user.set("meetingRoomHours",3);
+            user.set("planActive",true);
+          }
+    
+          if(props.title=="Visionario Flexible"){
+            
+            if(numberSusbcription>=5){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            
+            user.set("meetingRoomHours",5);
+            user.set("planActive",true);
+          } 
+          if(props.title=="Innovador Dedicado"){
+            if(numberSusbcription>=6){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("meetingRoomHours",8);
+            user.set("planActive",true);
+          }
+          if(props.title=="Líder Elite"){
+            if(numberSusbcription>=2){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("meetingRoomHours",8);
+            user.set("planActive",true);
+          }
+          if(props.title=="Corporativo Vanguardista"){
+            if(numberSusbcription>=1){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("meetingRoomHours",10);
+            user.set("planActive",true);
+          }
+          
+          if(props.title=="Titán del Éxito"){
+            if(numberSusbcription>=3){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("meetingRoomHours",10);
+            user.set("planActive",true);
+          }
+          
+          await user.save() 
+        } 
+return `${window.location.origin}/reservas`
+      },
       cancelUrl: `${window.location.origin}/customers`,
       customerEmail: user.get("email"),
 
