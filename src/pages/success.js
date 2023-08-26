@@ -25,11 +25,6 @@ const getStripe = () => {
 
   return stripePromise;
 };
-paymentElement.on('change', function(event) {
-  if (event.complete) {
-    // enable payment button
-  }
-});
 async function fecthstripe(){
   console.log("sessionId "+sessionId)
   const stripe = await getStripe();
