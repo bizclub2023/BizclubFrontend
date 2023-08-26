@@ -25,15 +25,19 @@ const getStripe = () => {
 
   return stripePromise;
 };
+paymentElement.on('change', function(event) {
+  if (event.complete) {
+    // enable payment button
+  }
+});
 async function fecthstripe(){
   console.log("sessionId "+sessionId)
   const stripe = await getStripe();
   if(sessionId){
     
-
-  const session = await stripe?.checkout?.sessions?.retrieve(sessionId);
-  const customer = await stripe?.customers?.retrieve(session.customer);
-
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const customer = await stripe.customers.retrieve(session.customer);
+    
   console.log("session"+session)
   console.log("customer"+customer)
   
