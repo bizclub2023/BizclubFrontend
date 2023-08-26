@@ -13,7 +13,7 @@ let stripePromise;
 
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe("pk_test_51JXtokLfVewAaHPMDAbIYdoYIhfxdG8M6FWB4pmVUxN7j5MkXPrztUSK17eSroZGR2OApvpUh9WB1kI63OnaWw5600oXOayr8a");
+    stripePromise = loadStripe("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
   }
 
   return stripePromise;
@@ -23,13 +23,35 @@ const Checkout = (props) => {
   const [stripeError, setStripeError] = useState(null);
   const {Moralis}=useMoralis()
   const [isLoading, setLoading] = useState(false);
-  const item = {
-    price: "price_1NVnQeLfVewAaHPMKi4vmrk6",
+  const item = [{
+    price: "price_1NihZ4Gc5cz7uc72GZeQPSw9",
     quantity: 1
-  };
+  },{
+    price: "price_1NihbpGc5cz7uc72gcdvagw5",
+    quantity: 1
+  },
+  {
+    price: "price_1NihcZGc5cz7uc72dhDMhIYq",
+    quantity: 1
+  },
+  {
+    price: "price_1NihdPGc5cz7uc72WtKT5uq1",
+    quantity: 1
+  },
+  {
+    price: "price_1Nihe3Gc5cz7uc724samAfy6",
+    quantity: 1
+  },{
+    price: "price_1NihhoGc5cz7uc729QUzLrQM",
+    quantity: 1
+  },{
+    price: "price_1NihjAGc5cz7uc72QG23pSfA",
+    quantity: 1
+  }
+]
 
   const checkoutOptions = {
-    lineItems: [item],
+    lineItems:item ,
     mode: "subscription",
     successUrl: `${window.location.origin}/success`,
     cancelUrl: `${window.location.origin}/cancel`
@@ -40,7 +62,7 @@ const Checkout = (props) => {
 
     console.log("redirectToCheckout "+props.title);
 
-    if(props.title){
+    /* if(props.title){
       const user = await Moralis.User.current();
       
       user.set("planName",props.title);
@@ -117,7 +139,7 @@ let numberSusbcription=object.length
       }
       
       await user.save() 
-    }
+    } */
 
     const stripe = await getStripe();
     const { error } = await stripe.redirectToCheckout(checkoutOptions);
