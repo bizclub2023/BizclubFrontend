@@ -18,7 +18,8 @@ const getStripe = () => {
 
 const Checkout1 = (props) => {
   const [stripeError, setStripeError] = useState(null);
-  const {Moralis}=useMoralis()
+  
+  var {user}=useMoralis()
   const [isLoading, setLoading] = useState(false);
   const item = [{
     price: "price_1NihZ4Gc5cz7uc72GZeQPSw9",
@@ -26,16 +27,12 @@ const Checkout1 = (props) => {
   }
 ]
 
-  const checkoutOptions = {
-    lineItems:item ,
-    mode: "subscription",
-    successUrl: `${window.location.origin}/success`,
-    cancelUrl: `${window.location.origin}/cancel`
-  };
 
   const redirectToCheckout = async () => {
     setLoading(true);
-
+if(!user){
+  return
+}
     console.log("redirectToCheckout "+props.title);
 
     /* if(props.title){
@@ -118,7 +115,14 @@ let numberSusbcription=object.length
     } */
 
     const stripe = await getStripe();
-    const { error } = await stripe.redirectToCheckout(checkoutOptions);
+    const { error } = await stripe.redirectToCheckout({
+      lineItems:item ,
+      mode: "subscription",
+      successUrl: `${window.location.origin}/reservas`,
+      cancelUrl: `${window.location.origin}/customers`,
+      customerEmail: user.get("email"),
+
+    });
 
 
 
@@ -130,7 +134,7 @@ let numberSusbcription=object.length
      };
 
    if (stripeError) alert(stripeError);
-
+console.log("entro todo")
     return (
       <div className="checkout">
         

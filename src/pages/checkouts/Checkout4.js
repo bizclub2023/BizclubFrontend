@@ -33,10 +33,14 @@ const Checkout4 = (props) => {
     successUrl: `${window.location.origin}/success`,
     cancelUrl: `${window.location.origin}/cancel`
   };
+  var {user}=useMoralis()
 
   const redirectToCheckout = async () => {
     setLoading(true);
 
+    if(!user){
+      return
+    }
     console.log("redirectToCheckout "+props.title);
 
     /* if(props.title){
@@ -119,7 +123,14 @@ let numberSusbcription=object.length
     } */
 
     const stripe = await getStripe();
-    const { error } = await stripe.redirectToCheckout(checkoutOptions);
+    const { error } = await stripe.redirectToCheckout({
+      lineItems:item ,
+      mode: "subscription",
+      successUrl: `${window.location.origin}/success`,
+      cancelUrl: `${window.location.origin}/cancel`,
+      customerEmail: user.get("email"),
+
+    });
 
 
 
