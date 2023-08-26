@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 
-import CardIcon from "./images/credit-card.svg";
-import ProductImage from "./images/product-image.jpg";
 
 import {
   Typography,
@@ -19,33 +17,12 @@ const getStripe = () => {
   return stripePromise;
 };
 
-const Checkout = (props) => {
+const Checkout6 = (props) => {
   const [stripeError, setStripeError] = useState(null);
   const {Moralis}=useMoralis()
   const [isLoading, setLoading] = useState(false);
   const item = [{
-    price: "price_1NihZ4Gc5cz7uc72GZeQPSw9",
-    quantity: 1
-  },{
-    price: "price_1NihbpGc5cz7uc72gcdvagw5",
-    quantity: 1
-  },
-  {
-    price: "price_1NihcZGc5cz7uc72dhDMhIYq",
-    quantity: 1
-  },
-  {
-    price: "price_1NihdPGc5cz7uc72WtKT5uq1",
-    quantity: 1
-  },
-  {
-    price: "price_1Nihe3Gc5cz7uc724samAfy6",
-    quantity: 1
-  },{
     price: "price_1NihhoGc5cz7uc729QUzLrQM",
-    quantity: 1
-  },{
-    price: "price_1NihjAGc5cz7uc72QG23pSfA",
     quantity: 1
   }
 ]
@@ -178,4 +155,4 @@ let numberSusbcription=object.length
     );
 };
 
-export default Checkout;
+export default Checkout6;

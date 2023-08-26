@@ -2,7 +2,13 @@ import PropTypes from 'prop-types';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 import { Avatar, Box, Button, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
-import Checkout from 'src/pages/Checkout';
+import Checkout1 from 'src/pages/checkouts/Checkout1';
+import Checkout2 from 'src/pages/checkouts/Checkout2';
+import Checkout3 from 'src/pages/checkouts/Checkout3';
+import Checkout4 from 'src/pages/checkouts/Checkout4';
+import Checkout5 from 'src/pages/checkouts/Checkout5';
+import Checkout6 from 'src/pages/checkouts/Checkout6';
+import Checkout7 from 'src/pages/checkouts/Checkout7';
 
 export const CompanyCard = (props) => {
   const { company } = props;
@@ -70,8 +76,14 @@ export const CompanyCard = (props) => {
         >
           {company.avaliable.toString().concat(company.title=="Explorador"?"/5":company.title=="Emprendedor Express"?"/5":company.title=="Visionario Flexible"?"/5":company.title=="Innovador Dedicado"?"/6":company.title=="Líder Elite"?"/2":company.title=="Corporativo Vanguardista"?"/1":company.title=="Titán del Éxito"?"/3":"/5"+" Disponibles")}
         </Typography>
-        <Checkout title={company.title}/>
-        
+        {company.title=="Explorador"?<Checkout1 title={company.title}/>:null}
+        {company.title=="Emprendedor Express"?<Checkout2 title={company.title}/>:null}
+        {company.title=="Visionario Flexible"?<Checkout3 title={company.title}/>:null}
+        {company.title=="Innovador Dedicado"?<Checkout4 title={company.title}/>:null}
+        {company.title=="Líder Elite"?<Checkout5 title={company.title}/>:null}
+        {company.title=="Corporativo Vanguardista"?<Checkout6 title={company.title}/>:null}
+        {company.title=="Titán del Éxito"?<Checkout7 title={company.title}/>:null}
+
             </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />
