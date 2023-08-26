@@ -22,7 +22,7 @@ const Checkout1 = (props) => {
   var {user}=useMoralis()
   const [isLoading, setLoading] = useState(false);
   const item = [{
-    price: "price_1NihZ4Gc5cz7uc72GZeQPSw9",
+    price: "price_1NjCXTGc5cz7uc72IOPdAdhG",
     quantity: 1
   }
 ]
