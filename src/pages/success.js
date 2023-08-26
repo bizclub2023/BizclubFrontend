@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { loadStripe } from "@stripe/stripe-js";
-const stripe = require('stripe')("pk_test_51NV05cGc5cz7uc72xTzSNZNeg3dsIWX9hZo4Y7nZH5WnFF8nuEJJwhSGviE29JHXzm8zovxToQDDVjLzfND57MWj00NdjCWocu");
+const stripe = require('stripe')("sk_test_51NV05cGc5cz7uc72E4yYvZZ2odhvKM3OT55PB7o0Uor8wWcAqZepAMvY77mwge9lk9fx8hXNo4fgXWJPfN1RAg4y00Z0xpoCXr");
 
 const now = new Date();
 const Page = () => {
