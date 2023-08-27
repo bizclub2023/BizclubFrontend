@@ -27,13 +27,13 @@ export const SideNav = (props) => {
   const {user}=useMoralis()
   const [isAdmin,setUser]=useState(false)
 useEffect(()=>{
-if(user?.get("planEnd")){
+if(user?.get("planDate")){
   const hoy = new Date();
 
- let isUser= user.get("planEnd").getTime()>=hoy.getTime()
+ let isUser=new Date( user.get("planDate")).getTime()>=hoy.getTime()
   setUser(isUser)
 }
-},[user?.get("planEnd")])
+},[user?.get("planDate")])
   const content = (
     <Scrollbar
       sx={{

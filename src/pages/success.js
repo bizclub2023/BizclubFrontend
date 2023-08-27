@@ -53,17 +53,22 @@ async function fecthstripe(){
       
       console.log("currentMonth "+JSON.stringify(fechaEnUnMes))
   
+      user.set("planDate",hoy)
       user.set("planEnd",fechaEnUnMes)
+      user.set("planActive",true)
+
       user.set("payment_status",session.payment_status)
       user.set("sessionId",sessionId)
       await user.save()
 
     }else{
       console.log(JSON.stringify("no ha terminado el mes de plan"))
-  
-    if (hoy.getTime() > user?.get("planEnd").getTime()) {
+  let time=new Date(user.get("planEnd").getTime())??0
+    if (hoy.getTime() >time) {
       if(sessionId!==user.get("sessionId")){
         console.log("Exito");
+        user.set("planActive",true)
+        user.set("planDate",hoy)
 
         user.set("planEnd",fechaEnUnMes)
         user.set("payment_status",session.payment_status)
@@ -75,9 +80,7 @@ async function fecthstripe(){
       }
 
       console.log("El día de hoy es mayor que la fecha en un mes");
-    } else if (hoy.getTime() < user.get("planEnd")?.getTime()) {
-      console.log("El día de hoy es menor que la fecha en un mes");
-    } else {
+    }  else {
       console.log("El día de hoy es igual a la fecha en un mes");
     }
 
