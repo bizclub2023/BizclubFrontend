@@ -40,7 +40,7 @@ async function fecthstripe(){
   console.log("customer_email "+JSON.stringify(session.customer_email))
   let user=await Moralis.User.current()
 
-  if(session.customer_email==user.get("email")){
+  if(session.customer_email){
     console.log("payment_status "+JSON.stringify(session.payment_status))
     const currentDate = new Date();  
       const fechaEnUnMes = obtenerFechaEnUnMes();
@@ -56,6 +56,7 @@ async function fecthstripe(){
       user.set("planDate",hoy)
       user.set("planEnd",fechaEnUnMes)
       user.set("planActive",true)
+      user.set("stripeEmail",session.customer_email)
 
       user.set("payment_status",session.payment_status)
       user.set("sessionId",sessionId)
@@ -69,6 +70,7 @@ async function fecthstripe(){
         console.log("Exito");
         user.set("planActive",true)
         user.set("planDate",hoy)
+        user.set("stripeEmail",session.customer_email)
 
         user.set("planEnd",fechaEnUnMes)
         user.set("payment_status",session.payment_status)
