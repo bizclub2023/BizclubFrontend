@@ -18,7 +18,14 @@ const Page = () => {
   const {Moralis}=useMoralis()
   const router=useRouter();
   const sessionId=useRouter().query.session_id ;
-  
+  function obtenerFechaEnUnMes() {
+    const hoy = new Date();
+    hoy.setMonth(hoy.getMonth() + 1);
+    const dia = hoy.getDate();
+    const mes = hoy.getMonth() + 1;
+    const año = hoy.getFullYear();
+    return `${dia}/${mes}/${año}`;
+  }
 async function fecthstripe(){
   console.log("sessionId "+sessionId)
   if(sessionId){
@@ -35,18 +42,44 @@ async function fecthstripe(){
 
   if(session.customer_email==user.get("email")){
     console.log("payment_status "+JSON.stringify(session.payment_status))
-    const currentDate = new Date();
-if(!user.get("nextPayment")||user.get("nextPayment")<=currentDate){
+    const currentDate = new Date();  
+      const fechaEnUnMes = obtenerFechaEnUnMes();
+    const hoy = new Date();
 
-    // Get the month and year of the current date
-    const currentMonth = currentDate.getMonth()+1;
-    console.log("currentMonth "+JSON.stringify(currentMonth))
+    if(!user.get("planEnd")){
 
-    user.set("nextPayment",currentMonth)
-    user.set("payment_status",session.payment_status)
+      // Get the month and year of the current date
+  
+      
+      console.log("currentMonth "+JSON.stringify(fechaEnUnMes))
+  
+      user.set("planEnd",fechaEnUnMes)
+      user.set("payment_status",session.payment_status)
+      user.set("sessionId",sessionId)
+      await user.save()
 
-  }else{
-    console.log(JSON.stringify("no ha terminado el mes de plan"))
+    }else{
+      console.log(JSON.stringify("no ha terminado el mes de plan"))
+  
+    if (hoy.getTime() > user.get("planEnd").getTime()) {
+      if(sessionId!==user.get("sessionId")){
+        console.log("Exito");
+
+        user.set("planEnd",fechaEnUnMes)
+        user.set("payment_status",session.payment_status)
+        user.set("sessionId",sessionId)
+       await user.save()
+      }else{
+        console.log("Estas agregando el mismo plan anterior");
+
+      }
+
+      console.log("El día de hoy es mayor que la fecha en un mes");
+    } else if (hoy.getTime() < user.get("planEnd").getTime()) {
+      console.log("El día de hoy es menor que la fecha en un mes");
+    } else {
+      console.log("El día de hoy es igual a la fecha en un mes");
+    }
 
   }
 }else{
