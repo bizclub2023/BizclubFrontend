@@ -31,7 +31,10 @@ if(user?.get("planDate")){
   const hoy = new Date();
 
  let isUser=new Date( user.get("planDate")).getTime()>=hoy.getTime()
-  setUser(isUser)
+ if(!isUser){
+user.set("planActive",false)
+ }
+ setUser(isUser)
 }
 },[user?.get("planDate")])
   const content = (
