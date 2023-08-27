@@ -17,6 +17,7 @@ import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
+import {  useMoralis } from 'react-moralis';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
