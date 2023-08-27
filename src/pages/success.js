@@ -26,7 +26,12 @@ async function fecthstripe(){
     const customer = await stripe.customers.retrieve(session.customer);
     
   console.log("session"+JSON.stringify(session))
+
+  
   console.log("customer"+JSON.stringify(customer))
+  console.log("customer_email "+JSON.stringify(session.customer_email))
+
+  console.log("payment_status "+JSON.stringify(session.payment_status))
   
 }
 
