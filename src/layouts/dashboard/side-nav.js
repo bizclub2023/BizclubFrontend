@@ -33,7 +33,7 @@ if(user?.get("planEnd")){
  let isUser= user.get("planEnd").getTime()>=hoy.getTime()
   setUser(isUser)
 }
-},[user])
+},[user?.get("planEnd")])
   const content = (
     <Scrollbar
       sx={{
