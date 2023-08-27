@@ -120,7 +120,7 @@ let numberSusbcription=object.length
       mode: "subscription",
       successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${window.location.origin}/customers`,
-      customerEmail: user.get("email"),
+      customerEmail: user?.get("email"),
 
     });
 
