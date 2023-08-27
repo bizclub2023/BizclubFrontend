@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { Scheduler } from "@aldabil/react-scheduler";
-import {  useMoralis } from 'react-moralis';
 import { OverviewPlan } from 'src/sections/overview/overview-plan';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -32,6 +31,7 @@ async function fecthstripe(){
   
   console.log("customer"+JSON.stringify(customer))
   console.log("customer_email "+JSON.stringify(session.customer_email))
+  let user=await Moralis.User.current()
 
   if(session.customer_email==user.get("email")){
     console.log("payment_status "+JSON.stringify(session.payment_status))
@@ -45,9 +45,14 @@ if(!user.get("nextPayment")||user.get("nextPayment")<=currentDate){
     user.set("nextPayment",currentMonth)
     user.set("payment_status",session.payment_status)
 
+  }else{
+    console.log(JSON.stringify("no ha terminado el mes de plan"))
+
   }
+}else{
+  console.log(JSON.stringify("Stripe Error"))
+
 }
-  let user=await Moralis.User.current()
 
 }
 
