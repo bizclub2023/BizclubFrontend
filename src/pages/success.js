@@ -61,7 +61,7 @@ async function fecthstripe(){
     }else{
       console.log(JSON.stringify("no ha terminado el mes de plan"))
   
-    if (hoy.getTime() > user.get("planEnd")?.getTime()) {
+    if (hoy.getTime() > user?.get("planEnd").getTime()) {
       if(sessionId!==user.get("sessionId")){
         console.log("Exito");
 
