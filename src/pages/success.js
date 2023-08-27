@@ -75,7 +75,7 @@ async function fecthstripe(){
       }
 
       console.log("El día de hoy es mayor que la fecha en un mes");
-    } else if (hoy.getTime() < user.get("planEnd").getTime()) {
+    } else if (hoy.getTime() < user.get("planEnd")?.getTime()) {
       console.log("El día de hoy es menor que la fecha en un mes");
     } else {
       console.log("El día de hoy es igual a la fecha en un mes");

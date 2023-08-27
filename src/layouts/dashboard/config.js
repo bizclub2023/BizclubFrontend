@@ -8,7 +8,7 @@ import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
 
-export const items = [
+export const itemsAdmin = [
   
   {
     title: 'Servicios Profesionales',
@@ -57,7 +57,69 @@ export const items = [
   },
 ];
 
+export const items = [
+  
+  {
+    title: 'Servicios Profesionales',
+    path: '/services',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ShoppingBagIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Coworking',
+    path: '/customers',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Account',
+    path: '/account',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    )
+  },
+];
 
+
+
+export const items2 = [
+  
+  {
+    title: 'Servicios Profesionales',
+    path: '/services',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ShoppingBagIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Reservaciones',
+    path: '/reservas',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Account',
+    path: '/account',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    )
+  },
+];
 /* 
 export const items = [
   {
