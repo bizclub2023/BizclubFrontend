@@ -18,14 +18,22 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
+import { useEffect } from 'react';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const hoy = new Date();
   const {user}=useMoralis()
+  const [isAdmin,setUser]=useState(false)
+useEffect(()=>{
+if(user?.get("planEnd")){
+  const hoy = new Date();
 
+ let isUser= user?.get("planEnd")?.getTime()>=hoy?.getTime()
+  setUser(isUser)
+}
+},[user])
   const content = (
     <Scrollbar
       sx={{
@@ -109,7 +117,7 @@ export const SideNav = (props) => {
               m: 0
             }}
           >
-            {user?.get("planEnd").getTime()>=hoy.getTime()?items2:items.map((item) => {
+            {isAdmin?items2:items.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
