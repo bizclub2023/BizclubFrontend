@@ -40,7 +40,7 @@ async function fecthstripe(){
   console.log("customer_email "+JSON.stringify(session.customer_email))
   let user=await Moralis.User.current()
 
-  if(session.customer_email){
+  if(session.payment_status=="paid"){
     console.log("payment_status "+JSON.stringify(session.payment_status))
     const currentDate = new Date();  
       const fechaEnUnMes = obtenerFechaEnUnMes();
