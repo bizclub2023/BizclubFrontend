@@ -30,7 +30,7 @@ useEffect(()=>{
 if(user?.get("planEnd")){
   const hoy = new Date();
 
- let isUser= user?.get("planEnd")?.getTime()>=hoy?.getTime()
+ let isUser= user.get("planEnd").getTime()>=hoy.getTime()
   setUser(isUser)
 }
 },[user])
