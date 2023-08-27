@@ -18,7 +18,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
