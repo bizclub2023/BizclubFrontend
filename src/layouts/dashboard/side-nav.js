@@ -23,6 +23,7 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const hoy = new Date();
+  const {user}=useMoralis()
 
   const content = (
     <Scrollbar
