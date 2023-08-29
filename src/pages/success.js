@@ -60,7 +60,7 @@ async function fecthstripe(){
       user.set("payment_status",session.payment_status)
       user.set("sessionId",sessionId)
 
-      if(20===session.amount_total/100){
+      if(parseFloat(session.amount_total/100)==20){
 
 
       const query = new Moralis.Query("_User");
@@ -77,11 +77,11 @@ let numberSusbcription=object.length
           user.set("planName","Explorador")
           user.set("meetingRoomHours",0);
           user.set("planActive",true);
-     
+          console.log("pago el plan");
+
       }
       await user.save()
 
-      console.log("pago el plan");
     }else{
       console.log(JSON.stringify("no ha terminado el mes de plan"))
   let time=new Date(user.get("planEnd")).getTime()
@@ -95,7 +95,7 @@ let numberSusbcription=object.length
         user.set("payment_status",session.payment_status)
         user.set("sessionId",sessionId)
         
-      if(20===session.amount_total/100){
+        if(parseFloat(session.amount_total/100)==20){
 
 
         const query = new Moralis.Query("_User");
@@ -111,7 +111,8 @@ let numberSusbcription=object.length
             user.set("planName","Explorador")
             user.set("meetingRoomHours",0);
             user.set("planActive",true);
-       
+            console.log("pago el plan");
+
         }
        await user.save()
       }else{
