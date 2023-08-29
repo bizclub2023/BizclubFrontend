@@ -30,8 +30,12 @@ useEffect(()=>{
 if(user?.get("planDate")){
   const hoy = new Date();
 
- let isUser=new Date( user.get("planDate")).getTime()>=hoy.getTime()
- if(!isUser){
+ let isUser=new Date( user.get("planDate")).getTime()>hoy.getTime()
+console.log("isAtive?"+new Date( user.get("planDate")).getTime())
+console.log("isAtive?"+hoy.getTime())
+console.log("isAtive?"+hoy.getTime())
+
+ if(isUser){
 user.set("planActive",false)
  }
  setUser(isUser)
