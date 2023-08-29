@@ -33,6 +33,7 @@ if(user){
   const hoy = new Date();
   console.log("entro?2"+JSON.stringify(user))
 
+  if(user.get("planActive")){
   console.log("entro?2"+user.get("email"))
   if(new Date(user.get("planEnd")).getTime()>0){
   
@@ -47,7 +48,7 @@ user.set("planActive",false)
  }
  setUser(isUser)
 }
-}
+}}
 },[user])
   const content = (
     <Scrollbar
