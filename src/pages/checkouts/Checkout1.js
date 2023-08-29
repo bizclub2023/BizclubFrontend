@@ -18,8 +18,8 @@ const getStripe = () => {
 
 const Checkout1 = (props) => {
   const [stripeError, setStripeError] = useState(null);
-  
-  var {user}=useMoralis()
+
+  var {user,Moralis}=useMoralis()
   const [isLoading, setLoading] = useState(false);
   const item = [{
     price: "price_1NjCXTGc5cz7uc72IOPdAdhG",
