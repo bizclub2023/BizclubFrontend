@@ -46,7 +46,7 @@ async function fecthstripe(){
       const fechaEnUnMes = obtenerFechaEnUnMes();
     const hoy = new Date();
 
-    if(!user.get("planEnd")){
+    if(!user.get("planDate")){
 
       // Get the month and year of the current date
   
