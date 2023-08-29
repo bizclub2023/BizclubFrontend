@@ -49,6 +49,7 @@ if(!user){
       query.equalTo("planActive",true)     
      let object= await query.find()
 let numberSusbcription=object.length
+console.log(numberSusbcription)
       if(props.title=="Explorador"){
 
         if(numberSusbcription>=5){
