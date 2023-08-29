@@ -35,8 +35,8 @@ if(user){
 
   console.log("entro?2"+user.get("email"))
 
-  console.log("isAtive?"+ user.get("planEnd"))
- let isUser=user.get("planEnd")<hoy.getTime()
+  console.log("isAtive?"+ new Date(user.get("planEnd")))
+ let isUser=new Date(user.get("planEnd")).getTime()<hoy.getTime()
 console.log("isAtive?"+hoy.getTime())
 console.log("isAtive?"+isUser)
 

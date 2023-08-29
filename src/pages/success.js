@@ -18,14 +18,14 @@ const Page = () => {
   const {Moralis}=useMoralis()
   const router=useRouter();
   const sessionId=useRouter().query.session_id ;
-  function obtenerFechaEnUnMes() {
-    const hoy = new Date();
-    hoy.setMonth(hoy.getMonth() + 1);
-    const dia = hoy.getDate();
-    const mes = hoy.getMonth() + 1;
-    const año = hoy.getFullYear();
-    return `${dia}/${mes}/${año}`;
+  function obtenerFechaMas30Dias() {
+    var fechaHoy = new Date();
+    var fechaMas30Dias = new Date(fechaHoy.getTime() + (30 * 24 * 60 * 60 * 1000));
+    var formatoISO = fechaMas30Dias.toISOString();
+    
+    return formatoISO;
   }
+  
 async function fecthstripe(){
   console.log("sessionId "+sessionId)
   if(sessionId){
@@ -42,8 +42,7 @@ async function fecthstripe(){
 
   if(session.payment_status=="paid"){
     console.log("payment_status "+JSON.stringify(session.payment_status))
-    const currentDate = new Date();  
-      const fechaEnUnMes = obtenerFechaEnUnMes();
+      const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
 
     if(!user.get("planEnd")){
@@ -63,12 +62,11 @@ async function fecthstripe(){
 
     }else{
       console.log(JSON.stringify("no ha terminado el mes de plan"))
-  let time=new Date(user.get("planDate").getTime())??0
+  let time=new Date(user.get("planEnd").getTime())??0
     if (hoy.getTime() >time) {
       if(sessionId!==user.get("sessionId")){
         console.log("Exito");
         user.set("planActive",true)
-        user.set("planDate",hoy)
         user.set("stripeEmail",session.customer_email)
 
         user.set("planEnd",fechaEnUnMes)
