@@ -49,7 +49,7 @@ user.set("planActive",false)
  setUser(isUser)
 }
 }}
-},[user])
+},[])
   const content = (
     <Scrollbar
       sx={{
