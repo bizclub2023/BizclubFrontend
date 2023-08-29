@@ -18,7 +18,7 @@ const getStripe = () => {
 
 const Checkout1 = (props) => {
   const [stripeError, setStripeError] = useState(null);
-  const {Moralis,user}=useMoralis()
+  const {Moralis}=useMoralis()
 
   const [isLoading, setLoading] = useState(false);
   const item = [{
@@ -30,7 +30,10 @@ const Checkout1 = (props) => {
 
   const redirectToCheckout = async () => {
     setLoading(true);
-if(!user){
+    let user=await Moralis.User.current()
+if(!user){ 
+       setLoading(false);
+
   return
 }
     console.log("redirectToCheckout "+props.title);
@@ -116,6 +119,7 @@ console.log(numberSusbcription)
        setLoading(false);
      } else{
       console.log("entro todo")
+      setLoading(false);
 
      };
     }

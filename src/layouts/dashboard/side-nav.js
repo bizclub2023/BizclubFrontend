@@ -24,32 +24,36 @@ export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const {user}=useMoralis()
+  const {Moralis,isAuthenticated}=useMoralis()
   const [isAdmin,setUser]=useState(false)
+  
+  async function init(){
+let user=await Moralis.User.current()
+    if(user){
+      const hoy = new Date();
+      console.log("entro?2"+JSON.stringify(user))
+    
+      if(user.get("planActive")){
+      console.log("entro?2"+user.get("email"))
+      if(new Date(user.get("planEnd")).getTime()>0){
+      
+      
+      console.log("isAtive?"+ new Date(user.get("planEnd")))
+     let isUser=new Date(user.get("planEnd")).getTime()>=hoy.getTime()
+    console.log("isAtive?"+hoy.getTime())
+    console.log("isAtive?"+isUser)
+    
+     if(isUser){
+    user.set("planActive",false)
+     }
+     setUser(isUser)
+    }
+    }}
+  }
 useEffect(()=>{
   console.log("entro?")
-
-if(user){
-  const hoy = new Date();
-  console.log("entro?2"+JSON.stringify(user))
-
-  if(user.get("planActive")){
-  console.log("entro?2"+user.get("email"))
-  if(new Date(user.get("planEnd")).getTime()>0){
-  
-  
-  console.log("isAtive?"+ new Date(user.get("planEnd")))
- let isUser=new Date(user.get("planEnd")).getTime()>=hoy.getTime()
-console.log("isAtive?"+hoy.getTime())
-console.log("isAtive?"+isUser)
-
- if(isUser){
-user.set("planActive",false)
- }
- setUser(isUser)
-}
-}}
-},[])
+init()
+},[isAuthenticated])
   const content = (
     <Scrollbar
       sx={{
