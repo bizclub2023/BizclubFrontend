@@ -98,9 +98,7 @@ console.log(numberSusbcription)
           console.log("Maximas Subscripciones")
           return 
         }
-      }
-      
-    } 
+      } 
 
     const stripe = await getStripe();
     const { error,  } = await stripe.redirectToCheckout({
@@ -125,6 +123,8 @@ console.log(numberSusbcription)
 
      };
     }
+      
+  }
    if (stripeError) alert(stripeError);
     return (
       <div className="checkout">
