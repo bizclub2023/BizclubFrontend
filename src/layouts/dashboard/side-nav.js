@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
-import { items } from './config';
+import { items,items2 } from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
@@ -27,20 +27,25 @@ export const SideNav = (props) => {
   const {user}=useMoralis()
   const [isAdmin,setUser]=useState(false)
 useEffect(()=>{
-if(user?.get("planDate")){
-  const hoy = new Date();
+  console.log("entro?")
 
- let isUser=new Date( user.get("planDate")).getTime()>hoy.getTime()
-console.log("isAtive?"+new Date( user.get("planDate")).getTime())
+if(user){
+  const hoy = new Date();
+  console.log("entro?2"+JSON.stringify(user))
+
+  console.log("entro?2"+user.get("email"))
+
+  console.log("isAtive?"+ user.get("planEnd"))
+ let isUser=user.get("planEnd")<hoy.getTime()
 console.log("isAtive?"+hoy.getTime())
-console.log("isAtive?"+hoy.getTime())
+console.log("isAtive?"+isUser)
 
  if(isUser){
 user.set("planActive",false)
  }
  setUser(isUser)
 }
-},[user?.get("planDate")])
+},[user])
   const content = (
     <Scrollbar
       sx={{

@@ -46,14 +46,13 @@ async function fecthstripe(){
       const fechaEnUnMes = obtenerFechaEnUnMes();
     const hoy = new Date();
 
-    if(!user.get("planDate")){
+    if(!user.get("planEnd")){
 
       // Get the month and year of the current date
   
       
       console.log("currentMonth "+JSON.stringify(fechaEnUnMes))
   
-      user.set("planDate",hoy)
       user.set("planEnd",fechaEnUnMes)
       user.set("planActive",true)
       user.set("stripeEmail",session.customer_email)
