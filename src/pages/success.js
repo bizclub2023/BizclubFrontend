@@ -45,7 +45,7 @@ async function fecthstripe(){
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
 
-    if(!user.get("planEnd")||user.get("planEnd")===""){
+    if(!user.get("planEnd")&&user.get("planEnd")!==""){
 
       // Get the month and year of the current date
   
@@ -60,6 +60,7 @@ async function fecthstripe(){
       user.set("sessionId",sessionId)
       await user.save()
 
+      console.log("pago el plan");
     }else{
       console.log(JSON.stringify("no ha terminado el mes de plan"))
   let time=new Date(user.get("planEnd")).getTime()
