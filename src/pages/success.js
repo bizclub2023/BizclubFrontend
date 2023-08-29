@@ -44,6 +44,7 @@ async function fecthstripe(){
     console.log("payment_status "+JSON.stringify(session.payment_status))
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
+    console.log("name "+JSON.stringify(customer.name))
 
     if(!user.get("planActive")){
 
@@ -58,6 +59,28 @@ async function fecthstripe(){
 
       user.set("payment_status",session.payment_status)
       user.set("sessionId",sessionId)
+
+      if(20===session.amount_total/100){
+
+
+      const query = new Moralis.Query("_User");
+
+      query.equalTo("planName","Explorador")     
+      query.equalTo("planActive",true)     
+     let object= await query.find()
+let numberSusbcription=object.length
+
+          if(numberSusbcription>=5){
+            console.log("Maximas Subscripciones")
+            return 
+          }
+          user.set("planName","Explorador")
+          user.set("meetingRoomHours",0);
+          user.set("planActive",true);
+     
+      }else if(session.amount_total/100){
+
+      }
       await user.save()
 
       console.log("pago el plan");

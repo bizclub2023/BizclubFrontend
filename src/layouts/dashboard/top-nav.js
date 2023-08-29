@@ -34,6 +34,8 @@ export const TopNav = (props) => {
     let description=""
     let image=""
     let user=await Moralis.User.current()
+    if(user?.get("avatar")){
+      
     await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
             .then(function (response) {
   
@@ -52,6 +54,7 @@ export const TopNav = (props) => {
   
   console.log(final)
   
+}
   
   }
   useEffect(() => {
