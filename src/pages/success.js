@@ -78,8 +78,6 @@ let numberSusbcription=object.length
           user.set("meetingRoomHours",0);
           user.set("planActive",true);
      
-      }else if(session.amount_total/100){
-
       }
       await user.save()
 
@@ -96,6 +94,25 @@ let numberSusbcription=object.length
         user.set("planEnd",fechaEnUnMes)
         user.set("payment_status",session.payment_status)
         user.set("sessionId",sessionId)
+        
+      if(20===session.amount_total/100){
+
+
+        const query = new Moralis.Query("_User");
+  
+        query.equalTo("planName","Explorador")     
+       let object= await query.find()
+  let numberSusbcription=object.length
+  
+            if(numberSusbcription>=5){
+              console.log("Maximas Subscripciones")
+              return 
+            }
+            user.set("planName","Explorador")
+            user.set("meetingRoomHours",0);
+            user.set("planActive",true);
+       
+        }
        await user.save()
       }else{
         console.log("Estas agregando el mismo plan anterior");
