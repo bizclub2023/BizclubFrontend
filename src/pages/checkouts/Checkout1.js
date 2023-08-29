@@ -24,10 +24,6 @@ const Checkout1 = (props) => {
   const item = [{
     price: "price_1NjCXTGc5cz7uc72IOPdAdhG",
     quantity: 1,
-    product_data: {
-      name: "Explorador",
-     
-    },
   }
 ]
 
