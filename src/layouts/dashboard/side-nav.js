@@ -34,7 +34,9 @@ if(user){
   console.log("entro?2"+JSON.stringify(user))
 
   console.log("entro?2"+user.get("email"))
-
+  if(new Date(user.get("planEnd")).getTime()>0){
+  
+  
   console.log("isAtive?"+ new Date(user.get("planEnd")))
  let isUser=new Date(user.get("planEnd")).getTime()>=hoy.getTime()
 console.log("isAtive?"+hoy.getTime())
@@ -44,6 +46,7 @@ console.log("isAtive?"+isUser)
 user.set("planActive",false)
  }
  setUser(isUser)
+}
 }
 },[user])
   const content = (
