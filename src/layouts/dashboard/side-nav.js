@@ -36,7 +36,7 @@ if(user){
   console.log("entro?2"+user.get("email"))
 
   console.log("isAtive?"+ new Date(user.get("planEnd")))
- let isUser=new Date(user.get("planEnd")).getTime()<hoy.getTime()
+ let isUser=new Date(user.get("planEnd")).getTime()>=hoy.getTime()
 console.log("isAtive?"+hoy.getTime())
 console.log("isAtive?"+isUser)
 
@@ -129,7 +129,21 @@ user.set("planActive",false)
               m: 0
             }}
           >
-            {isAdmin?items2:items.map((item) => {
+            {isAdmin?items2.map((item) => {
+              const active = item.path ? (pathname === item.path) : false;
+
+              return (
+                <SideNavItem
+                  active={active}
+                  disabled={item.disabled}
+                  external={item.external}
+                  icon={item.icon}
+                  key={item.title}
+                  path={item.path}
+                  title={item.title}
+                />
+              );
+            }):items.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
