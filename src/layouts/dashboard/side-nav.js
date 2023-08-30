@@ -50,10 +50,12 @@ let user=await Moralis.User.current()
     }
     }}
   }
-useEffect(()=>{
-  console.log("entro?")
-init()
-},[user])
+  useEffect(() => {
+    const interval = setInterval(() => {
+      init()
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
   const content = (
     <Scrollbar
       sx={{
