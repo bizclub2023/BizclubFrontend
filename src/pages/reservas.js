@@ -456,7 +456,6 @@ console.log(i)
   }
   
 async function fecthstripe(){
-  console.log("sessionId "+sessionId)
   let user=await Moralis.User.current()
 
   if(sessionId){
@@ -464,24 +463,18 @@ async function fecthstripe(){
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const customer = await stripe.customers.retrieve(session.customer);
     
-  console.log("session"+JSON.stringify(session))
 
   
-  console.log("customer"+JSON.stringify(customer))
-  console.log("customer_email "+JSON.stringify(session.customer_email))
 
   if(session.payment_status=="paid"){
-    console.log("payment_status "+JSON.stringify(session.payment_status))
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
-    console.log("name "+JSON.stringify(customer.name))
 
     if(!user.get("planActive")){
 
       // Get the month and year of the current date
   
       
-      console.log("currentMonth "+JSON.stringify(fechaEnUnMes))
   
       user.set("planEnd",fechaEnUnMes)
       user.set("planActive",true)
@@ -513,7 +506,6 @@ let numberSusbcription=object.length
       await user.save()
 
     }else{
-      console.log(JSON.stringify("no ha terminado el mes de plan"))
   let time=new Date(user.get("planEnd")).getTime()
     if (hoy.getTime() >time) {
       if(sessionId!==user.get("sessionId")){
