@@ -19,6 +19,7 @@ import { items,items2 } from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
+const stripe = require('stripe')("sk_test_51NV05cGc5cz7uc72E4yYvZZ2odhvKM3OT55PB7o0Uor8wWcAqZepAMvY77mwge9lk9fx8hXNo4fgXWJPfN1RAg4y00Z0xpoCXr");
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
@@ -32,13 +33,20 @@ export const SideNav = (props) => {
 let user=await Moralis.User.current()
 
     if(user){
+ 
 
-      const hoy = new Date();
+      if(user.get("sessionId")){
+        const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+        console.log("session"+JSON.stringify(session))
 
-      if(user.get("planActive")){
+        if(session.payment_status==="paid"){
 
+          setUser(true)
+        }else{
+          setUser(false)
+
+        }
     
-     setUser(true)
     }}
   }
   useEffect(() => {
