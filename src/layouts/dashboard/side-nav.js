@@ -53,7 +53,7 @@ let user=await Moralis.User.current()
 useEffect(()=>{
   console.log("entro?")
 init()
-},[isAuthenticated])
+},[user])
   const content = (
     <Scrollbar
       sx={{
