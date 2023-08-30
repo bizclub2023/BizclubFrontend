@@ -451,38 +451,7 @@ async function fecthstripe(){
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
 console.log("entro2")
-    if(!user.get("planActive")){
-      console.log("entro22")
-
-      // Get the month and year of the current date
-  
-      
-  
-      user.set("planEnd",fechaEnUnMes)
-      user.set("planActive",true)
-      user.set("stripeEmail",session.customer_email)
-
-      user.set("payment_status",session.payment_status)
-      user.set("sessionId",sessionId)
-
-      if(parseFloat(session.amount_total/100)==20){
-
-        console.log("entro32")
-
-          user.set("planName","Explorador")
-          user.set("meetingRoomHours",0);
-          user.set("planActive",true);
-          console.log("pago el plan");
-
-      }
-      await user.save()
-
-    }else{
-      console.log("entro2342")
-
-  let time=new Date(user.get("planEnd")).getTime()
-    if (hoy.getTime() >time) {
-      if(sessionId){
+   
         console.log("Exito");
         user.set("planActive",true)
         user.set("stripeEmail",session.customer_email)
@@ -493,17 +462,6 @@ console.log("entro2")
         
         if(parseFloat(session.amount_total/100)==20){
 
-
-        const query = new Moralis.Query("_User");
-  
-        query.equalTo("planName","Explorador")     
-       let object= await query.find()
-  let numberSusbcription=object.length
-  
-            if(numberSusbcription>=5){
-              console.log("Maximas Subscripciones")
-              return 
-            }
             user.set("planName","Explorador")
             user.set("meetingRoomHours",0);
             user.set("planActive",true);
@@ -511,18 +469,7 @@ console.log("entro2")
 
         }
        await user.save()
-      }else{
-
-        console.log("Estas agregando el mismo plan anterior");
-
-      }
-
-      console.log("El día de hoy es mayor que la fecha en un mes");
-    }  else {
-      console.log("El día de hoy es igual a la fecha en un mes");
-    }
-
-  }
+      
 }else{
   console.log(JSON.stringify("Stripe Error"))
 
