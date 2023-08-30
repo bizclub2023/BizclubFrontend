@@ -43,6 +43,9 @@ let user=await Moralis.User.current()
      }
      setUser(isUser)
     }
+    }else{
+      setUser(false)
+
     }}
   }
   useEffect(() => {
