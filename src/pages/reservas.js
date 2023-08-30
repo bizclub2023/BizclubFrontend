@@ -562,15 +562,11 @@ let numberSusbcription=object.length
 }
 
 }else{
-  if(user.get("sessionId")){
-if(user.get("planActive")===true){
-return
-}else{
-  router.push('/services');
+  console.log("entro1"+user.get("planActive"))
 
-}
+  if(user.get("planActive")){
   }else{
-    
+
   router.push('/services');
   }
 
