@@ -9,11 +9,12 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import {  useMoralis } from 'react-moralis';
 import NextLink from 'next/link';
 import { OverviewPlan } from 'src/sections/overview/overview-plan';
-import { useRouter } from 'next/router';
 import { loadStripe } from "@stripe/stripe-js";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Alert from '@mui/material/Alert';
+import { useRouter } from 'next/router';
+
 import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
 const now = new Date();
 const EVENTS = [
@@ -162,7 +163,7 @@ const useCustomerIds = (customers) => {
 };
 
 const Page = () => {
-  
+
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -456,7 +457,9 @@ console.log(i)
   
 async function fecthstripe(){
   console.log("sessionId "+sessionId)
-  if(sessionId){
+  let user=await Moralis.User.current()
+
+  if(sessionId==""){
     
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const customer = await stripe.customers.retrieve(session.customer);
@@ -466,7 +469,6 @@ async function fecthstripe(){
   
   console.log("customer"+JSON.stringify(customer))
   console.log("customer_email "+JSON.stringify(session.customer_email))
-  let user=await Moralis.User.current()
 
   if(session.payment_status=="paid"){
     console.log("payment_status "+JSON.stringify(session.payment_status))
@@ -558,6 +560,19 @@ let numberSusbcription=object.length
   console.log(JSON.stringify("Stripe Error"))
 
 }
+
+}else{
+  if(user.get("sessionId")){
+if(user.get("planActive")===true){
+return
+}else{
+  router.push('/services');
+
+}
+  }else{
+    
+  router.push('/services');
+  }
 
 }
 

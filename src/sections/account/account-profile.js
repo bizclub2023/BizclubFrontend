@@ -98,8 +98,10 @@ const [loading,setLoading]=useState(false)
     acceptedFiles.forEach(async (file) => {
       const reader = new FileReader()
       
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
+      reader.onabort = () =>   setLoading(false)
+
+      reader.onerror = () =>   setLoading(false)
+
       reader.onload = async () => {
       // Do whatever you want with the file contents
         const binaryStr = reader.result
