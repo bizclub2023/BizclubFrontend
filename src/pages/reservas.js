@@ -221,8 +221,6 @@ let planName=await user.get("planName");
             return
           }else{
             let hoursCalculated=await diff_hours(event.start,event.end)
-            console.log("hoursCalculated "+hoursCalculated)   
-                     console.log("meetingRoomHours "+user.get("meetingRoomHours"))
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
           }
@@ -230,49 +228,37 @@ let planName=await user.get("planName");
       }
       if(planName=="Visionario Flexible"){
         if(user.get("meetingRoomHours")<=0){
-          console.log("no puede")
           return
         }
     }
     if(planName=="Innovador Dedicado"){
       if(user.get("meetingRoomHours")<=0){
-        console.log("no puede")
         return
       }
   }
   if(planName=="Líder Elite"){
     if(user.get("meetingRoomHours")<=0){
-      console.log("no puede")
       return
     }
 }
 if(planName=="Corporativo Vanguardista"){
   if(user.get("meetingRoomHours")<=0){
-    console.log("no puede")
     return
   }
 }
 if(planName=="Titán del Éxito"){
   if(user.get("meetingRoomHours")<=0){
-    console.log("no puede")
     return
   }
 }
   await user.save()
 
       }
-/* 
-const query = new Moralis.Query("Reserves");
-await query.equalTo("areaName",values.areaName)
-let res=await query.first()
-console.log("res "+JSON.stringify(res))
- */
   const Reserves=Moralis.Object.extend("Reserves")
 
    const reserve=new Reserves() 
    let uniqueID=parseInt((Date.now()+ Math.random()).toString())
    reserve.set("uid",uniqueID)       
-   console.log("email "+user.get("email"))
 
    reserve.set("user",user.get("email"))  
    if(values.areaName!==""){
@@ -282,11 +268,8 @@ console.log("res "+JSON.stringify(res))
    } 
   reserve.set("title",JSON.stringify(event.title)  )   
  let eventitos=[]
- console.log("myevent "+(JSON.stringify(event)))
- console.log("myevent "+(JSON.stringify(event.start)))
 
 
-  console.log("myevents "+(eventitos))
   let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
 
   reserve.set("event",{
@@ -366,9 +349,9 @@ setError("")
 
       return new Promise(async (res, rej) => {
         if (action === "edit") {
-         console.log("Edited");
+          return
         } else if (action === "create") {
-          console.log("Created");
+         return 
         }
 
         var currentDate=new Date()
@@ -392,7 +375,6 @@ setError("")
           for(let i=0;i<object.length;i++){
             
 
-console.log(i)
               var dFecha1 = new Date(event.start.valueOf());
               var dFecha2 = new Date(event.end.valueOf());
               var dRangoInicio = new Date(object[i].attributes.event.start);
@@ -402,7 +384,6 @@ console.log(i)
               if ((dFecha1 > dRangoInicio && dFecha1 < dRangoFin) ||
                  ( dFecha2 > dRangoInicio && dFecha2 < dRangoFin)) {
             
-                    console.log("entro mal ")
                     notify3()
                     rej();
                     return
@@ -457,7 +438,7 @@ console.log(i)
   
 async function fecthstripe(){
   let user=await Moralis.User.current()
-
+console.log("sessionId"+sessionId)
   if(sessionId){
     
     const session = await stripe.checkout.sessions.retrieve(sessionId);
