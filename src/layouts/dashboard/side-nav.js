@@ -41,6 +41,7 @@ let user=await Moralis.User.current()
      if(isUser){
     user.set("planActive",isUser)
      }
+     setUser(isUser)
     }
     }else{
       setUser(false)
