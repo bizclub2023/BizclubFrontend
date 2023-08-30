@@ -28,19 +28,15 @@ export const SideNav = (props) => {
   const [isAdmin,setUser]=useState(false)
   
   async function init(){
-    console.log("entro ")
 
 let user=await Moralis.User.current()
 
     if(user){
 
       const hoy = new Date();
-      console.log(user.get("planActive"))
 
       if(user.get("planActive")){
-        console.log("entro 3"+user.get("planActive"))
 
-      console.log("planActive "+user.get("planActive"))
     
      setUser(true)
     }}
