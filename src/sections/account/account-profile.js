@@ -5,6 +5,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  CircularProgress,
   Divider,
   Typography
 } from '@mui/material';
@@ -53,6 +54,8 @@ async function fetchAvatar(){
 
   if(user?.get("avatar").ipnft){
 
+    setLoading(true)
+
   await fetch("https://"+user?.get("avatar").ipnft+".ipfs.dweb.link/metadata.json")
           .then(function (response) {
 
@@ -64,10 +67,11 @@ async function fetchAvatar(){
             image = data.image
           })
           
-          console.log("image "+image)
  let newimage = image.replace("ipfs://", "https://")
  let final=newimage.replace( "/avatar.png",".ipfs.dweb.link/avatar.png")
  setAvatar(final)
+
+ setLoading(false)
 
  return
 }
@@ -81,8 +85,11 @@ var {Moralis}=useMoralis()
 useEffect(()=>{
   fetchAvatar()
 },[])
-
+const [loading,setLoading]=useState(false)
   useEffect(()=>{
+    setLoading(true)
+    console.log("image ")
+
   var imageFile=""
   
   const user= Moralis.User.current()
@@ -110,6 +117,8 @@ useEffect(()=>{
    await user.save()
     
    await fetchAvatar()
+   
+  setLoading(false)
               }
         
       }
@@ -128,6 +137,7 @@ useEffect(()=>{
     timezone: 'GTM-7'
   };
   }
+  console.log("image ")
 
   },[acceptedFiles])
   
@@ -174,6 +184,23 @@ useEffect(()=>{
       </Box>
     </CardContent>
     <Divider />
+    {loading?<Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          height:150,
+          marginTop:10,
+          flexDirection: 'column'
+        }}
+      ><CircularProgress/>
+      </Box>:<Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          height:150,
+          flexDirection: 'column'
+        }}
+      >
     <CardActions> 
       <section className="container">
               <div className="container">
@@ -185,6 +212,6 @@ useEffect(()=>{
     </div>
      
     </section>
-    </CardActions>
+    </CardActions>   </Box>}
   </Card>
 };

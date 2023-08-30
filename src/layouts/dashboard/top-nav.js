@@ -47,19 +47,22 @@ export const TopNav = (props) => {
               image = data.image
             })
             
-            console.log("image "+image)
    let newimage = image.replace("ipfs://", "https://")
    let final=newimage.replace( "/avatar.png",".ipfs.dweb.link/avatar.png")
    setAvatar(final)
   
-  console.log(final)
   
 }
   
-  }
+  } 
   useEffect(() => {
-    fetchAvatar()
 
+
+ 
+    const interval = setInterval(() => {
+      fetchAvatar()
+    }, 300);
+    return () => clearInterval(interval);
 }, []);
 
   return (
