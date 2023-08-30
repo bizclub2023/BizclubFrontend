@@ -103,7 +103,7 @@ console.log(numberSusbcription)
     const { error,  } = await stripe.redirectToCheckout({
       lineItems:item ,
       mode: "subscription",
-      successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      successUrl: `${window.location.origin}/reservas?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${window.location.origin}/customers`,
       customerEmail: user?.get("email"),
 
