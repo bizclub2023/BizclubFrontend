@@ -459,7 +459,7 @@ async function fecthstripe(){
   console.log("sessionId "+sessionId)
   let user=await Moralis.User.current()
 
-  if(sessionId==""){
+  if(sessionId){
     
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const customer = await stripe.customers.retrieve(session.customer);
