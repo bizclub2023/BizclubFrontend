@@ -438,9 +438,9 @@ setError("")
   
 async function fecthstripe(){
   let user=await Moralis.User.current()
-console.log("sessionId"+sessionId)
+
   if(sessionId){
-    
+
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const customer = await stripe.customers.retrieve(session.customer);
     
@@ -450,8 +450,9 @@ console.log("sessionId"+sessionId)
   if(session.payment_status=="paid"){
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
-
+console.log("entro2")
     if(!user.get("planActive")){
+      console.log("entro22")
 
       // Get the month and year of the current date
   
@@ -466,6 +467,7 @@ console.log("sessionId"+sessionId)
 
       if(parseFloat(session.amount_total/100)==20){
 
+        console.log("entro32")
 
       const query = new Moralis.Query("_User");
 
@@ -487,6 +489,8 @@ let numberSusbcription=object.length
       await user.save()
 
     }else{
+      console.log("entro2342")
+
   let time=new Date(user.get("planEnd")).getTime()
     if (hoy.getTime() >time) {
       if(sessionId!==user.get("sessionId")){
@@ -519,6 +523,7 @@ let numberSusbcription=object.length
         }
        await user.save()
       }else{
+
         console.log("Estas agregando el mismo plan anterior");
 
       }
