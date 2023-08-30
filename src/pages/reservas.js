@@ -469,17 +469,6 @@ console.log("entro2")
 
         console.log("entro32")
 
-      const query = new Moralis.Query("_User");
-
-      query.equalTo("planName","Explorador")     
-      query.equalTo("planActive",true)     
-     let object= await query.find()
-let numberSusbcription=object.length
-
-          if(numberSusbcription>=5){
-            console.log("Maximas Subscripciones")
-            return 
-          }
           user.set("planName","Explorador")
           user.set("meetingRoomHours",0);
           user.set("planActive",true);
@@ -493,7 +482,7 @@ let numberSusbcription=object.length
 
   let time=new Date(user.get("planEnd")).getTime()
     if (hoy.getTime() >time) {
-      if(sessionId!==user.get("sessionId")){
+      if(sessionId){
         console.log("Exito");
         user.set("planActive",true)
         user.set("stripeEmail",session.customer_email)
