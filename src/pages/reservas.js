@@ -191,57 +191,23 @@ let active=await user.get("planActive")
 
 let planName=await user.get("planName");
 
-console.log("Falta la reserva123123123 active  "+active)
       if(active){
         console.log("Falta la 333333333333"+planName)
 
-        if(planName=="Explorador"){
+        if(planName!==""){
           if(user.get("meetingRoomHours")<=0){
             setError("No tienes Horas de Reserva")
             return
           } else {
             let hoursCalculated=await diff_hours(event.start,event.end)
+            console.log("entro1 "+hoursCalculated)
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
           }
         }
-        if(planName=="Emprendedor Express"){
-          if(user.get("meetingRoomHours")<=0){
-            setError("No tienes Horas de Reserva")
-            return
-          }else{
-            let hoursCalculated=await diff_hours(event.start,event.end)
+        console.log("planName"+planName)
+       
 
-            user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
-          }
-          
-      }
-      if(planName=="Visionario Flexible"){
-        if(user.get("meetingRoomHours")<=0){
-          return
-        }
-    }
-    if(planName=="Innovador Dedicado"){
-      if(user.get("meetingRoomHours")<=0){
-        return
-      }
-  }
-  if(planName=="Líder Elite"){
-    if(user.get("meetingRoomHours")<=0){
-      return
-    }
-}
-if(planName=="Corporativo Vanguardista"){
-  if(user.get("meetingRoomHours")<=0){
-    return
-  }
-}
-if(planName=="Titán del Éxito"){
-  if(user.get("meetingRoomHours")<=0){
-    return
-  }
-}
-console.log("Falta l11111111111")
 
 
   await user.save()
@@ -353,7 +319,7 @@ setError("")
 
         if(currentDate<=event.start&&currentDate<=event.end&&user){
           let hoursCalculated=await diff_hours(event.start,event.end)
-
+console.log(user?.get("meetingRoomHours"))
           if(user?.get("meetingRoomHours")<hoursCalculated){
               
             notify2()
