@@ -37,51 +37,54 @@ import { useEffect } from 'react';
 export const AccountProfileDetails = () => {
   const [isLoading,setLoading]= useState(false)
 
-  const [values, setValues] = useState({
+  var [values, setValues] = useState({
     username: '',
     email: '',
     phone: '',
   });
 
+
   var {Moralis,isAuthenticated}=useMoralis()
  async  function init(){
-    let user=await Moralis.User.current()
-    console.log()
-    
-    setValues({   username: user?.get("username"),
-    email: user?.get("email"),
-    phone: user?.get("phone"),})
 
+    let user=await Moralis.User.current()
+    if(user){
+      
+    console.log("entro"+user.get("email"))
+    console.log("entro"+user.get("username"))
+    console.log("entro"+user.get("phone"))
+    setValues({   username: user.get("username")})
+    setValues({   phone: user.get("phone")})
+    setValues({   email: user.get("email")})
+
+  }
   }
   useEffect(()=>{
     init()
+   },[])
+    const handleSubmit = async (event) => {
 
-     
-
-  },[isAuthenticated])
-  const handleChange = useCallback(
-   async (event) => {
-     await setValues((prevState) => ({
-        ...prevState,
-        [event.target.name]: event.target.value
-      }));
-    },
-    []
-    );
-  const handleSubmit = useCallback(
-   async (event) => {
     setLoading(true)
+    console.log(values.phone)
       console.log(values.username)
     let user=await Moralis.User.current()
     user.set("username",values.username)
     user.set("phone",values.phone)
 await user.save()
 setLoading(false)
+console.log("termino")
 
-    },
-    []
-  );
+    }
 
+    const handleChange = useCallback(
+      async (event) => {
+        await setValues((prevState) => ({
+           ...prevState,
+           [event.target.name]: event.target.value
+         }));
+       },
+       []
+       );
   return (
       <Card>
         <CardHeader
@@ -105,6 +108,7 @@ setLoading(false)
                   required
                   
                   value={values.username}
+                  SelectProps={{ native: true }}
 
                   onChange={handleChange}
                 />
@@ -119,6 +123,7 @@ setLoading(false)
                   InputLabelProps={{ shrink: true }} 
                   label="Correo Electronico"
                   name="email"
+                  SelectProps={{ native: true }}
 
                   value={values.email}
                   required
@@ -133,6 +138,8 @@ setLoading(false)
                   label="Phone Number"
                   type="number"
                   name="phone"
+                  SelectProps={{ native: true }}
+
                   onChange={handleChange}
                   value={values.phone}
 
