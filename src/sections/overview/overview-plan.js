@@ -8,6 +8,7 @@ export const OverviewPlan = (props) => {
   const { value, sx } = props;
   const [planName,setPlanName]=useState("")
   const [planHours,setPlanHours]=useState("")
+  const [planUsers,setplanUsers]=useState("")
 
   const init=async ()=>{
 
@@ -16,6 +17,8 @@ export const OverviewPlan = (props) => {
     
     let planName=await user.get("planName");    
     let planHours=await user.get("meetingRoomHours");
+    let planUsers=await user.get("planUsers");
+    setplanUsers(planUsers)
 
     setPlanName(planName)
     setPlanHours(planHours)
@@ -23,8 +26,14 @@ export const OverviewPlan = (props) => {
   }
   const {Moralis}=useMoralis()
 useEffect(()=>{
-init()
-},[props.rebuild])
+  
+ 
+  const interval = setInterval(() => {
+    init()
+  }, 300);
+  return () => clearInterval(interval);
+
+},[])
   return (
     <Card sx={sx}>
       <CardContent>
@@ -40,6 +49,12 @@ init()
               variant="overline"
             >
               Plan Actual: {planName}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Usuarios Permitidos: {planUsers}
             </Typography>
             <Typography variant="h4">
               Horas restantes: {planHours}
