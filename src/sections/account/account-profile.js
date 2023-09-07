@@ -52,7 +52,7 @@ async function fetchAvatar(){
   let image=""
   const user=await Moralis.User.current()
 
-  if(user?.get("avatar").ipnft){
+  if(user?.get("avatar")?.ipnft){
 
     setLoading(true)
 
@@ -120,7 +120,6 @@ const [loading,setLoading]=useState(false)
     
    await fetchAvatar()
    
-  setLoading(false)
               }
         
       }
@@ -141,6 +140,7 @@ const [loading,setLoading]=useState(false)
   }
   console.log("image ")
 
+  setLoading(false)
   },[acceptedFiles])
   
   const acceptedFileItems = acceptedFiles.map(file => (
