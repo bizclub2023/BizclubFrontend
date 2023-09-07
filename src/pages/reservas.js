@@ -168,57 +168,46 @@ const Page = () => {
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
-
+  
   const [title,setTitle]=useState([])
-  var [rowsDate,setRowsDate]=useState([]) 
-  const [date, setDate] = useState(null);
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handlePageChange = useCallback(
-    (event, value) => {
-      setPage(value);
-    },
-    []
-  );
-  function handleDate(){  
- }
  const [error,setError]=useState('')
 let eventos=[]
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const notify2 = () => toast("No tienes Horas de reserva");
 const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
-const fetchData=()=>{
-  
-}
-async function handleReserva(event){
+    async function handleReserva(event){
 
-  console.log("Falta la reserva"+event.title)
+     console.log("Falta la reserva"+event.title)
 
     if(title===""){
-      
       setError("Falta la reserva")
       return
-    }
+    }    
+
        
     let user=await Moralis.User.current()
 let active=await user.get("planActive")
 
 let planName=await user.get("planName");
-      if(active){
-        if(planName=="Explorador"){
-          setError("No tienes Horas de Reserva")
 
+console.log("Falta la reserva123123123 active  "+active)
+      if(active){
+        console.log("Falta la 333333333333"+planName)
+
+        if(planName=="Explorador"){
+          if(user.get("meetingRoomHours")<=0){
+            setError("No tienes Horas de Reserva")
             return
+          } else {
+            let hoursCalculated=await diff_hours(event.start,event.end)
+
+            user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
+          }
         }
         if(planName=="Emprendedor Express"){
           if(user.get("meetingRoomHours")<=0){
             setError("No tienes Horas de Reserva")
-
             return
           }else{
             let hoursCalculated=await diff_hours(event.start,event.end)
@@ -252,9 +241,15 @@ if(planName=="Titán del Éxito"){
     return
   }
 }
+console.log("Falta l11111111111")
+
+
   await user.save()
+  console.log("Falta la reserva2")
 
       }
+      
+  console.log("Falta la Reserves")
   const Reserves=Moralis.Object.extend("Reserves")
 
    const reserve=new Reserves() 
@@ -349,11 +344,8 @@ setError("")
     const handleConfirm = async (event, action) => {
 
       return new Promise(async (res, rej) => {
-        if (action === "edit") {
-          return
-        } else if (action === "create") {
-         return 
-        }
+          console.log("test test")
+
 
         var currentDate=new Date()
             
@@ -368,7 +360,8 @@ setError("")
             rej();
             return
           }
-          
+          console.log("test test2")
+
   const query = new Moralis.Query("Reserves");
   
 
@@ -394,8 +387,11 @@ setError("")
         
           }
         setTimeout(async () => {
+          console.log("test test5")
+
           await  setTitle(event.title)
           await setMyEvents([...myEvents,event])
+        
           if(user?.get("meetingRoomHours")<=0){
 
             notify2()

@@ -43,6 +43,11 @@ let user=await Moralis.User.current()
 
           setUser(true)
         }else{
+          if(user.get("planActive")){
+
+            user.set("planActive",false)
+            await user.save()
+          }
           setUser(false)
 
         }
@@ -53,7 +58,7 @@ let user=await Moralis.User.current()
  
     const interval = setInterval(() => {
       init()
-    }, 300);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
   const content = (
