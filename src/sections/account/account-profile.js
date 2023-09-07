@@ -97,11 +97,11 @@ const [loading,setLoading]=useState(false)
       
     acceptedFiles.forEach(async (file) => {
       const reader = new FileReader()
-      
       reader.onabort = () =>   setLoading(false)
 
       reader.onerror = () =>   setLoading(false)
 
+    
       reader.onload = async () => {
       // Do whatever you want with the file contents
         const binaryStr = reader.result
@@ -121,7 +121,8 @@ const [loading,setLoading]=useState(false)
    await fetchAvatar()
    
               }
-        
+              setLoading(false)
+
       }
       reader.readAsArrayBuffer(file)
     })
@@ -140,7 +141,6 @@ const [loading,setLoading]=useState(false)
   }
   console.log("image ")
 
-  setLoading(false)
   },[acceptedFiles])
   
   const acceptedFileItems = acceptedFiles.map(file => (
