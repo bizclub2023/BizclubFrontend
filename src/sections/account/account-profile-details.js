@@ -34,8 +34,10 @@ const states = [
 
 import { useEffect } from 'react';
 
-export const AccountProfileDetails = () => {
+export const AccountProfileDetails = (props) => {
   const [isLoading,setLoading]= useState(false)
+  var [phone,setPhone]= useState("")
+  var [username,setUsername]= useState("")
 
   var [values, setValues] = useState({
     username: '',
@@ -45,20 +47,39 @@ export const AccountProfileDetails = () => {
 
 
   var {Moralis,isAuthenticated}=useMoralis()
- async  function init(){
+ async function init(){
 
     let user=await Moralis.User.current()
     if(user){
+      let username=await user.get("username")
       
-    console.log("entro"+user.get("email"))
-    console.log("entro"+user.get("username"))
-    console.log("entro"+user.get("phone"))
-   await setValues({   username: user.get("username")})
-   await setValues({   phone: user.get("phone")})
+      let phone=await user.get("phone")
+    
+   setPhone(phone)
+   setUsername(username)
+
    await setValues({   email: user.get("email")})
 
   }
   }
+  
+  const handleChange = useCallback(
+    async (event) => {
+      if(event.target.name=="phone"){
+        setPhone(event.target.value)
+        return
+      }
+      if(event.target.name=="username"){
+setUsername(event.target.value)
+return
+      }
+      await setValues((prevState) => ({
+         ...prevState,
+         [event.target.name]: event.target.value
+       }));
+     },
+     []
+     );
   useEffect(()=>{
     init()
    },[])
@@ -68,23 +89,14 @@ export const AccountProfileDetails = () => {
     console.log(values.phone)
       console.log(values.username)
     let user=await Moralis.User.current()
-    user.set("username",values.username)
-    user.set("phone",values.phone)
+    user.set("username",username)
+    user.set("phone",phone)
 await user.save()
 setLoading(false)
 console.log("termino")
 
     }
 
-    const handleChange = useCallback(
-      async (event) => {
-        await setValues((prevState) => ({
-           ...prevState,
-           [event.target.name]: event.target.value
-         }));
-       },
-       []
-       );
   return (
       <Card>
         <CardHeader
@@ -106,8 +118,9 @@ console.log("termino")
                   name="username"
                   label="Nombre de Usuario"
                   required
-                  
-                  value={values.username}
+                  InputLabelProps={{ shrink: true }} 
+
+                  value={username}
                   SelectProps={{ native: true }}
 
                   onChange={handleChange}
@@ -139,9 +152,11 @@ console.log("termino")
                   type="number"
                   name="phone"
                   SelectProps={{ native: true }}
+                  required
+                  InputLabelProps={{ shrink: true }} 
 
                   onChange={handleChange}
-                  value={values.phone}
+                  value={phone}
 
                 />
               </Grid>

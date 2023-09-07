@@ -58,7 +58,7 @@ let user=await Moralis.User.current()
  
     const interval = setInterval(() => {
       init()
-    }, 3000);
+    }, 300);
     return () => clearInterval(interval);
   }, []);
   const content = (

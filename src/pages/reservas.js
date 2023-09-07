@@ -458,13 +458,71 @@ console.log("entro2")
         user.set("sessionId",sessionId)
         
         if(parseFloat(session.amount_total/100)==20){
-
+ 
             user.set("planName","Explorador")
             user.set("meetingRoomHours",0);
             user.set("planActive",true);
             console.log("pago el plan");
+            user.set("planUsers",1);
 
         }
+        if(parseFloat(session.amount_total/100)==30){
+
+          user.set("planName","Emprendedor Express")
+          user.set("meetingRoomHours",3);
+          user.set("planActive",true);
+          console.log("pago el plan");
+          user.set("planUsers",1);
+
+      }
+      if(parseFloat(session.amount_total/100)==40){
+
+        user.set("planName","Visionario Flexible")
+        user.set("meetingRoomHours",5);
+        user.set("planActive",true);
+        console.log("pago el plan");
+        user.set("planUsers",1);
+
+    }
+    if(parseFloat(session.amount_total/100)==60){
+
+      user.set("planName","Innovador Dedicado")
+      user.set("meetingRoomHours",8);
+      user.set("planActive",true);
+      console.log("pago el plan");
+      user.set("planUsers",1);
+
+  }
+  if(parseFloat(session.amount_total/100)==70){
+
+    user.set("planName","Líder Elite")
+    user.set("meetingRoomHours",8);
+    user.set("planActive",true);
+    user.set("planUsers",2);
+
+    console.log("pago el plan");
+
+}
+
+if(parseFloat(session.amount_total/100)==80){
+
+  user.set("planName","Corporativo Vanguardista")
+  user.set("meetingRoomHours",10);
+  user.set("planActive",true);
+  console.log("pago el plan");
+  user.set("planUsers",8);
+
+}
+
+if(parseFloat(session.amount_total/100)==90){
+
+  user.set("planName","Titán del Éxito")
+  user.set("meetingRoomHours",10);
+  user.set("planActive",true);
+  console.log("pago el plan");
+  user.set("planUsers",4);
+
+}
        await user.save()
       
 }else{
