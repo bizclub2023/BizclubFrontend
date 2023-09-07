@@ -53,9 +53,9 @@ export const AccountProfileDetails = () => {
     console.log("entro"+user.get("email"))
     console.log("entro"+user.get("username"))
     console.log("entro"+user.get("phone"))
-    setValues({   username: user.get("username")})
-    setValues({   phone: user.get("phone")})
-    setValues({   email: user.get("email")})
+   await setValues({   username: user.get("username")})
+   await setValues({   phone: user.get("phone")})
+   await setValues({   email: user.get("email")})
 
   }
   }
