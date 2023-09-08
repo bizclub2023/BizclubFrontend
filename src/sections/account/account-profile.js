@@ -87,7 +87,6 @@ useEffect(()=>{
 },[])
 const [loading,setLoading]=useState(false)
   useEffect(()=>{
-    setLoading(true)
     console.log("image ")
 
   var imageFile=""
@@ -97,12 +96,11 @@ const [loading,setLoading]=useState(false)
       
     acceptedFiles.forEach(async (file) => {
       const reader = new FileReader()
-      reader.onabort = () =>   setLoading(false)
-
-      reader.onerror = () =>   setLoading(false)
 
     
       reader.onload = async () => {
+        
+    setLoading(true)
       // Do whatever you want with the file contents
         const binaryStr = reader.result
          imageFile = await new File([ binaryStr ], 'avatar.png', { type: 'image' })
