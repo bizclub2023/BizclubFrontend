@@ -37,21 +37,27 @@ const Page = () => {
         .required('Password is required')
     }),
     onSubmit: async (values, helpers) => {
+     setLoading(true)
+
       try {
+        
         if(!loading){
 
-     setLoading(true)
          await auth.signUp(values.email, values.name, values.password);
          setTextSuccess("Exito! Revisa tu correo y haz click en el enlace enviado para confirmalo.")
  
-         await setTimeout(()=>router.push('/'),5000)
-         setLoading(false)
+         await setTimeout(()=>{
+          setLoading(false)
+
+          router.push('/')},5000)
 
         } 
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
+        setLoading(false)
+
       }
     }
   });
