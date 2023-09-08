@@ -38,12 +38,9 @@ export const AccountProfileDetails = (props) => {
   const [isLoading,setLoading]= useState(false)
   var [phone,setPhone]= useState("")
   var [username,setUsername]= useState("")
+  var [username,setUsername]= useState("")
+  var [email,setEmail]= useState("")
 
-  var [values, setValues] = useState({
-    username: '',
-    email: '',
-    phone: '',
-  });
 
 
   var {Moralis,user,isAuthenticated}=useMoralis()
@@ -53,11 +50,12 @@ export const AccountProfileDetails = (props) => {
       let username=await user.get("username")
       
       let phone=await user.get("phone")
-    
+      let useremail=await user.get("email")
+
    setPhone(phone)
    setUsername(username)
+   setEmail(useremail)
 
-   await setValues({   email: user.get("email")})
 
   }
   }
@@ -70,6 +68,10 @@ export const AccountProfileDetails = (props) => {
       }
       if(event.target.name=="username"){
 setUsername(event.target.value)
+return
+      }
+      if(event.target.name=="email"){
+setEmail(event.target.value)
 return
       }
       await setValues((prevState) => ({
@@ -85,8 +87,6 @@ return
     const handleSubmit = async (event) => {
 
     setLoading(true)
-    console.log(values.phone)
-      console.log(values.username)
     user.set("username",username)
     user.set("phone",phone)
 await user.save()
@@ -136,7 +136,7 @@ console.log("termino")
                   name="email"
                   SelectProps={{ native: true }}
 
-                  value={values.email}
+                  value={email}
                   required
                 />
               </Grid>
