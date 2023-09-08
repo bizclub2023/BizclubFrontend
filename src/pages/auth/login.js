@@ -192,7 +192,7 @@ const Page = () => {
                     sx={{ mt: 3 }}
                     variant="body2"
                   >
-                    {formik.errors.submit}
+                    {formik.errors.submit==="ParseError: 101 Invalid username/password."?"Correo o contraseña invalida":}
                   </Typography>
                 )}
                       <LoadingButton
