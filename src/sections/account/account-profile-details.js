@@ -46,10 +46,9 @@ export const AccountProfileDetails = (props) => {
   });
 
 
-  var {Moralis,isAuthenticated}=useMoralis()
+  var {Moralis,user,isAuthenticated}=useMoralis()
  async function init(){
 
-    let user=await Moralis.User.current()
     if(user){
       let username=await user.get("username")
       
@@ -88,7 +87,6 @@ return
     setLoading(true)
     console.log(values.phone)
       console.log(values.username)
-    let user=await Moralis.User.current()
     user.set("username",username)
     user.set("phone",phone)
 await user.save()
