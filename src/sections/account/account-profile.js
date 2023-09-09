@@ -15,6 +15,7 @@ import { NFTStorage } from 'nft.storage'
 import styled from 'styled-components'
 
 import {useDropzone} from 'react-dropzone'
+
 const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGE3YTEwQTE3MWIzNUUyYThkMTI2NTc0RjIzMDQ0N0U2NTJjMzBhYTkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY5MTI0Nzg2MzkzMywibmFtZSI6IkJpemNsdWIifQ.r6KIrRNFH9P6iFyu5ZQraNWf0TFsw4979ENY_EYp_7c'
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
 
@@ -39,6 +40,7 @@ export const AccountProfile = () =>{
   var currentUser={}
   const [name,setName]=useState()
   var [avatar,setAvatar]=useState()
+  var {Moralis,user}=useMoralis()
 
   const {
     acceptedFiles,
@@ -50,7 +52,6 @@ async function fetchAvatar(){
   let name=""
   let description=""
   let image=""
-  const user=await Moralis.User.current()
 
   if(user?.get("avatar")?.ipnft){
 
@@ -80,7 +81,6 @@ setAvatar("")
 
 
 }
-var {Moralis,user}=useMoralis()
 
 useEffect(()=>{
   if(user){

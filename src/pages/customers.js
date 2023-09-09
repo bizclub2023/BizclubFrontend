@@ -131,11 +131,11 @@ let user=await Moralis.User.current()
 
         if(session.payment_status==="paid"){
 
+          await router.push('/services');
           setUser(true)
         }else{
 
           setUser(false)
-         await router.push('/services');
 
         }
     
