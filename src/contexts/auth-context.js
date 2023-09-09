@@ -151,10 +151,7 @@ let user=await Moralis.User.current()
     user.set("username", name);
     user.set("email", email);
     user.set("password", password);
-     Moralis.Cloud.run(
-      "sendVerificationEmail",
-      { currentUser }
-    );
+  
     
     await user.signUp();
 
