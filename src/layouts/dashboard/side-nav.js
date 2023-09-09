@@ -26,7 +26,7 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const {Moralis,isAuthenticated}=useMoralis()
-  const [isAdmin,setUser]=useState(false)
+  const [isCustomer,setUser]=useState(false)
   
   async function init(){
 
@@ -144,7 +144,7 @@ let user=await Moralis.User.current()
               m: 0
             }}
           >
-            {isAdmin?items2.map((item) => {
+            {isCustomer?items2.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (

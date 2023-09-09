@@ -38,7 +38,6 @@ export const AccountProfileDetails = (props) => {
   const [isLoading,setLoading]= useState(false)
   var [phone,setPhone]= useState("")
   var [username,setUsername]= useState("")
-  var [username,setUsername]= useState("")
   var [email,setEmail]= useState("")
 
 

@@ -18,12 +18,14 @@ import { CompaniesSearch } from 'src/sections/companies/companies-search';
 import StripeCheckout from 'react-stripe-checkout';
 import { useEffect,useState } from 'react';
 import { useMoralis } from "react-moralis";
+import { useRouter } from 'next/router';
 
 
 const Page = () => {
+  const router=useRouter();
 
 var [companies,setCompanies]=useState([])
-  const {Moralis}=useMoralis()
+  const {Moralis,user}=useMoralis()
 
   const fetchData=async ()=>{
 let empty=[]
@@ -111,7 +113,44 @@ empty=[...empty,{
 
     setCompanies(empty)
 
+  }  
+   const [isPayed,setUser]=useState(false)
+
+
+  async function fetchUser(){
+
+let user=await Moralis.User.current()
+
+    if(user){
+ 
+
+      if(user.get("sessionId")){
+        const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+        console.log("session"+JSON.stringify(session))
+
+        if(session.payment_status==="paid"){
+
+          setUser(true)
+        }else{
+
+          setUser(false)
+         await router.push('/services');
+
+        }
+    
+    }}
   }
+  useEffect(() => {
+    
+
+ 
+    const interval = setInterval(() => {
+      fetchUser()
+    }, 300);
+    return () => clearInterval(interval);
+}, []);
+
+
   useEffect(()=>{
  fetchData()
   },[])

@@ -283,11 +283,11 @@ setError("")
       {
         value: 'meetingRoom',
         label: 'Salon de Reuniones'
-      },
+      },/* 
       {
         value: 'commonRoom',
         label: 'Salon Comun'
-      }
+      } */
     ];
     const columnsDate = [
       { field: 'id', headerName: 'id', width: 70 },

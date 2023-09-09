@@ -8,13 +8,7 @@ import { useEffect,useState } from 'react';
 import { SettingsPassword } from 'src/sections/settings/settings-password';
 
 const Page = () => {
-  const {user}=useMoralis()
-  const [name,setName]=useState()
   
-  useEffect(()=>{
-
-
-  },[user])
   return <>
     <Head>
       <title>
