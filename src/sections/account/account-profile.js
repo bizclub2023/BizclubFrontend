@@ -80,62 +80,66 @@ setAvatar("")
 
 
 }
-var {Moralis}=useMoralis()
+var {Moralis,user}=useMoralis()
 
 useEffect(()=>{
-  fetchAvatar()
+  if(user){
+
+    fetchAvatar()
+  }
+
+  
 },[])
+async function fetchImage(){
+  
+  acceptedFiles.forEach(async (file) => {
+    const reader = new FileReader()
+
+  
+    reader.onload = async () => {
+      
+  setLoading(true)
+    // Do whatever you want with the file contents
+      const binaryStr = reader.result
+       imageFile = await new File([ binaryStr ], 'avatar.png', { type: 'image' })
+
+       if(imageFile){
+    
+        const metadata = await client.store({
+          name: user.get("username"),
+          description: "avatar",
+          image: imageFile
+        })
+        user.set("avatar",metadata)
+
+ await user.save()
+  
+ await fetchAvatar()
+ 
+            }
+            setLoading(false)
+
+    }
+    reader.readAsArrayBuffer(file)
+  })
+  
+
+setName(user?.get("username"))
+
+currentUser= {
+  avatar: '/assets/avatars/avatar-anika-visser.png',
+  city: 'Los Angeles',
+  country: 'USA',
+  jobTitle: 'Senior Developer',
+  name: user?.get("username"),
+  timezone: 'GTM-7'
+};
+}
 const [loading,setLoading]=useState(false)
   useEffect(()=>{
-    console.log("image ")
-
-  var imageFile=""
-  
-  const user= Moralis.User.current()
   if(acceptedFiles.length>0){
-      
-    acceptedFiles.forEach(async (file) => {
-      const reader = new FileReader()
-
     
-      reader.onload = async () => {
-        
-    setLoading(true)
-      // Do whatever you want with the file contents
-        const binaryStr = reader.result
-         imageFile = await new File([ binaryStr ], 'avatar.png', { type: 'image' })
-
-         if(imageFile){
-      
-          const metadata = await client.store({
-            name: user.get("username"),
-            description: "avatar",
-            image: imageFile
-          })
-          user.set("avatar",metadata)
-
-   await user.save()
-    
-   await fetchAvatar()
-   
-              }
-              setLoading(false)
-
-      }
-      reader.readAsArrayBuffer(file)
-    })
-    
-
-  setName(user?.get("username"))
-  
-  currentUser= {
-    avatar: '/assets/avatars/avatar-anika-visser.png',
-    city: 'Los Angeles',
-    country: 'USA',
-    jobTitle: 'Senior Developer',
-    name: user?.get("username"),
-    timezone: 'GTM-7'
-  };
+       fetchImage()
   }
   console.log("image ")
 
@@ -174,13 +178,7 @@ const [loading,setLoading]=useState(false)
             width: 80
           }}
         />
-        <Typography
-          gutterBottom
-          variant="h5"
-        >
-          {name}
-        </Typography>
-     
+    
       </Box>
     </CardContent>
     <Divider />
