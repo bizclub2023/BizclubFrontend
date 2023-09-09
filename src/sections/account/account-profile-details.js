@@ -73,16 +73,16 @@ return
 setEmail(event.target.value)
 return
       }
-      await setValues((prevState) => ({
+  /*     await setValues((prevState) => ({
          ...prevState,
          [event.target.name]: event.target.value
-       }));
+       })); */
      },
      []
      );
   useEffect(()=>{
     init()
-   },[])
+   },[user])
     const handleSubmit = async (event) => {
 
     setLoading(true)
