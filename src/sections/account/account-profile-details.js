@@ -45,7 +45,6 @@ export const AccountProfileDetails = (props) => {
   var {Moralis,user,isAuthenticated}=useMoralis()
  async function init(){
 
-    if(user){
       let username=await user.get("username")
       
       let phone=await user.get("phone")
@@ -56,7 +55,6 @@ export const AccountProfileDetails = (props) => {
    setEmail(useremail)
 
 
-  }
   }
   
   const handleChange = useCallback(
@@ -81,8 +79,11 @@ return
      []
      );
   useEffect(()=>{
-    init()
-   },[user])
+    if(user){
+
+      init()
+    }
+   },[])
     const handleSubmit = async (event) => {
 
     setLoading(true)
@@ -145,7 +146,7 @@ console.log("termino")
               >
                 <TextField
                   fullWidth
-                  label="Phone Number"
+                  label="Numero de telefono"
                   type="number"
                   name="phone"
                   SelectProps={{ native: true }}
