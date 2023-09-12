@@ -294,9 +294,10 @@ setError("")
       { field: 'date', headerName: 'date', width: 500 },
     
     ];
-  
-     var [myEvents,setMyEvents] = useState([]);
+    var [sessionIdCancel,setSessionId] = useState("");
 
+     var [myEvents,setMyEvents] = useState([]);
+     
     function diff_hours(dt2, dt1) 
     {
     var diff =(dt2.getTime() - dt1.getTime()) / 1000;
@@ -402,15 +403,44 @@ console.log(user?.get("meetingRoomHours"))
 async function fecthstripe(){
   let user=await Moralis.User.current()
 
-  if(sessionId){
+  if(sessionId||user.get("sessionId")){
+    var session="";
+    var session2="";
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    const customer = await stripe.customers.retrieve(session.customer);
+if(sessionId){
+   session = await stripe.checkout.sessions.retrieve(sessionId);
+
+}else if(user.get("sessionId")) {
+   session2 = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+   if(session2.payment_status=="paid"){
+    const query = new Moralis.Query("_User");
+
+
+      query.equalTo("sessionId",sessionId)
+      let total=await query.find()
+      if(total.length>0){
+        console.log("total "+JSON.stringify(total))
+        console.log("total "+JSON.stringify(total[0].attributes.sessionId))
+
+    setSessionId(total[0].attributes.sessionId)
     
+   }
+   return
+}
+ }
 
   
-
+ 
+  
+ 
   if(session.payment_status=="paid"){
+
+
+
+
+        setSessionId(sessionId)
+    
+
       const fechaEnUnMes = obtenerFechaMas30Dias();
     const hoy = new Date();
 console.log("entro2")
@@ -422,7 +452,7 @@ console.log("entro2")
         user.set("planEnd",fechaEnUnMes)
         user.set("payment_status",session.payment_status)
         user.set("sessionId",sessionId)
-        
+
         if(parseFloat(session.amount_total/100)==20){
  
             user.set("planName","Explorador")
@@ -492,18 +522,14 @@ if(parseFloat(session.amount_total/100)==90){
        await user.save()
       
 }else{
-  console.log(JSON.stringify("Stripe Error"))
-
-}
-
-}else{
-  console.log("entro1"+user.get("planActive"))
 
   if(user.get("planActive")){
   }else{
 
   router.push('/services');
   }
+
+}
 
 }
 
@@ -565,7 +591,16 @@ if(object){
 
 
   }
-
+  const cancelSubscription = async (subscriptionId) => {
+    try {
+      const canceledSubscription = await stripe.subscriptions.del(subscriptionId);
+      // Handle success (e.g., update your database to reflect the canceled subscription)
+      console.log('Subscription canceled:', canceledSubscription);
+    } catch (error) {
+      // Handle error (e.g., show an error message to the user)
+      console.error('Error canceling subscription:', error);
+    }
+  };
   return (
     <>
       <Head>

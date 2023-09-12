@@ -77,18 +77,14 @@ async function fetchAvatar(){
  return
 }
 
-setAvatar("")
+setLoading(false)
 
 
 }
 
 useEffect(()=>{
-  if(user){
-
-    fetchAvatar()
-  }
-
   
+  fetchAvatar()
 },[])
 async function fetchImage(){
   
@@ -101,7 +97,7 @@ async function fetchImage(){
   setLoading(true)
     // Do whatever you want with the file contents
       const binaryStr = reader.result
-       imageFile = await new File([ binaryStr ], 'avatar.png', { type: 'image' })
+       let imageFile = await new File([ binaryStr ], 'avatar.png', { type: 'image' })
 
        if(imageFile){
     
@@ -111,13 +107,10 @@ async function fetchImage(){
           image: imageFile
         })
         user.set("avatar",metadata)
-
+console.log("metadata "+metadata)
  await user.save()
-  
- await fetchAvatar()
- 
             }
-            setLoading(false)
+            fetchAvatar()
 
     }
     reader.readAsArrayBuffer(file)

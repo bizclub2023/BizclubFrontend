@@ -16,12 +16,18 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
-};
+};import { useRouter } from 'next/router';
+
 export const CompanyCard = (props) => {
   const { company } = props;
 
+  const router=useRouter();
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = async () => {
+    await router.push('/service1');
+
+    
+    setOpen(true) };
   const handleClose = () => setOpen(false);
 
   return (

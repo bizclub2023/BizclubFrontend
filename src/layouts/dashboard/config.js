@@ -9,16 +9,6 @@ import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
 
 export const itemsAdmin = [
-  
-  {
-    title: 'Servicios Profesionales',
-    path: '/services',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
-      </SvgIcon>
-    )
-  },
   {
     title: 'Panel de control',
     path: '/dashboard',
@@ -29,17 +19,18 @@ export const itemsAdmin = [
     )
   },
   {
-    title: 'Reservaciones',
-    path: '/reservas',
+    title: 'Servicios Profesionales',
+    path: '/services',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <ShoppingBagIcon />
       </SvgIcon>
     )
   },
+  
   {
-    title: 'Coworking',
-    path: '/customers',
+    title: 'Reservaciones',
+    path: '/reservas',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />

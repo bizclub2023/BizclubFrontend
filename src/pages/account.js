@@ -6,6 +6,7 @@ import { AccountProfileDetails } from 'src/sections/account/account-profile-deta
 import { useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
 import { SettingsPassword } from 'src/sections/settings/settings-password';
+import { CancelSubscription } from 'src/sections/settings/cancel-subscription';
 
 const Page = () => {
   
@@ -56,6 +57,8 @@ const Page = () => {
       <Container maxWidth="lg" style={{marginBottom:20}}>
 
       <SettingsPassword />
+      <CancelSubscription />
+
       </Container>
     </Box>
   </>

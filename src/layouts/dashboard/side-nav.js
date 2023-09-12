@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
-import { items,items2 } from './config';
+import { items,items2 ,itemsAdmin} from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
@@ -27,14 +27,17 @@ export const SideNav = (props) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const {Moralis,isAuthenticated}=useMoralis()
   const [isCustomer,setUser]=useState(false)
-  
+  const [isAdmin,setAdmin]=useState(false)
+
   async function init(){
 
 let user=await Moralis.User.current()
 
     if(user){
- 
-
+      
+      if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="printifyxyz@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"){
+setAdmin(true)
+      }
       if(user.get("sessionId")){
         const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
         console.log("session"+JSON.stringify(session))
@@ -58,7 +61,7 @@ let user=await Moralis.User.current()
  
     const interval = setInterval(() => {
       init()
-    }, 300);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
   const content = (
@@ -144,7 +147,21 @@ let user=await Moralis.User.current()
               m: 0
             }}
           >
-            {isCustomer?items2.map((item) => {
+            {isCustomer?isAdmin?itemsAdmin.map((item) => {
+              const active = item.path ? (pathname === item.path) : false;
+
+              return (
+                <SideNavItem
+                  active={active}
+                  disabled={item.disabled}
+                  external={item.external}
+                  icon={item.icon}
+                  key={item.title}
+                  path={item.path}
+                  title={item.title}
+                />
+              );
+            }):items2.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
