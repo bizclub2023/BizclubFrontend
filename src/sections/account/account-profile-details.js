@@ -42,9 +42,11 @@ export const AccountProfileDetails = (props) => {
 
 
 
-  var {Moralis,user,isAuthenticated}=useMoralis()
+  var {Moralis,isAuthenticated}=useMoralis()
  async function init(){
-
+  let user=await Moralis.User.current()
+if(user){
+  
       let username=await user.get("username")
       
       let phone=await user.get("phone")
@@ -54,6 +56,7 @@ export const AccountProfileDetails = (props) => {
    setUsername(username)
    setEmail(useremail)
 
+  }
 
   }
   
@@ -79,10 +82,10 @@ return
      []
      );
   useEffect(()=>{
-    if(user){
+   
 
       init()
-    }
+  
    },[])
     const handleSubmit = async (event) => {
 
