@@ -24,9 +24,47 @@ export const CompanyCard = (props) => {
   const router=useRouter();
   const [open, setOpen] = useState(false);
   const handleOpen = async () => {
-    await router.push('/service1');
+    if(company.title==="Contabilidad y Finanzas."){
 
+      await router.push('/serviceFinances');
+    }
+    if(company.title==="Marketing y Publicidad."){
+
+      await router.push('/marketing');
+    }
+    if(company.title==="Tecnologia y Desarrollo Web."){
+
+      await router.push('/tecnologia');
+    }
     
+    if(company.title==="Recursos Humanos."){
+
+      await router.push('/recursoshumanos');
+    }
+    if(company.title==="Servicios Legales."){
+
+      await router.push('/legalservices');
+    }
+    if(company.title==="Logística y Cadena de Suministro."){
+
+      await router.push('/logistica');
+    } 
+    if(company.title==="Oficina y Coworking"){
+
+      await router.push('/serviceCoworking');
+    }
+    if(company.title==="Investigaciòn y Analisis."){
+
+      await router.push('/investigacion');
+    }
+    if(company.title==="Capacitación y Coaching."){
+
+      await router.push('/capacitacion');
+    }
+    if(company.title==="Servicios Profesionales."){
+
+      await router.push('/serviciosProfesionales');
+    }
     setOpen(true) };
   const handleClose = () => setOpen(false);
 
@@ -78,22 +116,7 @@ export const CompanyCard = (props) => {
       >
      
 <Button onClick={handleOpen}>LEER MÁS</Button>
-<Modal
-  keepMounted
-  open={open}
-  onClose={handleClose}
-  aria-labelledby="keep-mounted-modal-title"
-  aria-describedby="keep-mounted-modal-description"
->
-  <Box sx={style}>
-    <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
-      Text in a modal
-    </Typography>
-    <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
-      Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-    </Typography>
-  </Box>
-</Modal>
+
       
       </Stack>
     </Card>

@@ -27,16 +27,6 @@ export const itemsAdmin = [
       </SvgIcon>
     )
   },
-  
-  {
-    title: 'Reservaciones',
-    path: '/reservas',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UsersIcon />
-      </SvgIcon>
-    )
-  },
   {
     title: 'Account',
     path: '/account',

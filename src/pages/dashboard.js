@@ -231,7 +231,6 @@ console.log("res "+JSON.stringify(res))
    const reserve=new Reserves() 
    let uniqueID=parseInt((Date.now()+ Math.random()).toString())
    reserve.set("uid",uniqueID)       
-   console.log("email "+user.get("email"))
 
    reserve.set("user",user.get("email"))  
    if(values.areaName!==""){
@@ -241,11 +240,7 @@ console.log("res "+JSON.stringify(res))
    } 
   reserve.set("title",JSON.stringify(event.title)  )   
  let eventitos=[]
- console.log("myevent "+(JSON.stringify(event)))
- console.log("myevent "+(JSON.stringify(event.start)))
 
-
-  console.log("myevents "+(eventitos))
   let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
 
   reserve.set("event",{
@@ -336,8 +331,9 @@ setError("")
     { field: 'username', headerName: 'Nombre', width: 200 },
 
     { field: 'planName', headerName: 'nombrePlan', width: 200 },
+    { field: 'meetingRoomHoursUsed', headerName: 'horasReservadas', width: 200 },
 
-    { field: 'meetingRoomHours', headerName: 'horasReuniones', width: 200 },
+    { field: 'meetingRoomHours', headerName: 'horasDisponibles', width: 200 },
     { field: 'planActive', headerName: 'planActive', width: 200 },
 
   ];
@@ -351,12 +347,28 @@ setError("")
      console.log(JSON.stringify(object))
     for(let i=0;i<object.length;i++){
       console.log(JSON.stringify(object[i].attributes.email))
-
+      let horasUsadas=0
+      if(object[i].attributes.planName=="Explorador"){
+        horasUsadas=0
+      }else if(object[i].attributes.planName=="Emprendedor Express"){
+        horasUsadas=3-object[i].attributes.meetingRoomHours
+      }else if(object[i].attributes.planName=="Visionario Flexible"){
+        horasUsadas=5-object[i].attributes.meetingRoomHours
+      }else if(object[i].attributes.planName=="Innovador Dedicado"){
+        horasUsadas=8-object[i].attributes.meetingRoomHours
+      }else if(object[i].attributes.planName=="Líder Elite"){
+        horasUsadas=8-object[i].attributes.meetingRoomHours
+      }else if(object[i].attributes.planName=="Corporativo Vanguardista"){
+        horasUsadas=10-object[i].attributes.meetingRoomHours
+      }else if(object[i].attributes.planName=="Titán del Éxito"){
+        horasUsadas=10-object[i].attributes.meetingRoomHours
+      }
       courses=[...courses,{
         id:i,
         planName:object[i].attributes.planName?object[i].attributes.planName:"No plan", 
         email:object[i].attributes.email??"No Verificado",
         username:object[i].attributes.username,
+        meetingRoomHoursUsed:horasUsadas??0,
 
         meetingRoomHours:object[i].attributes.meetingRoomHours??0,
         planActive:object[i].attributes.planActive??false,
@@ -372,7 +384,7 @@ setError("")
     <>
       <Head>
         <title>
-          Reservaciones | Bizclub
+          Dashboard | Bizclub
         </title>
       </Head>
       <Box
@@ -382,7 +394,7 @@ setError("")
           py: 8
         }}
       >
-      <Container   maxWidth="lg">
+      <Container maxWidth="lg">
         
       <div >
             <Typography alignSelf={"center"} variant="h4">
@@ -414,31 +426,7 @@ setError("")
           sx={{ height: '100%' }}
           value={reserves}/>
           </Grid>
-         {/*   <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
-               Area de Interes
-           </Typography>
-           
-          <TextField
-                  fullWidth
-                  
-                  name="areaName"
-                  onChange={handleChange}
-                  required
-                  hiddenLabel
-                  defaultValue={areas[0]}
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.areaName}
-                >
-                  {areas.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField> */}
+       
                 
       <div >
             <Typography alignSelf={"center"} variant="h4">

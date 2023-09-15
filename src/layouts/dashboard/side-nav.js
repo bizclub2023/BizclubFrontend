@@ -35,9 +35,6 @@ let user=await Moralis.User.current()
 
     if(user){
       
-      if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="printifyxyz@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"){
-setAdmin(true)
-      }
       if(user.get("sessionId")){
         const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
         console.log("session"+JSON.stringify(session))
@@ -55,7 +52,13 @@ setAdmin(true)
 
         }
     
-    }}
+    }
+  
+    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="printifyxyz@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"){
+      setAdmin(true)
+      console.log("entrooo")
+            }
+  }
   }
   useEffect(() => {
  
@@ -147,7 +150,7 @@ setAdmin(true)
               m: 0
             }}
           >
-            {isCustomer?isAdmin?itemsAdmin.map((item) => {
+            {isAdmin?itemsAdmin.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
@@ -161,7 +164,7 @@ setAdmin(true)
                   title={item.title}
                 />
               );
-            }):items2.map((item) => {
+            }):isCustomer?items2.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (

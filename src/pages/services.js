@@ -20,7 +20,7 @@ const companies = [
   {
     id: '2569ce0d517a7f06d3ea1f24',
     createdAt: '27/03/2019',
-    description: 'Dropbox is a file hosting service that offers cloud storage, file synchronization, a personal cloud.',
+    description: 'Ofrecemos consultoría de negocios, planificación estratégica, análisis financiero, desarrollo de modelos de negocio y otros servicios de gestión empresarial.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/public-service.png',
     title: 'Servicios Profesionales.',
     downloads: '594'
@@ -28,7 +28,7 @@ const companies = [
   {
     id: 'ed2b900870ceba72d203ec15',
     createdAt: '31/03/2019',
-    description: 'Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.',
+    description: 'Nuestros servicios incluyen desarrollo de aplicaciones, diseño y desarrollo web, mantenimiento de sitios web, seguridad informática, soluciones de comercio electrónico y otros servicios tecnológicos',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/tecnologia.png',
     title: 'Tecnologia y Desarrollo Web.',
     downloads: '625'
@@ -36,7 +36,7 @@ const companies = [
   {
     id: 'a033e38768c82fca90df3db7',
     createdAt: '03/04/2019',
-    description: 'Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.',
+    description: 'Nuestros servicios incluyen transporte, almacenamiento, gestión de inventarios, distribución y otros relacionados con la cadena de suministro.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/logistic.png',
     title: 'Logística y Cadena de Suministro.',
     downloads: '857'
@@ -44,7 +44,7 @@ const companies = [
   {
     id: '1efecb2bf6a51def9869ab0f',
     createdAt: '04/04/2019',
-    description: 'Lyft is an on-demand transportation company based in San Francisco, California.',
+    description: 'Brindamos servicios de contabilidad, auditoría, gestión de impuestos, nómina, facturación y servicios financieros.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/money-management.png',
     title: 'Contabilidad y Finanzas.',
     downloads: '406'
@@ -52,7 +52,7 @@ const companies = [
   {
     id: '1ed68149f65fbc6089b5fd07',
     createdAt: '04/04/2019',
-    description: 'GitHub is a web-based hosting service for version control of code using Git.',
+    description: 'Ofrecemos reclutamiento y selección de personal, capacitación y desarrollo de empleados, consultoría en cultura organizacional y gestión de talento.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/reunion.png',
     title: 'Recursos Humanos.',
     downloads: '835'
@@ -60,7 +60,7 @@ const companies = [
   {
     id: '5dab321376eff6177407e887',
     createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
+    description: 'Ofrecemos espacios de trabajo compartidos, alquiler de oficinas, servicios de secretaría virtual, recepción de correspondencia y apoyo administrativo.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/trabajando.png',
     title: 'Oficina y Coworking',
     downloads: '835'
@@ -68,7 +68,7 @@ const companies = [
   {
     id: '5dab321376eff6177407e887',
     createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
+    description: 'Especializados en marketing digital, diseño gráfico, gestión de redes sociales, publicidad en línea, SEO, producción de contenido y relaciones públicas.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/megafono.png',
     title: 'Marketing y Publicidad.',
     downloads: '835'
@@ -76,7 +76,7 @@ const companies = [
   {
     id: '5dab321376eff6177407e887',
     createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
+    description: 'Proporcionamos asesoría legal, propiedad intelectual, protección de datos, contratos comerciales, mediación y servicios de litigio.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/equilibrar.png',
     title: 'Servicios Legales.',
     downloads: '835'
@@ -84,9 +84,17 @@ const companies = [
   {
     id: '5dab321376eff6177407e887',
     createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
+    description: 'Realizamos estudios de mercado, análisis de la competencia, análisis de datos y otros servicios de investigación aplicados a los negocios.',
     logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/research-and-development.png',
     title: 'Investigaciòn y Analisis.',
+    downloads: '835'
+  },
+  {
+    id: '5dab321376eff6177407e887',
+    createdAt: '04/04/2019',
+    description: 'Compartimos coaching empresarial, mentoría, talleres y cursos específicos para el desarrollo de habilidades empresariales y liderazgo.',
+    logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/research-and-development.png',
+    title: 'Capacitación y Coaching.',
     downloads: '835'
   }
 ];
