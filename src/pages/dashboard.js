@@ -234,7 +234,7 @@ const customersIds = useCustomerIds(customers);
   return userCorreo
 }
 async function handleReserva(event,usermail){
-  const object = await Moralis.Cloud.run("setUserHours",{email:usermail,event:event});
+  const object =  Moralis.Cloud.run("setUserHours",{email:usermail,event:event});
        if(object==false){
          setError("No tienes Horas de Reserva")
          return
