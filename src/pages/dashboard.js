@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField } from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField,Card,Avatar ,CardContent} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { applyPagination } from 'src/utils/apply-pagination';
@@ -9,7 +9,9 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import {  useMoralis } from 'react-moralis';
 import NextLink from 'next/link';
 import { DataGrid } from '@mui/x-data-grid';
-
+import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
+import BootstrapTable from 'react-bootstrap-table-next';
+import MaterialTable from 'material-table';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Alert from '@mui/material/Alert';
@@ -18,160 +20,53 @@ import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
 import { OverviewBudget } from 'src/sections/overview/overview-budget';
-const now = new Date();
-const EVENTS = [
-  {
-    event_id: 1,
-    title: "Event 1",
-    start: new Date(new Date(new Date().setHours(9)).setMinutes(0)),
-    end: new Date(new Date(new Date().setHours(10)).setMinutes(0)),
-    disabled: true,
-    admin_id: [1, 2, 3, 4]
-  },
-  {
-    event_id: 2,
-    title: "Event 2",
-    start: new Date(new Date(new Date().setHours(10)).setMinutes(0)),
-    end: new Date(new Date(new Date().setHours(12)).setMinutes(0)),
-    admin_id: 2,
-    color: "#50b500"
-  },
-  {
-    event_id: 3,
-    title: "Event 3",
-    start: new Date(new Date(new Date().setHours(11)).setMinutes(0)),
-    end: new Date(new Date(new Date().setHours(12)).setMinutes(0)),
-    admin_id: 1,
-    editable: false,
-    deletable: false
-  },
-  {
-    event_id: 4,
-    title: "Event 4",
-    start: new Date(
-      new Date(new Date(new Date().setHours(9)).setMinutes(30)).setDate(
-        new Date().getDate() - 2
-      )
-    ),
-    end: new Date(
-      new Date(new Date(new Date().setHours(11)).setMinutes(0)).setDate(
-        new Date().getDate() - 2
-      )
-    ),
-    admin_id: 2,
-    color: "#900000"
-  },
-  {
-    event_id: 5,
-    title: "Event 5",
-    start: new Date(
-      new Date(new Date(new Date().setHours(10)).setMinutes(30)).setDate(
-        new Date().getDate() - 2
-      )
-    ),
-    end: new Date(
-      new Date(new Date(new Date().setHours(14)).setMinutes(0)).setDate(
-        new Date().getDate() - 2
-      )
-    ),
-    admin_id: 2,
-    editable: true
-  },
-  {
-    event_id: 6,
-    title: "Event 6",
-    start: new Date(
-      new Date(new Date(new Date().setHours(10)).setMinutes(30)).setDate(
-        new Date().getDate() - 4
-      )
-    ),
-    end: new Date(new Date(new Date().setHours(14)).setMinutes(0)),
-    admin_id: 2
-  }
-];
+import { ThemeProvider } from '@mui/styles'
+import { createTheme } from '@mui/material';
+import { forwardRef } from 'react';
 
-const data = [
-  {
-    id: '5e887ac47eed253091be10cb',
-    address: {
-      city: 'Cleveland',
-      country: 'USA',
-      state: 'Ohio',
-      street: '2849 Fulton Street'
-    },
-    avatar: 'https://bafybeich6o5bnenfzwhikujw62embrwsuijxhymlwc67pzr46i33ktvq6e.ipfs.nftstorage.link/crisis.png',
-    createdAt: subDays(subHours(now, 7), 1).getTime(),
-    email: 'carson.darrin@devias.io',
-    name: 'Te quedan 10 dias de plan ',
-    phone: '304-428-3097'
-  },
-  {
-    id: '5e887b209c28ac3dd97f6db5',
-    address: {
-      city: 'Atlanta',
-      country: 'USA',
-      state: 'Georgia',
-      street: '1865  Pleasant Hill Road'
-    },
-    avatar: 'https://bafybeich6o5bnenfzwhikujw62embrwsuijxhymlwc67pzr46i33ktvq6e.ipfs.nftstorage.link/crisis.png',
-    createdAt: subDays(subHours(now, 1), 2).getTime(),
-    email: 'fran.perez@devias.io',
-    name: 'Te quedan 30 dias de plan',
-    phone: '712-351-5711'
-  },
-  {
-    id: '5e887b7602bdbc4dbb234b27',
-    address: {
-      city: 'North Canton',
-      country: 'USA',
-      state: 'Ohio',
-      street: '4894  Lakeland Park Drive'
-    },
-    avatar: 'https://bafybeie4rl6impamxhmsmt46lztkpfcqmonjl25uffqsrrtnzj4rbgqiou.ipfs.nftstorage.link/alerta.png',
-    createdAt: subDays(subHours(now, 4), 2).getTime(),
-    email: 'jie.yan.song@devias.io',
-    name: 'Plan Cancelado.',
-    phone: '770-635-2682'
-  },
-];
-const style = {
-  position: 'absolute' ,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
+import AddBox from '@material-ui/icons/AddBox';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import Check from '@material-ui/icons/Check';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import Clear from '@material-ui/icons/Clear';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
+import FilterList from '@material-ui/icons/FilterList';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Remove from '@material-ui/icons/Remove';
+import SaveAlt from '@material-ui/icons/SaveAlt';
+import Search from '@material-ui/icons/Search';
+import ViewColumn from '@material-ui/icons/ViewColumn';
+
+const tableIcons = {
+  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
+  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
-
-const useCustomers = (page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [page, rowsPerPage]
-  );
-};
-
-const useCustomerIds = (customers) => {
-  return useMemo(
-    () => {
-      return customers.map((customer) => customer.id);
-    },
-    [customers]
-  );
-};
-
 const Page = () => {
-  
+  const [selectedRow, setSelectedRow] = useState();
+  const [data, setData] = useState([]);
+
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  const [planUsers,setPlanUsers]=useState(0)
 
   const [title,setTitle]=useState([])
   var [rowsDate,setRowsDate]=useState([]) 
@@ -187,12 +82,15 @@ const {Moralis}=useMoralis()
   );
   function handleDate(){  
  }
+
  const [reserves,setTotalReserves]=useState('')
  const [users,setTotalUsers]=useState('')
  const [profits,setTotalProfits]=useState(0)
 
  const [error,setError]=useState('')
 let eventos=[]
+const notify2 = () => toast("No tienes Horas de reserva");
+
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const fetchData=async ()=>{
   const query = new Moralis.Query("Reserves");
@@ -204,113 +102,41 @@ const fetchData=async ()=>{
   const query2 = new Moralis.Query("User");
   let res2=await query2.find()
   setTotalUsers(res2.length)
-
+  let datas=[]
+ 
+  setData([...datas]);
+ 
   console.log("res1 "+res2.length)
 
 }
-async function handleReserva(event){
-
-  console.log("Falta la reserva"+event.title)
-
-    if(title===""){
-      
-      setError("Falta la reserva")
-      return
-    }
-    
-
-/* 
-const query = new Moralis.Query("Reserves");
-await query.equalTo("areaName",values.areaName)
-let res=await query.first()
-console.log("res "+JSON.stringify(res))
- */
-  const Reserves=Moralis.Object.extend("Reserves")
-  let user=await Moralis.User.current()
-
-   const reserve=new Reserves() 
-   let uniqueID=parseInt((Date.now()+ Math.random()).toString())
-   reserve.set("uid",uniqueID)       
-
-   reserve.set("user",user.get("email"))  
-   if(values.areaName!==""){
-    reserve.set("areaName",values.areaName)     
-   } else{
-    reserve.set("areaName",areas[0].label)     
-   } 
-  reserve.set("title",JSON.stringify(event.title)  )   
- let eventitos=[]
-
-  let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
-
-  reserve.set("event",{
-  
-    event_id: uniqueID2,
-    title: event.title,
-    start: event.start,
-    end: event.end,
-  }) 
-  await reserve.save()
-
-    setValues({   areaName: '',
-    title: '',
-    comentary: '',})
+const onSelectionChange = (selectedRows) => {
+  console.log(selectedRows);
+};
+let userCorreo=""
 
 
-setError("")
+const [values, setValues] = useState({
+  areaName: '',
+  title: '',
+  userEmail: '',
+  comentary: '',
 
-
-}
-  const handleRowsPerPageChange = useCallback(
-    (event) => {
-      setRowsPerPage(event.target.value);
-    },
-    []
-  );
-
-  const [values, setValues] = useState({
-    areaName: '',
-    title: '',
-    comentary: '',
-
-  });
-  const handleChange = useCallback(
-    (event) => {
-      setValues((prevState) => ({
-        ...prevState,
-        [event.target.name]: event.target.value
-      }));
-    },
-    []
-  );
+});
   useEffect(() => {
+    getEvents()
     fetchData()
     fetchUsuarios()
-  }, [values.areaName]);
+  }, []);
 
-  const areas = [
-    {
-      value: 'Salon1',
-      label: 'Salon1'
-    },
-    {
-      value: 'Salon2',
-      label: 'Salon2'
-    },
-    {
-      value: 'Salon3',
-      label: 'Salon3'
-    },
-    {
-      value: 'Salon4',
-      label: 'Salon4'
-    }
-  ];
-  const columnsDate = [
-    { field: 'id', headerName: 'id', width: 70 },
-    { field: 'date', headerName: 'date', width: 500 },
-   
-  ];
+  const onRowClick = async (e, clickedRow) => {
+    setSelectedRow(clickedRow);
+    setPlanName(clickedRow.planName);
+    setPlanHours(clickedRow.meetingRoomHours);
+    setPlanUsers(clickedRow.planUsers);
+  setUserEmail(clickedRow.email)
+    await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email});
+
+  };
   
   var [myEvents,setMyEvents] = useState([]);
 
@@ -324,25 +150,47 @@ setError("")
   
  } 
    var [rowsCourse,setRowsCourse]=useState([])
+   
+  const columns = [
+    { field: 'id', title: 'id' },
+    { field: 'email', title: 'correo'},
+    { field: 'username', title: 'Nombre' },
 
-  const columnsCourse = [
-    { field: 'id', headerName: 'id', width: 70 },
-    { field: 'email', headerName: 'correo', width: 200 },
-    { field: 'username', headerName: 'Nombre', width: 200 },
+    { field: 'planName', title: 'nombrePlan' },
+    { field: 'meetingRoomHoursUsed', title: 'horasReservadas' },
 
-    { field: 'planName', headerName: 'nombrePlan', width: 200 },
-    { field: 'meetingRoomHoursUsed', headerName: 'horasReservadas', width: 200 },
-
-    { field: 'meetingRoomHours', headerName: 'horasDisponibles', width: 200 },
-    { field: 'planActive', headerName: 'planActive', width: 200 },
+    { field: 'meetingRoomHours', title: 'horasDisponibles' },
+    { field: 'planActive', title: 'planActive' },
+    { field: 'planUsers', title: 'UsuariosPermitidos' },
 
   ];
   
-  const fetchUsuarios = async () => {
- 
-    const query = new Moralis.Query("User");
+const useCustomers = (page, rowsPerPage) => {
+  return useMemo(
+    () => {
+      return applyPagination(data, page, rowsPerPage);
+    },
+    [page, rowsPerPage]
+  );
+};
 
-    const object = await query.find();
+  const customers = useCustomers(page, rowsPerPage);
+
+const useCustomerIds = (customers) => {
+  return useMemo(
+    () => {
+      return customers.map((customer) => customer.id);
+    },
+    [customers]
+  );
+};
+const customersIds = useCustomerIds(customers);
+
+
+  const fetchUsuarios = async () => {
+  
+
+    const object =  await Moralis.Cloud.run("getAllUsers");
      let courses=[]
      console.log(JSON.stringify(object))
     for(let i=0;i<object.length;i++){
@@ -363,15 +211,17 @@ setError("")
       }else if(object[i].attributes.planName=="Titán del Éxito"){
         horasUsadas=10-object[i].attributes.meetingRoomHours
       }
+  
       courses=[...courses,{
         id:i,
         planName:object[i].attributes.planName?object[i].attributes.planName:"No plan", 
-        email:object[i].attributes.email??"No Verificado",
+        email:object[i].attributes.email,
         username:object[i].attributes.username,
         meetingRoomHoursUsed:horasUsadas??0,
 
         meetingRoomHours:object[i].attributes.meetingRoomHours??0,
         planActive:object[i].attributes.planActive??false,
+        planUsers:object[i].attributes.planUsers??0,
 
        }]
   
@@ -380,6 +230,160 @@ setError("")
     setRowsCourse([...courses])
 
 }
+ function getUser(){
+  return userCorreo
+}
+async function handleReserva(event,usermail){
+  const object = await Moralis.Cloud.run("setUserHours",{email:usermail,event:event});
+       if(object==false){
+         setError("No tienes Horas de Reserva")
+         return
+       } 
+ setValues({   
+ title: '',
+ comentary: '',})
+setError("")
+}
+const customersSelection = useSelection(customersIds);
+
+async function getEvents(){
+
+
+  const query = new Moralis.Query("Reserves");
+  
+  
+    let object= await query.find()
+    eventos=[]
+
+  if(object){
+    
+    for(let i=0;i<object.length;i++){ 
+      
+      eventos=[...eventos,{
+        event_id: null,
+        title: object[i].attributes.title,
+        start: object[i].attributes.event.start,
+        end: object[i].attributes.event.end,
+        admin_id: 1,
+        editable: false,
+        deletable: false,
+        color: "#50b500"
+      }]
+   
+    }
+    console.log("eventos "+JSON.stringify(eventos))
+    calendarRef.current.scheduler.handleState([...eventos], "events")
+  }
+
+
+  }   
+   const [rebuild,setRebuild]=useState(false)
+
+
+  const handleConfirm =  (event, action) => {
+    return new Promise(async (res, rej) => {
+      let usermail=await Moralis.Cloud.run("getUserEmail");
+      console.log("usermail "+usermail)
+
+
+      var currentDate=new Date()
+      
+    const user =  await Moralis.Cloud.run("getUser",{email:usermail});
+
+if(!user){
+  
+  rej();
+  return 
+}
+console.log("query "+user.get("email"))
+      if(currentDate<=event.start&&currentDate<=event.end&&user){
+        let hoursCalculated=await diff_hours(event.start,event.end)
+
+        if(user?.get("meetingRoomHours")<hoursCalculated){
+            
+          notify2()
+          rej();
+          return
+        } 
+        console.log("test test2")
+
+const query = new Moralis.Query("Reserves");
+
+
+     let object= await query.find()
+        for(let i=0;i<object.length;i++){
+          
+
+            var dFecha1 = new Date(event.start.valueOf());
+            var dFecha2 = new Date(event.end.valueOf());
+            var dRangoInicio = new Date(object[i].attributes.event.start);
+            var dRangoFin = new Date(object[i].attributes.event.end);
+          
+            // Verificar si las fechas están dentro del rango
+            if ((dFecha1 > dRangoInicio && dFecha1 < dRangoFin) ||
+               ( dFecha2 > dRangoInicio && dFecha2 < dRangoFin)) {
+          
+                  notify3()
+                  rej();
+                  return
+              
+            }
+
+      
+        }
+      setTimeout(async () => {
+
+        await  setTitle(event.title)
+        await setMyEvents([...myEvents,event])
+      
+        if(user?.get("meetingRoomHours")<=0){
+
+          notify2()
+          rej();
+          return
+        }
+
+         await handleReserva(event,usermail)
+         await calendarRef.current.scheduler.triggerDialog(true, event
+          )
+          setRebuild(!rebuild)
+
+        await  res({
+            ...event,
+            event_id: event.event_id || Math.random()
+          });
+     
+      }, 2000);
+      
+
+    }else{
+      notify()
+         rej();
+    
+    
+    }
+    
+    return
+  })
+  }
+  
+const [planName,setPlanName]=useState("")
+const [userEmail,setUserEmail]=useState("")
+const [planHours,setPlanHours]=useState("")
+useEffect(()=>{
+  setValues((prevValues) => ({
+    ...prevValues,
+    userEmail: userEmail,
+  }));
+  console.log(userEmail)
+},[userEmail])
+const [selectionModel, setSelectionModel] = useState([]);
+const selectRow = {
+  mode: 'radio',
+  clickToSelect: true
+};
+const mytheme =  createTheme({
+});
   return (
     <>
       <Head>
@@ -426,66 +430,166 @@ setError("")
           sx={{ height: '100%' }}
           value={reserves}/>
           </Grid>
-       
-                
-      <div >
-            <Typography alignSelf={"center"} variant="h4">
+<Scheduler
+events={eventos}
+ref={calendarRef}
+
+view="week"
+translations={{
+  navigation: {
+  month: "Mes",
+  week: "Semana",
+  day: "Dia",
+  today: "Hoy"
+  },
+  form: {
+  addTitle: "Haz una reservacion",
+  editTitle: "Edit Event",
+  confirm: "Confirm",
+  delete: "Delete",
+  cancel: "Cancel"
+  },
+  event: {
+  title: "Title",
+  start: "Start",
+  end: "End",
+  allDay: "All Day"
+ },
+  validation: {
+  required: "Required",
+  invalidEmail: "Invalid Email",
+  onlyNumbers: "Only Numbers Allowed",
+  min: "Minimum {{min}} letters",
+  max: "Maximum {{max}} letters"
+  },
+  moreEvents: "More...",
+  loading: "Loading..."
+ }}
+week={{ 
+weekDays: [0, 1, 2, 3, 4, 5,6], 
+weekStartOn: 6, 
+startHour: 7, 
+endHour: 19,
+step: 60,
+navigation: true,
+disableGoToDay: false
+}}
+
+onConfirm={handleConfirm}
+eventRenderer={(event) => {
+ 
+  
+  if (event.event_id % 2 === 0) {
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "100%",
+          background: "#757575"
+        }}
+      >
+        <div
+          style={{ height: 20, background: "#ffffffb5", color: "black" }}
+        >
+          {event.start.toLocaleTimeString("en-US", {
+            timeStyle: "short"
+          })}
+        </div>
+        <div>{event.title}</div>
+        <div
+          style={{ height: 20, background: "#ffffffb5", color: "black" }}
+        >
+          {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+        </div>
+      </div>
+    );
+  }
+  return null;
+}}
+/>
+<Card  style={{width:"100%",height:"300px"}}>
+      <CardContent>
+        <Stack
+          alignItems="flex-start"
+          direction="row"
+          justifyContent="space-between"
+          spacing={3}
+        >
+          <Stack spacing={1}>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Plan Actual: {planName}
+            </Typography>
+            
+             
+            <Typography variant="h4">
+            Horas restantes en sala de reuniones: {planHours}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Usuarios Permitidos: {planUsers}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Usuario: {values.userEmail}
+            </Typography>
+           
+          </Stack>
+          <Avatar
+            sx={{
+              backgroundColor: 'primary.main',
+              height: 56,
+              width: 56
+            }}
+          >
+            <SvgIcon>
+              <CurrencyDollarIcon />
+            </SvgIcon>
+          </Avatar>
+        </Stack>
+      </CardContent>
+    </Card>
+<div >
+            <Typography marginTop={10} alignSelf={"center"} variant="h4">
               Todos los usuarios
             </Typography>
           </div>
-                  <Box         style={{marginTop:30,height:300}}
->
-      <DataGrid
-        rows={rowsCourse}
-        columns={columnsCourse}
 
-      />
-      </Box>{/* 
-        <Scheduler
-      events={eventos}
-      ref={calendarRef}
+    <Box style={{marginTop:30,height:500}}>
+    <ThemeProvider theme={mytheme}>
 
-      view="week"
-      day={null}
-      month={null}
+    <MaterialTable
+        title="Bizclub Data"
+        data={rowsCourse}
+        columns={columns}
+        icons={tableIcons}
 
-      onConfirm={handleConfirm}
+        onRowClick={onRowClick}
+        options={{     
+               sorting: true,
 
-      eventRenderer={(event) => {
-       
+          //For multi select
+          // selection: true,
+          // showSelectAllCheckbox: false,
+          // showTextRowsSelected: false,
+          rowStyle: (row) =>
+            row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
+        }}
         
-        if (+event.event_id % 2 === 0) {
+        onSelectionChange={onSelectionChange}
+      />      
+        </ThemeProvider>
 
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                height: "100%",
-                background: "#757575"
-              }}
-            >
-              <div
-                style={{ height: 20, background: "#ffffffb5", color: "black" }}
-              >
-                {event.start.toLocaleTimeString("en-US", {
-                  timeStyle: "short"
-                })}
-              </div>
-              <div>{event.title}</div>
-              <div
-                style={{ height: 20, background: "#ffffffb5", color: "black" }}
-              >
-                {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
-              </div>
-            </div>
-          );
-        }
-        return null;
-      }}
-    />
-              */}
+      </Box>
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 

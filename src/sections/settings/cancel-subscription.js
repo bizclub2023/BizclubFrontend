@@ -14,6 +14,8 @@ import { useAuth } from 'src/hooks/use-auth';
 import { useMoralis } from 'react-moralis';
 import { useEffect } from 'react';
 
+const stripe = require('stripe')("sk_test_51NV05cGc5cz7uc72E4yYvZZ2odhvKM3OT55PB7o0Uor8wWcAqZepAMvY77mwge9lk9fx8hXNo4fgXWJPfN1RAg4y00Z0xpoCXr");
+
 export const CancelSubscription = () => {
   const [values, setValues] = useState({
     password: '',
@@ -27,10 +29,13 @@ export const CancelSubscription = () => {
   const [phone,setPhone]=useState()
   useEffect(()=>{
     console.log(user)
-    setName(user?.get("username"))  
+    if(user){
+
+      setName(user?.get("username"))  
       setEmail(user?.get("email"))
       setPhone(user?.get("phone"))
     
+    }
 
   },[user])
   const handleChange = useCallback(
@@ -49,13 +54,21 @@ export const CancelSubscription = () => {
 
       
       try {      
-          
-        await auth.recoverPassword(user.get("email"));
-      
-        setTextSuccess("Revisa tu correo y haz click en el enlace enviado.")
-        console.log("Revisa tu correo")
+        const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+        const customer = await stripe.customers.retrieve(session.customer);
+        console.log("customer "+JSON.stringify(customer))
+        console.log("customer "+JSON.stringify(customer.id))
+        const subscriptions = await stripe.subscriptions.list({
+          limit: 3,
+        });
+        console.log("customer "+JSON.stringify(subscriptions.data[0].id))
+        console.log("customer "+JSON.stringify(subscriptions.data))
+for(let i=0;i<subscriptions.data.length;i++){
+  var deleted = await stripe.subscriptions.cancel(subscriptions.data[i].id);
+  console.log(deleted)
 
-       
+}
+setTextSuccess("Subscripcion Cancelada ya no se te cobrara el proximo mes")
       } catch (err) {
         console.log(err.message)
       }

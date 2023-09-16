@@ -40,8 +40,9 @@ export const AccountProfile = () =>{
   var currentUser={}
   const [name,setName]=useState()
   var [avatar,setAvatar]=useState()
-  var {Moralis,user}=useMoralis()
+  var {Moralis}=useMoralis()
 
+  const [loading,setLoading]=useState(false)
   const {
     acceptedFiles,
     fileRejections,
@@ -52,8 +53,10 @@ async function fetchAvatar(){
   let name=""
   let description=""
   let image=""
+  let user=await Moralis.User.current()
 
   if(user?.get("avatar")?.ipnft){
+    console.log("ENTROOO")
 
     setLoading(true)
 
@@ -72,6 +75,7 @@ async function fetchAvatar(){
  let final=newimage.replace( "/avatar.png",".ipfs.dweb.link/avatar.png")
  setAvatar(final)
 
+ console.log("final "+final)
  setLoading(false)
 
  return
@@ -87,7 +91,10 @@ useEffect(()=>{
   fetchAvatar()
 },[])
 async function fetchImage(){
-  
+  let user=await Moralis.User.current()
+
+  if(user){
+    
   acceptedFiles.forEach(async (file) => {
     const reader = new FileReader()
 
@@ -128,7 +135,7 @@ currentUser= {
   timezone: 'GTM-7'
 };
 }
-const [loading,setLoading]=useState(false)
+}
   useEffect(()=>{
   if(acceptedFiles.length>0){
     

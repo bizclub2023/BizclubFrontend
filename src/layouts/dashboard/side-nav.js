@@ -37,7 +37,6 @@ let user=await Moralis.User.current()
       
       if(user.get("sessionId")){
         const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
-        console.log("session"+JSON.stringify(session))
 
         if(session.payment_status==="paid"){
 
@@ -54,9 +53,8 @@ let user=await Moralis.User.current()
     
     }
   
-    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="printifyxyz@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"){
+    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
       setAdmin(true)
-      console.log("entrooo")
             }
   }
   }

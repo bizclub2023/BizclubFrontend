@@ -311,7 +311,7 @@ setError("")
     const handleConfirm = async (event, action) => {
 
       return new Promise(async (res, rej) => {
-          console.log("test test")
+          console.log("test test"+values.areaName)
 
 
         var currentDate=new Date()
@@ -320,7 +320,6 @@ setError("")
 
         if(currentDate<=event.start&&currentDate<=event.end&&user){
           let hoursCalculated=await diff_hours(event.start,event.end)
-console.log(user?.get("meetingRoomHours"))
           if(user?.get("meetingRoomHours")<hoursCalculated){
               
             notify2()
@@ -429,16 +428,8 @@ if(sessionId){
 }
  }
 
-  
- 
-  
- 
   if(session.payment_status=="paid"){
-
-
-
-
-        setSessionId(sessionId)
+setSessionId(sessionId)
     
 
       const fechaEnUnMes = obtenerFechaMas30Dias();
@@ -448,6 +439,9 @@ console.log("entro2")
         console.log("Exito");
         user.set("planActive",true)
         user.set("stripeEmail",session.customer_email)
+        console.log("stripeId "+JSON.stringify(session))
+console.log("stripeId "+session.stripe_id)
+console.log("stripeId "+session.stripeId)
 
         user.set("planEnd",fechaEnUnMes)
         user.set("payment_status",session.payment_status)
