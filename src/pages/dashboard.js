@@ -233,17 +233,6 @@ const customersIds = useCustomerIds(customers);
  function getUser(){
   return userCorreo
 }
-async function handleReserva(event,usermail){
-  const object =  Moralis.Cloud.run("setUserHours",{email:usermail,event:event});
-       if(object==false){
-         setError("No tienes Horas de Reserva")
-         return
-       } 
- setValues({   
- title: '',
- comentary: '',})
-setError("")
-}
 const customersSelection = useSelection(customersIds);
 
 async function getEvents(){
@@ -282,68 +271,21 @@ async function getEvents(){
 
   const handleConfirm =  (event, action) => {
     return new Promise(async (res, rej) => {
-      let usermail=await Moralis.Cloud.run("getUserEmail");
-      console.log("usermail "+usermail)
 
 
       var currentDate=new Date()
+
+      if(currentDate<=event.start&&currentDate<=event.end){
       
-    const user =  await Moralis.Cloud.run("getUser",{email:usermail});
-
-if(!user){
-  
-  rej();
-  return 
-}
-console.log("query "+user.get("email"))
-      if(currentDate<=event.start&&currentDate<=event.end&&user){
-        let hoursCalculated=await diff_hours(event.start,event.end)
-
-        if(user?.get("meetingRoomHours")<hoursCalculated){
-            
-          notify2()
-          rej();
-          return
-        } 
         console.log("test test2")
 
-const query = new Moralis.Query("Reserves");
-
-
-     let object= await query.find()
-        for(let i=0;i<object.length;i++){
-          
-
-            var dFecha1 = new Date(event.start.valueOf());
-            var dFecha2 = new Date(event.end.valueOf());
-            var dRangoInicio = new Date(object[i].attributes.event.start);
-            var dRangoFin = new Date(object[i].attributes.event.end);
-          
-            // Verificar si las fechas están dentro del rango
-            if ((dFecha1 > dRangoInicio && dFecha1 < dRangoFin) ||
-               ( dFecha2 > dRangoInicio && dFecha2 < dRangoFin)) {
-          
-                  notify3()
-                  rej();
-                  return
-              
-            }
-
-      
-        }
       setTimeout(async () => {
 
         await  setTitle(event.title)
         await setMyEvents([...myEvents,event])
       
-        if(user?.get("meetingRoomHours")<=0){
-
-          notify2()
-          rej();
-          return
-        }
-
-         await handleReserva(event,usermail)
+        let usermail=await Moralis.Cloud.run("getUserEmail",{event:event});
+  
          await calendarRef.current.scheduler.triggerDialog(true, event
           )
           setRebuild(!rebuild)
