@@ -94,7 +94,7 @@ const notify2 = () => toast("No tienes Horas de reserva");
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const fetchData=async ()=>{
   const query = new Moralis.Query("Reserves");
-
+  query.limit(1000)
   let res=await query.find()
   console.log("res "+res.length)
   setTotalReserves(res.length)
@@ -270,24 +270,26 @@ async function getEvents(){
 
 
   const handleConfirm =  (event, action) => {
+    
     return new Promise(async (res, rej) => {
 
 
+      if( await Moralis.Cloud.run("getUserMail",{event:event})==="" ){
+        rej()
+        return 
+      }
       var currentDate=new Date()
 
       if(currentDate<=event.start&&currentDate<=event.end){
       
-        console.log("test test2")
 
       setTimeout(async () => {
 
         await  setTitle(event.title)
         await setMyEvents([...myEvents,event])
       
-        let usermail=await Moralis.Cloud.run("getUserEmail",{event:event});
-  
-         await calendarRef.current.scheduler.triggerDialog(true, event
-          )
+        await Moralis.Cloud.run("getUserEmail",{event:event});
+          await calendarRef.current.scheduler.triggerDialog(true, event)
           setRebuild(!rebuild)
 
         await  res({
@@ -312,13 +314,6 @@ async function getEvents(){
 const [planName,setPlanName]=useState("")
 const [userEmail,setUserEmail]=useState("")
 const [planHours,setPlanHours]=useState("")
-useEffect(()=>{
-  setValues((prevValues) => ({
-    ...prevValues,
-    userEmail: userEmail,
-  }));
-  console.log(userEmail)
-},[userEmail])
 const [selectionModel, setSelectionModel] = useState([]);
 const selectRow = {
   mode: 'radio',
