@@ -89,7 +89,7 @@ const {Moralis}=useMoralis()
 
  const [error,setError]=useState('')
 let eventos=[]
-const notify2 = () => toast("No tienes Horas de reserva");
+const notify2 = () => toast("Debes seleccionar el usuario primero");
 
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const fetchData=async ()=>{
@@ -276,6 +276,8 @@ async function getEvents(){
 
       if( await Moralis.Cloud.run("getUserMail",{event:event})==="" ){
         rej()
+        notify2()
+
         return 
       }
       var currentDate=new Date()
