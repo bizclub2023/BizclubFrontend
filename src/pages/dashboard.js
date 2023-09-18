@@ -68,6 +68,10 @@ const {Moralis}=useMoralis()
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [planUsers,setPlanUsers]=useState(0)
 
+  const [planName,setPlanName]=useState("")
+  const [userEmail,setUserEmail]=useState("")
+  const [planHours,setPlanHours]=useState("")
+  const [selectionModel, setSelectionModel] = useState([]);
   const [title,setTitle]=useState([])
   var [rowsDate,setRowsDate]=useState([]) 
   const [date, setDate] = useState(null);
@@ -120,6 +124,7 @@ const [values, setValues] = useState({
   title: '',
   userEmail: '',
   comentary: '',
+  planUsers: '',
 
 });
   useEffect(() => {
@@ -132,12 +137,20 @@ const [values, setValues] = useState({
     setSelectedRow(clickedRow);
     setPlanName(clickedRow.planName);
     setPlanHours(clickedRow.meetingRoomHours);
-    setPlanUsers(clickedRow.planUsers);
   setUserEmail(clickedRow.email)
+  console.log(clickedRow.email)
+  setValues({   userEmail:clickedRow.email,planUsers:clickedRow.planUsers})
+
+
     await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email});
 
-  };
-  
+  };/* 
+  useEffect(()=>{
+if(planName!==""){
+  setUserEmail(Moralis.Cloud.run("getUserMail"))
+
+}
+  },[planName]) */
   var [myEvents,setMyEvents] = useState([]);
 
     const calendarRef = useRef(null);
@@ -240,7 +253,7 @@ async function getEvents(){
 
   const query = new Moralis.Query("Reserves");
   
-  
+  query.limit(1000)
     let object= await query.find()
     eventos=[]
 
@@ -313,10 +326,6 @@ async function getEvents(){
   })
   }
   
-const [planName,setPlanName]=useState("")
-const [userEmail,setUserEmail]=useState("")
-const [planHours,setPlanHours]=useState("")
-const [selectionModel, setSelectionModel] = useState([]);
 const selectRow = {
   mode: 'radio',
   clickToSelect: true
@@ -473,7 +482,7 @@ eventRenderer={(event) => {
               color="text.secondary"
               variant="overline"
             >
-              Usuarios Permitidos: {planUsers}
+              Usuarios Permitidos: {values.planUsers}
             </Typography>
             <Typography
               color="text.secondary"
