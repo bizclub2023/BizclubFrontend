@@ -94,6 +94,7 @@ const {Moralis}=useMoralis()
  const [error,setError]=useState('')
 let eventos=[]
 const notify2 = () => toast("Debes seleccionar el usuario primero");
+const notify3 = () => toast("No tiene horas de reserva");
 
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const fetchData=async ()=>{
@@ -131,6 +132,7 @@ const [values, setValues] = useState({
     getEvents()
     fetchData()
     fetchUsuarios()
+
   }, []);
 
   const onRowClick = async (e, clickedRow) => {
@@ -250,6 +252,7 @@ const customersSelection = useSelection(customersIds);
 
 async function getEvents(){
 
+  await Moralis.Cloud.run("setUserEmail",{email:""});
 
   const query = new Moralis.Query("Reserves");
   
@@ -286,8 +289,9 @@ async function getEvents(){
     
     return new Promise(async (res, rej) => {
 
-
-      if( await Moralis.Cloud.run("getUserMail",{event:event})==="" ){
+let res3=await Moralis.Cloud.run("getUserMail",{event:event})
+console.log("entro2 "+res3)
+      if(res3===""){
         rej()
         notify2()
 
@@ -303,14 +307,22 @@ async function getEvents(){
         await  setTitle(event.title)
         await setMyEvents([...myEvents,event])
       
-        await Moralis.Cloud.run("getUserEmail",{event:event});
+        let res2= await Moralis.Cloud.run("getUserEmail",{event:event});
+        if(!res2){
+          rej()
+          notify3()
+  
+          return 
+        }else{
           await calendarRef.current.scheduler.triggerDialog(true, event)
           setRebuild(!rebuild)
+          await  res({
+              ...event,
+              event_id: event.event_id || Math.random()
+            });
+        }
+        
 
-        await  res({
-            ...event,
-            event_id: event.event_id || Math.random()
-          });
      
       }, 2000);
       

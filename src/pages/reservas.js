@@ -525,16 +525,16 @@ if(parseFloat(session.amount_total/100)==90){
       fecthstripe()
 
     }, []);
- async function getEvents(){
+    
+async function getEvents(){
 
 
   const query = new Moralis.Query("Reserves");
   
-  if(values.areaName!==""){
-
-    await query.equalTo("areaName",values.areaName)     
+  query.limit(1000)
     let object= await query.find()
     eventos=[]
+
   if(object){
     
     for(let i=0;i<object.length;i++){ 
@@ -551,33 +551,12 @@ if(parseFloat(session.amount_total/100)==90){
       }]
    
     }
+    console.log("eventos "+JSON.stringify(eventos))
     calendarRef.current.scheduler.handleState([...eventos], "events")
   }
-}else{
-  await query.equalTo("areaName",areas[0].label)     
-  let object= await query.find()
-if(object){
-  for(let i=0;i<object.length;i++){ 
-    eventos=[...eventos,{
-      event_id: null,
-      title: object[i].attributes.title,
-      start: object[i].attributes.event.start,
-      end: object[i].attributes.event.end,
-      admin_id: 1,
-      editable: false,
-      deletable: false,
-      color: "#50b500"
-    },]
-
-      
-
-  }
-  calendarRef.current.scheduler.handleState([...eventos], "events")
-}
-}
 
 
-  }
+  }   
   const cancelSubscription = async (subscriptionId) => {
     try {
       const canceledSubscription = await stripe.subscriptions.del(subscriptionId);

@@ -13,16 +13,19 @@ export const OverviewPlan = (props) => {
   const init=async ()=>{
 
     let user=await Moralis.User.current()
-    let active=await user.get("planActive")
+    if(user){
+
+      let active=await user?.get("planActive")
     
-    let planName=await user.get("planName");    
-    let planHours=await user.get("meetingRoomHours");
-    let planUsers=await user.get("planUsers");
-    setplanUsers(planUsers)
-
-    setPlanName(planName)
-    setPlanHours(planHours)
-
+      let planName=await user?.get("planName");    
+      let planHours=await user?.get("meetingRoomHours");
+      let planUsers=await user?.get("planUsers");
+      setplanUsers(planUsers)
+  
+      setPlanName(planName)
+      setPlanHours(planHours)
+  
+    }
   }
   const {Moralis}=useMoralis()
 useEffect(()=>{
