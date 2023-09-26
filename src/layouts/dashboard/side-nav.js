@@ -11,7 +11,8 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  CircularProgress
 } from '@mui/material';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -25,16 +26,15 @@ export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const {Moralis,isAuthenticated}=useMoralis()
+  const {Moralis,user,isAuthenticated}=useMoralis()
   const [isCustomer,setUser]=useState(false)
   const [isAdmin,setAdmin]=useState(false)
 
   async function init(){
 
-let user=await Moralis.User.current()
 
     if(user){
-      
+
       if(user.get("sessionId")){
         const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
 
@@ -56,14 +56,22 @@ let user=await Moralis.User.current()
     if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
       setAdmin(true)
             }
+            setIsLoading(false)
+
   }
+
   }
+  const [isLoading,setIsLoading]=useState(true)
   useEffect(() => {
- 
+    setIsLoading(true)
+
     const interval = setInterval(() => {
+
       init()
+
     }, 1000);
     return () => clearInterval(interval);
+
   }, []);
   const content = (
     <Scrollbar
@@ -148,7 +156,7 @@ let user=await Moralis.User.current()
               m: 0
             }}
           >
-            {isAdmin?itemsAdmin.map((item) => {
+            {isLoading?<CircularProgress />:isAdmin?itemsAdmin.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (

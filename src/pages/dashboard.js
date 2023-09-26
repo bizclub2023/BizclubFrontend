@@ -129,7 +129,7 @@ const [values, setValues] = useState({
 
 });
   useEffect(() => {
-    getEvents()
+    getEvents("")
     fetchData()
     fetchUsuarios()
 
@@ -145,7 +145,7 @@ const [values, setValues] = useState({
 
 
     await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email});
-
+    getEvents(clickedRow.email)
   };/* 
   useEffect(()=>{
 if(planName!==""){
@@ -250,7 +250,7 @@ const customersIds = useCustomerIds(customers);
 }
 const customersSelection = useSelection(customersIds);
 
-async function getEvents(){
+async function getEvents(usermail){
 
   await Moralis.Cloud.run("setUserEmail",{email:""});
 
@@ -261,9 +261,11 @@ async function getEvents(){
     eventos=[]
 
   if(object){
-    
+    console.log("userEmail: "+usermail) 
+
     for(let i=0;i<object.length;i++){ 
-      
+      console.log("userEmail: "+usermail===object[i].attributes.user) 
+
       eventos=[...eventos,{
         event_id: null,
         title: object[i].attributes.title,
@@ -272,7 +274,7 @@ async function getEvents(){
         admin_id: 1,
         editable: false,
         deletable: false,
-        color: "#50b500"
+        color: usermail===object[i].attributes.user?"red":"#50b500"
       }]
    
     }
@@ -366,30 +368,88 @@ const mytheme =  createTheme({
             </Typography>
           </div>
           
-        <Stack spacing={0}>
-        <Grid
-            xs={12}
-            sm={6}
-            lg={3}
+<div >
+            <Typography marginTop={10} alignSelf={"center"} variant="h4">
+              Todos los usuarios
+            </Typography>
+          </div>
+
+    <Box style={{marginTop:30,height:500}}>
+    <ThemeProvider theme={mytheme}>
+
+    <MaterialTable
+        title="Bizclub Data"
+        data={rowsCourse}
+        columns={columns}
+        icons={tableIcons}
+        style={{height:500}}
+        onRowClick={onRowClick}
+        options={{     
+               sorting: true,
+
+          //For multi select
+          // selection: true,
+          // showSelectAllCheckbox: false,
+          // showTextRowsSelected: false,
+          rowStyle: (row) =>
+            row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
+        }}
+        
+        onSelectionChange={onSelectionChange}
+      />      
+        </ThemeProvider>
+
+      </Box>
+      
+<Card  style={{marginTop:80,justifyContent:"center",alignItems:"center",idth:"100%",height:"250px"}}>
+      <CardContent>
+        <Stack
+          alignItems="flex-start"
+          direction="row"
+          justifyContent="space-between"
+          spacing={3}
+        >
+          <Stack spacing={1}>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Plan Actual: {planName}
+            </Typography>
+            
+             
+            <Typography variant="h4">
+            Horas restantes en sala de reuniones: {planHours}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Usuarios Permitidos: {values.planUsers}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              variant="overline"
+            >
+              Usuario: {values.userEmail}
+            </Typography>
+           
+          </Stack>
+          <Avatar
+            sx={{
+              backgroundColor: 'primary.main',
+              height: 56,
+              width: 56
+            }}
           >
-            <OverviewTotalCustomers  positive={false}
-          sx={{ height: '100%' }}
-          value={users}/>
-          </Grid>
-        <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          > 
-           <OverviewTotalProfit difference={16}
-          positive={false}
-          sx={{ height: '100%' }}
-          value={profits}/>
-           <OverviewBudget difference={16}
-          positive={false}
-          sx={{ height: '100%' }}
-          value={reserves}/>
-          </Grid>
+            <SvgIcon>
+              <CurrencyDollarIcon />
+            </SvgIcon>
+          </Avatar>
+        </Stack>
+      </CardContent>
+    </Card>
+    
 <Scheduler
 events={eventos}
 ref={calendarRef}
@@ -470,86 +530,30 @@ eventRenderer={(event) => {
   return null;
 }}
 />
-<Card  style={{width:"100%",height:"300px"}}>
-      <CardContent>
-        <Stack
-          alignItems="flex-start"
-          direction="row"
-          justifyContent="space-between"
-          spacing={3}
-        >
-          <Stack spacing={1}>
-            <Typography
-              color="text.secondary"
-              variant="overline"
-            >
-              Plan Actual: {planName}
-            </Typography>
-            
-             
-            <Typography variant="h4">
-            Horas restantes en sala de reuniones: {planHours}
-            </Typography>
-            <Typography
-              color="text.secondary"
-              variant="overline"
-            >
-              Usuarios Permitidos: {values.planUsers}
-            </Typography>
-            <Typography
-              color="text.secondary"
-              variant="overline"
-            >
-              Usuario: {values.userEmail}
-            </Typography>
-           
-          </Stack>
-          <Avatar
-            sx={{
-              backgroundColor: 'primary.main',
-              height: 56,
-              width: 56
-            }}
+        <Stack spacing={0}>
+        <Grid
+            xs={12}
+            sm={6}
+            lg={3}
           >
-            <SvgIcon>
-              <CurrencyDollarIcon />
-            </SvgIcon>
-          </Avatar>
-        </Stack>
-      </CardContent>
-    </Card>
-<div >
-            <Typography marginTop={10} alignSelf={"center"} variant="h4">
-              Todos los usuarios
-            </Typography>
-          </div>
-
-    <Box style={{marginTop:30,height:500}}>
-    <ThemeProvider theme={mytheme}>
-
-    <MaterialTable
-        title="Bizclub Data"
-        data={rowsCourse}
-        columns={columns}
-        icons={tableIcons}
-
-        onRowClick={onRowClick}
-        options={{     
-               sorting: true,
-
-          //For multi select
-          // selection: true,
-          // showSelectAllCheckbox: false,
-          // showTextRowsSelected: false,
-          rowStyle: (row) =>
-            row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
-        }}
-        
-        onSelectionChange={onSelectionChange}
-      />      
-        </ThemeProvider>
-
-      </Box>
+            <OverviewTotalCustomers  positive={false}
+          sx={{ height: '100%' }}
+          value={users}/>
+          </Grid>
+        <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          > 
+           <OverviewTotalProfit difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={profits}/>
+           <OverviewBudget difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={reserves}/>
+          </Grid>
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 

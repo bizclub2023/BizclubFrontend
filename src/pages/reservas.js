@@ -275,7 +275,7 @@ setError("")
     []
     );
     useEffect(() => {
-        getEvents()
+        getEvents("")
 
     }, [values.areaName]);
 
@@ -526,8 +526,9 @@ if(parseFloat(session.amount_total/100)==90){
 
     }, []);
     
-async function getEvents(){
+    async function getEvents(usermail){
 
+      let user=await Moralis.User.current()
 
   const query = new Moralis.Query("Reserves");
   
@@ -547,7 +548,7 @@ async function getEvents(){
         admin_id: 1,
         editable: false,
         deletable: false,
-        color: "#50b500"
+        color: user.get("email")===object[i].attributes.user?"red":"#50b500"
       }]
    
     }
