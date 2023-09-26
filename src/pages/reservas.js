@@ -276,7 +276,7 @@ setError("")
     []
     );
     useEffect(() => {
-        getEvents("")
+        getEvents(values.userEmail)
 
     }, [values.areaName]);
 

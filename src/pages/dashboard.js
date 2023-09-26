@@ -129,30 +129,25 @@ const [values, setValues] = useState({
 
 });
   useEffect(() => {
-    getEvents("")
+    getEvents(userEmail)
     fetchData()
     fetchUsuarios()
 
-  }, []);
+  }, [values.areaName]);
 
   const onRowClick = async (e, clickedRow) => {
+
     setSelectedRow(clickedRow);
     setPlanName(clickedRow.planName);
     setPlanHours(clickedRow.meetingRoomHours);
   setUserEmail(clickedRow.email)
-  console.log(clickedRow.email)
+  console.log("clickedRow "+clickedRow.email)
   setValues({   userEmail:clickedRow.email,planUsers:clickedRow.planUsers})
+  await getEvents(clickedRow.email)
 
 
-    await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email});
-    getEvents(clickedRow.email)
-  };/* 
-  useEffect(()=>{
-if(planName!==""){
-  setUserEmail(Moralis.Cloud.run("getUserMail"))
+  };
 
-}
-  },[planName]) */
   var [myEvents,setMyEvents] = useState([]);
 
     const calendarRef = useRef(null);
@@ -252,11 +247,22 @@ const customersSelection = useSelection(customersIds);
  
 async function getEvents(usermail){
 
-  await Moralis.Cloud.run("setUserEmail",{email:""});
+  await Moralis.Cloud.run("setUserEmail",{email:usermail});
 
   const query = new Moralis.Query("Reserves");
   
+  if(values.areaName==="meetingRoom"){
+    query.equalTo("areaName","meetingRoom")
+
+  }else  if(values.areaName==="commonRoom"){
+    query.equalTo("areaName","commonRoom")
+
+  }else{
+    query.equalTo("areaName","meetingRoom")
+
+  }
   query.limit(1000)
+
     let object= await query.find()
     eventos=[]
 
@@ -287,12 +293,25 @@ async function getEvents(usermail){
    const [rebuild,setRebuild]=useState(false)
 
 
+   const areas = [
+    {
+      value: 'meetingRoom',
+      label: 'Salon de Reuniones'
+    },
+    {
+      value: 'commonRoom',
+      label: 'Salon Comun'
+    } 
+  ];
   const handleConfirm =  (event, action) => {
     
     return new Promise(async (res, rej) => {
 
-let res3=await Moralis.Cloud.run("getUserMail",{event:event})
+let res3=await Moralis.Cloud.run("getUserMail")
 console.log("entro2 "+res3)
+console.log("entro2 "+values.areaName)
+console.log("entro2 "+values.userEmail)
+
       if(res3===""){
         rej()
         notify2()
@@ -340,6 +359,20 @@ console.log("entro2 "+res3)
   })
   }
   
+  const handleChange = useCallback(
+    async (event) => {
+     
+      setValues((prevState) => ({
+        ...prevState,
+        [event.target.name]: event.target.value
+      }));
+      if(event.target.name==='areaName'){
+        await Moralis.Cloud.run("setSalon",{room:event.target.value});
+
+      }
+    },
+    []
+    );
 const selectRow = {
   mode: 'radio',
   clickToSelect: true
@@ -374,7 +407,7 @@ const mytheme =  createTheme({
             </Typography>
           </div>
 
-    <Box style={{marginTop:30,height:500}}>
+    <Box style={{marginTop:30,height:700}}>
     <ThemeProvider theme={mytheme}>
 
     <MaterialTable
@@ -383,6 +416,7 @@ const mytheme =  createTheme({
         columns={columns}
         icons={tableIcons}
         style={{height:500}}
+
         onRowClick={onRowClick}
         options={{     
                sorting: true,
@@ -390,7 +424,7 @@ const mytheme =  createTheme({
             row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
         }}
         
-        onSelectionChange={onSelectionChange}
+        onSelectionChange={onRowClick}
       />      
         </ThemeProvider>
 
@@ -444,7 +478,28 @@ const mytheme =  createTheme({
         </Stack>
       </CardContent>
     </Card>
-    
+    <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+            Area de Interes
+          </Typography>
+          <TextField
+                  fullWidth
+                  name="areaName"
+                  onChange={handleChange}
+                  required
+                  select
+                  hiddenLabel
+                  SelectProps={{ native: true }}
+                  value={values.areaName}
+                >
+                  {areas.map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  ))}
+                </TextField>
 <Scheduler
 events={eventos}
 ref={calendarRef}
