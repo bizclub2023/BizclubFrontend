@@ -249,7 +249,7 @@ const customersIds = useCustomerIds(customers);
   return userCorreo
 }
 const customersSelection = useSelection(customersIds);
-
+ 
 async function getEvents(usermail){
 
   await Moralis.Cloud.run("setUserEmail",{email:""});
@@ -386,11 +386,6 @@ const mytheme =  createTheme({
         onRowClick={onRowClick}
         options={{     
                sorting: true,
-
-          //For multi select
-          // selection: true,
-          // showSelectAllCheckbox: false,
-          // showTextRowsSelected: false,
           rowStyle: (row) =>
             row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
         }}
