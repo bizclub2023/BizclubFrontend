@@ -35,6 +35,10 @@ export const SideNav = (props) => {
 
     if(user){
 
+      if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
+        setAdmin(true)
+        return
+              }
       if(user.get("sessionId")){
         const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
 
@@ -47,16 +51,12 @@ export const SideNav = (props) => {
             user.set("planActive",false)
             await user.save()
           }
-          setUser(false)
 
         }
     
     }
+    setIsLoading(false)
   
-    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
-      setAdmin(true)
-            }
-            setIsLoading(false)
 
   }
 
@@ -156,7 +156,8 @@ export const SideNav = (props) => {
               m: 0
             }}
           >
-            {isLoading?<CircularProgress />:isAdmin?itemsAdmin.map((item) => {
+            {isLoading?<CircularProgress />:<div>
+            {isAdmin?itemsAdmin.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
@@ -199,6 +200,8 @@ export const SideNav = (props) => {
                 />
               );
             })}
+            </div>}
+            
           </Stack>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />

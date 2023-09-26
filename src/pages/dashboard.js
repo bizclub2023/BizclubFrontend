@@ -362,14 +362,14 @@ console.log("entro2 "+values.userEmail)
   const handleChange = useCallback(
     async (event) => {
      
+      if(event.target.name==='areaName'){
+         Moralis.Cloud.run("setSalon",{room:event.target.value});
+
+      }
       setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
       }));
-      if(event.target.name==='areaName'){
-        await Moralis.Cloud.run("setSalon",{room:event.target.value});
-
-      }
     },
     []
     );
@@ -424,7 +424,6 @@ const mytheme =  createTheme({
             row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
         }}
         
-        onSelectionChange={onRowClick}
       />      
         </ThemeProvider>
 
