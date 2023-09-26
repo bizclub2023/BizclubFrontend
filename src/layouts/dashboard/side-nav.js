@@ -27,7 +27,7 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const {Moralis,user,isAuthenticated}=useMoralis()
-  const [isCustomer,setUser]=useState(false)
+  const [isCustomer,setIsCostumer]=useState(false)
   const [isAdmin,setAdmin]=useState(false)
 
   async function init(){
@@ -39,15 +39,19 @@ try{
       const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
 
       if(session.payment_status==="paid"){
-
-        setUser(true)
+console.log("session.payment_status "+session.payment_status)
+      await setIsCostumer(true)
+      return
       }else{
         if(user.get("planActive")){
 
           user.set("planActive",false)
+          await setIsCostumer(false)
+
           await user.save()
         }
-
+        await setIsCostumer(false)
+return
       }
       
     if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
@@ -177,7 +181,8 @@ try{
                   title={item.title}
                 />
               );
-            }):isCustomer?items2.map((item) => {
+            }):null}
+            {isCustomer?items2.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
