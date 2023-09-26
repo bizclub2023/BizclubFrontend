@@ -32,33 +32,39 @@ export const SideNav = (props) => {
 
   async function init(){
 
+try{
+  if(user){
 
-    if(user){
+    if(user.get("sessionId")){
+      const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
 
-      if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
-        setAdmin(true)
-        return
-              }
-      if(user.get("sessionId")){
-        const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+      if(session.payment_status==="paid"){
 
-        if(session.payment_status==="paid"){
+        setUser(true)
+      }else{
+        if(user.get("planActive")){
 
-          setUser(true)
-        }else{
-          if(user.get("planActive")){
-
-            user.set("planActive",false)
-            await user.save()
-          }
-
+          user.set("planActive",false)
+          await user.save()
         }
-    
-    }
-    setIsLoading(false)
+
+      }
+      
+    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
+      setAdmin(true)
+      
+            }
+  
+  }
+  setIsLoading(false)
+}} catch(e){
+  console.log(e.message)
+  setIsLoading(false)
+
+}
+   
   
 
-  }
 
   }
   const [isLoading,setIsLoading]=useState(true)
