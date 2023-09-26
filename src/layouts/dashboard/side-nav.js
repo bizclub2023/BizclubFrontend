@@ -41,26 +41,30 @@ try{
       if(session.payment_status==="paid"){
 console.log("session.payment_status "+session.payment_status)
       await setIsCostumer(true)
+      await setIsLoading(false)
+
       return
       }else{
         if(user.get("planActive")){
 
           user.set("planActive",false)
-          await setIsCostumer(false)
-
           await user.save()
-        }
+        }        
+          await setIsLoading(false)
+
+
         await setIsCostumer(false)
-return
+
       }
       
     if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
       setAdmin(true)
       
             }
-  
+            setIsLoading(false)
+
+            return
   }
-  setIsLoading(false)
 }} catch(e){
   console.log(e.message)
   setIsLoading(false)
@@ -73,7 +77,7 @@ return
   }
   const [isLoading,setIsLoading]=useState(true)
   useEffect(() => {
-    setIsLoading(true)
+    init()
 
     const interval = setInterval(() => {
 
