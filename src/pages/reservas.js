@@ -287,7 +287,7 @@ setError("")
       },
       {
         value: 'commonRoom',
-        label: 'Salon Comun'
+        label: 'Sala de uso compartido'
       } 
     ];
     const columnsDate = [

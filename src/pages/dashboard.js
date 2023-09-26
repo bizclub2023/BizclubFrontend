@@ -300,7 +300,7 @@ async function getEvents(usermail){
     },
     {
       value: 'commonRoom',
-      label: 'Salon Comun'
+      label: 'Sala de uso compartido'
     } 
   ];
   const handleConfirm =  (event, action) => {
