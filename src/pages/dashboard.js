@@ -159,8 +159,19 @@ const [values, setValues] = useState({
   return Math.abs(Math.round(diff));
   
  } 
+ var [rowsCourseReserves,setRowsCourseReserves]=useState([])
+
    var [rowsCourse,setRowsCourse]=useState([])
    
+  const columnsReserve = [
+    { field: 'id', title: 'id' },
+    { field: 'user', title: 'correo'},
+    { field: 'username', title: 'Nombre' },
+
+    { field: 'start', title: 'Empieza' },
+    { field: 'end', title: 'Empieza' },
+
+  ];
   const columns = [
     { field: 'id', title: 'id' },
     { field: 'email', title: 'correo'},
@@ -265,6 +276,7 @@ async function getEvents(usermail){
 
     let object= await query.find()
     eventos=[]
+    let eventosUser=[]
 
   if(object){
     console.log("userEmail: "+usermail) 
@@ -282,8 +294,19 @@ async function getEvents(usermail){
         deletable: false,
         color: usermail===object[i].attributes.user?"red":"#50b500"
       }]
+      if(usermail===object[i].attributes.user){
+        eventosUser=[...eventosUser,{
+          id:i,
+          title: object[i].attributes.title,
+          start: object[i].attributes.event.start.toString(),
+          end: (object[i].attributes.event.end).toString(),
+          user:object[i].attributes.user
+          }]
+      }
    
     }
+    setRowsCourseReserves([...eventosUser])
+
     console.log("eventos "+JSON.stringify(eventos))
     calendarRef.current.scheduler.handleState([...eventos], "events")
   }
@@ -400,7 +423,29 @@ const mytheme =  createTheme({
               Panel de Control
             </Typography>
           </div>
-          
+          <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          >
+            <OverviewTotalCustomers  positive={false}
+          sx={{ height: '100%' }}
+          value={users}/>
+          </Grid>
+        <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          > 
+           <OverviewTotalProfit difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={profits}/>
+           <OverviewBudget difference={16}
+          positive={false}
+          sx={{ height: '100%' }}
+          value={reserves}/>
+          </Grid>
 <div >
             <Typography marginTop={10} alignSelf={"center"} variant="h4">
               Todos los usuarios
@@ -580,29 +625,28 @@ eventRenderer={(event) => {
 }}
 />
         <Stack spacing={0}>
-        <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTotalCustomers  positive={false}
-          sx={{ height: '100%' }}
-          value={users}/>
-          </Grid>
-        <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          > 
-           <OverviewTotalProfit difference={16}
-          positive={false}
-          sx={{ height: '100%' }}
-          value={profits}/>
-           <OverviewBudget difference={16}
-          positive={false}
-          sx={{ height: '100%' }}
-          value={reserves}/>
-          </Grid>
+      
+          <Box style={{marginTop:30,height:700}}>
+    <ThemeProvider theme={mytheme}>
+
+    <MaterialTable
+        title="Reservas del Usuario"
+        data={rowsCourseReserves}
+        columns={columnsReserve}
+        icons={tableIcons}
+        style={{height:500}}
+
+        options={{     
+               sorting: true,
+          rowStyle: (row) =>
+            row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
+        }}
+        
+      />      
+        </ThemeProvider>
+
+      </Box>
+      
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
