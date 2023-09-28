@@ -169,7 +169,7 @@ const [values, setValues] = useState({
     { field: 'username', title: 'Nombre' },
 
     { field: 'start', title: 'Empieza' },
-    { field: 'end', title: 'Empieza' },
+    { field: 'end', title: 'Termina' },
     { field: 'room', title: 'Sala' },
 
   ];
@@ -296,6 +296,9 @@ async function getEvents(usermail){
         color: usermail===object[i].attributes.user?"red":"#50b500"
       }]
       if(usermail===object[i].attributes.user){
+        let currentDate=new Date()
+        if(currentDate>=object[i].attributes.event.start){
+
         eventosUser=[...eventosUser,{
           id:i,
           title: object[i].attributes.title,
@@ -305,6 +308,8 @@ async function getEvents(usermail){
           room:object[i].attributes.areaName==="meetingRoom"?"SalaReuniones":"SalonComun",
 
           }]
+          
+        }
       }
    
     }
