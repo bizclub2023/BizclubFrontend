@@ -170,6 +170,7 @@ const [values, setValues] = useState({
 
     { field: 'start', title: 'Empieza' },
     { field: 'end', title: 'Empieza' },
+    { field: 'room', title: 'Sala' },
 
   ];
   const columns = [
@@ -300,7 +301,9 @@ async function getEvents(usermail){
           title: object[i].attributes.title,
           start: object[i].attributes.event.start.toString(),
           end: (object[i].attributes.event.end).toString(),
-          user:object[i].attributes.user
+          user:object[i].attributes.user,      
+          room:object[i].attributes.areaName==="meetingRoom"?"SalaReuniones":"SalonComun",
+
           }]
       }
    
@@ -423,6 +426,11 @@ const mytheme =  createTheme({
               Panel de Control
             </Typography>
           </div>
+<div >
+            <Typography marginTop={10} alignSelf={"center"} variant="h4">
+              Todos los usuarios
+            </Typography>
+          </div>
           <Grid
             xs={12}
             sm={6}
@@ -446,13 +454,8 @@ const mytheme =  createTheme({
           sx={{ height: '100%' }}
           value={reserves}/>
           </Grid>
-<div >
-            <Typography marginTop={10} alignSelf={"center"} variant="h4">
-              Todos los usuarios
-            </Typography>
-          </div>
-
-    <Box style={{marginTop:30,height:700}}>
+    <Box style={{marginTop:30,marginBottom:40,maxHeight:650}}>
+      
     <ThemeProvider theme={mytheme}>
 
     <MaterialTable
@@ -463,7 +466,10 @@ const mytheme =  createTheme({
         style={{height:500}}
 
         onRowClick={onRowClick}
-        options={{     
+        options={{  
+          rowStyle:{paddingTop:50},
+          columnResizable:false,
+          emptyRowsWhenPaging: false , 
                sorting: true,
           rowStyle: (row) =>
             row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
@@ -626,7 +632,7 @@ eventRenderer={(event) => {
 />
         <Stack spacing={0}>
       
-          <Box style={{marginTop:30,height:700}}>
+          <Box style={{marginTop:30,marginBottom:50,maxHeight:700}}>
     <ThemeProvider theme={mytheme}>
 
     <MaterialTable
@@ -634,9 +640,9 @@ eventRenderer={(event) => {
         data={rowsCourseReserves}
         columns={columnsReserve}
         icons={tableIcons}
-        style={{height:500}}
+        style={{height:700}}
 
-        options={{     
+        options={{   
                sorting: true,
           rowStyle: (row) =>
             row?.id === selectedRow?.id ? { background: "#e7e7e7" } : {},
@@ -645,11 +651,12 @@ eventRenderer={(event) => {
       />      
         </ThemeProvider>
 
-      </Box>
       
+    
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
+                </Box>
         </Stack>
       </Container>
      
