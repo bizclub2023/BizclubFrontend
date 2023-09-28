@@ -26,14 +26,16 @@ export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const {Moralis,user,isAuthenticated}=useMoralis()
+  const {Moralis,isAuthenticated}=useMoralis()
   const [isCustomer,setIsCostumer]=useState(false)
   const [isAdmin,setAdmin]=useState(false)
 
   async function init(){
 
 try{
-  if(user){
+    let user=await Moralis.User.current()
+
+    if(user){
 
     if(user.get("sessionId")){
       const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
@@ -42,33 +44,43 @@ try{
 console.log("session.payment_status "+session.payment_status)
       await setIsCostumer(true)
       await setIsLoading(false)
+      console.log("aqui3 ")
 
-      return
+      
+    
+
       }else{
         if(user.get("planActive")){
 
           user.set("planActive",false)
           await user.save()
         }        
-          await setIsLoading(false)
 
 
         await setIsCostumer(false)
 
       }
       
-    if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
-      setAdmin(true)
-      
-            }
-            setIsLoading(false)
+                    await setIsLoading(false)
 
-            return
+            
   }
+  
+  if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
+    await setAdmin(true)
+    await setIsCostumer(false)
+
+          }
+          
+    await setIsLoading(false)
 }} catch(e){
   console.log(e.message)
   setIsLoading(false)
 
+  await setAdmin(false)
+  await setIsCostumer(false)
+
+  await setIsLoading(false)
 }
    
   
@@ -171,7 +183,8 @@ console.log("session.payment_status "+session.payment_status)
             }}
           >
             {isLoading?<CircularProgress />:<div>
-            {isAdmin?itemsAdmin.map((item) => {
+        
+            {isCustomer?items2.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
@@ -185,8 +198,7 @@ console.log("session.payment_status "+session.payment_status)
                   title={item.title}
                 />
               );
-            }):null}
-            {isCustomer?items2.map((item) => {
+            }):isAdmin?itemsAdmin.map((item) => {
               const active = item.path ? (pathname === item.path) : false;
 
               return (
