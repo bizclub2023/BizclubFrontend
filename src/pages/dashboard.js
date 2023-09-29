@@ -94,7 +94,7 @@ const {Moralis}=useMoralis()
  const [error,setError]=useState('')
 let eventos=[]
 const notify2 = () => toast("Debes seleccionar el usuario primero");
-const notify3 = () => toast("No tiene horas de reserva");
+const notify3 = () => toast("Verifica las horas y fechas");
 
 const notify = () => toast("Elige la fecha de hoy o dias futuros");
 const fetchData=async ()=>{
@@ -128,6 +128,13 @@ const [values, setValues] = useState({
   planUsers: '',
 
 });
+const fetchUser=async (e)=>{
+  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+}
+
+useEffect(()=>{
+fetchUser()
+},[])
   useEffect(() => {
     getEvents(userEmail)
     fetchData()
@@ -258,18 +265,20 @@ const customersIds = useCustomerIds(customers);
 const customersSelection = useSelection(customersIds);
  
 async function getEvents(usermail){
-
+  if(usermail===""){
+    return
+  }
   await Moralis.Cloud.run("setUserEmail",{email:usermail});
-
+console.log("usermail "+usermail)
   const query = new Moralis.Query("Reserves");
   
-  if(values.areaName==="meetingRoom"){
+  if(await Moralis.Cloud.run("getSalon")==="meetingRoom"){
     query.equalTo("areaName","meetingRoom")
 
-  }else  if(values.areaName==="commonRoom"){
+  }else  if(await Moralis.Cloud.run("getSalon")==="commonRoom"){
     query.equalTo("areaName","commonRoom")
 
-  }else{
+  } else {
     query.equalTo("areaName","meetingRoom")
 
   }
@@ -280,10 +289,10 @@ async function getEvents(usermail){
     let eventosUser=[]
 
   if(object){
-    console.log("userEmail: "+usermail) 
+    let currentDate=new Date()
 
     for(let i=0;i<object.length;i++){ 
-      console.log("userEmail: "+usermail===object[i].attributes.user) 
+      if(currentDate>=object[i].attributes.event.start){
 
       eventos=[...eventos,{
         event_id: null,
@@ -295,8 +304,20 @@ async function getEvents(usermail){
         deletable: false,
         color: usermail===object[i].attributes.user?"red":"#50b500"
       }]
+    } else {
+        eventos=[...eventos,{
+          event_id: null,
+          title: object[i].attributes.title,
+          start: object[i].attributes.event.start,
+          end: object[i].attributes.event.end,
+          admin_id: 1,
+          editable: false,
+          deletable: false,
+          color: usermail===object[i].attributes.user?"blue":"#50b500"
+        }]
+      }
+
       if(usermail===object[i].attributes.user){
-        let currentDate=new Date()
         if(currentDate>=object[i].attributes.event.start){
 
         eventosUser=[...eventosUser,{
@@ -306,7 +327,6 @@ async function getEvents(usermail){
           end: (object[i].attributes.event.end).toString(),
           user:object[i].attributes.user,      
           room:object[i].attributes.areaName==="meetingRoom"?"SalaReuniones":"SalonComun",
-
           }]
           
         }
@@ -339,17 +359,14 @@ async function getEvents(usermail){
     return new Promise(async (res, rej) => {
 
 let res3=await Moralis.Cloud.run("getUserMail")
-console.log("entro2 "+res3)
-console.log("entro2 "+values.areaName)
-console.log("entro2 "+values.userEmail)
 
       if(res3===""){
         rej()
         notify2()
-
         return 
       }
       var currentDate=new Date()
+
 
       if(currentDate<=event.start&&currentDate<=event.end){
       
@@ -358,14 +375,15 @@ console.log("entro2 "+values.userEmail)
 
         await  setTitle(event.title)
         await setMyEvents([...myEvents,event])
-      
+      console.log(JSON.stringify(event))
         let res2= await Moralis.Cloud.run("getUserEmail",{event:event});
-        if(!res2){
+      console.log("res2 "+JSON.stringify(res2))
+        if(!res2.success) {
           rej()
           notify3()
   
           return 
-        }else{
+        } else {
           await calendarRef.current.scheduler.triggerDialog(true, event)
           setRebuild(!rebuild)
           await  res({
@@ -393,14 +411,15 @@ console.log("entro2 "+values.userEmail)
   const handleChange = useCallback(
     async (event) => {
      
-      if(event.target.name==='areaName'){
-         Moralis.Cloud.run("setSalon",{room:event.target.value});
-
-      }
       setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
       }));
+      
+      if(event.target.name==='areaName'){
+        Moralis.Cloud.run("setSalon",{room:event.target.value});
+
+     }
     },
     []
     );
@@ -566,7 +585,7 @@ translations={{
   week: "Semana",
   day: "Dia",
   today: "Hoy"
-  },
+  }, 
   form: {
   addTitle: "Haz una reservacion",
   editTitle: "Edit Event",

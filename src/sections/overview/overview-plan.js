@@ -75,10 +75,6 @@ useEffect(()=>{
 
             </Typography>
             <Typography variant="h7">
-            - Conexión a Internet: Acceso a internet de alta velocidad para garantizar una óptima
-            productividad.
-            </Typography>
-            <Typography variant="h7">
             - Horas de Sala de Reuniones: 3 horas al mes en salas de reuniones reservables.
             </Typography>
             <Typography variant="h7">

@@ -95,7 +95,7 @@ console.log("session.payment_status "+session.payment_status)
 
       init()
 
-    }, 1000);
+    }, 5000);
     return () => clearInterval(interval);
 
   }, []);

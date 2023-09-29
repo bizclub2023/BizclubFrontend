@@ -168,7 +168,7 @@ const Page = () => {
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  
+
   const [title,setTitle]=useState([])
  const [error,setError]=useState('')
 let eventos=[]
@@ -179,17 +179,16 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
     async function handleReserva(event){
 
 
-    if(title===""){
-      setError("Falta la reserva")
-      return
-    }    
+      if(title===""){
+        setError("Falta la reserva")
+        return
+      }    
 
        
-    let user=await Moralis.User.current()
-let active=await user.get("planActive")
+      let user=await Moralis.User.current()
+      let active=await user.get("planActive")
 
-let planName=await user.get("planName");
-
+      let planName=await user.get("planName");
       if(active){
 
         if(planName!==""){
@@ -218,6 +217,7 @@ let planName=await user.get("planName");
 
    reserve.set("user",user.get("email"))  
    let areaName=await Moralis.Cloud.run("getSalon")
+   console.log("areaName "+values.areaName)
    if(areaName!==""){
   
     reserve.set("areaName", areaName )     
@@ -238,10 +238,7 @@ let planName=await user.get("planName");
     end: event.end,
   }) 
   await reserve.save()
-
-    setValues({ areaName:areaName,  
-    title: '',
-    comentary: '',})
+return true
 
 
 setError("")
@@ -254,9 +251,9 @@ setError("")
     },
     []
   );
-
+var areaFinal=""
   const [values, setValues] = useState({
-    areaName: '',
+    areaName:  "",
     title: '',
     comentary: '',
 
@@ -268,10 +265,11 @@ setError("")
         ...prevState,
         [event.target.name]: event.target.value
       }));
-      if(event.target.name==='areaName'){
-        await Moralis.Cloud.run("setSalon",{room:event.target.value});
 
-      }
+      if(event.target.name==='areaName'){
+        Moralis.Cloud.run("setSalon",{room:event.target.value});
+
+     }
     },
     []
     );
@@ -308,87 +306,65 @@ setError("")
   
     const calendarRef = useRef(null);
     const [rebuild,setRebuild]=useState(false)
-    
     const handleConfirm = async (event, action) => {
-
-      return new Promise(async (res, rej) => {
-          console.log("test test"+values.areaName)
-
-
-        var currentDate=new Date()
-            
-        let user=await Moralis.User.current()
-
-        if(currentDate<=event.start&&currentDate<=event.end&&user){
-          let hoursCalculated=await diff_hours(event.start,event.end)
-          if(user?.get("meetingRoomHours")<hoursCalculated){
-              
-            notify2()
-            rej();
-            return
-          }
-          console.log("test test2")
-
-  const query = new Moralis.Query("Reserves");
-  
-
-       let object= await query.find()
-          for(let i=0;i<object.length;i++){
-            
-
-              var dFecha1 = new Date(event.start.valueOf());
-              var dFecha2 = new Date(event.end.valueOf());
-              var dRangoInicio = new Date(object[i].attributes.event.start);
-              var dRangoFin = new Date(object[i].attributes.event.end);
-            
-              // Verificar si las fechas están dentro del rango
-              if ((dFecha1 > dRangoInicio && dFecha1 < dRangoFin) ||
-                 ( dFecha2 > dRangoInicio && dFecha2 < dRangoFin)) {
-            
-                    notify3()
-                    rej();
-                    return
-                
-              }
-
-        
-          }
-        setTimeout(async () => {
-          console.log("test test5")
-
-          await  setTitle(event.title)
-          await setMyEvents([...myEvents,event])
-        
-          if(user?.get("meetingRoomHours")<=0){
-
-            notify2()
-            rej();
-            return
-          }
-
-           await handleReserva(event)
-           await calendarRef.current.scheduler.triggerDialog(true, event
-            )
-            setRebuild(!rebuild)
-
-          await  res({
+      return await new Promise(async (res, rej) => {
+        try {
+          const currentDate = new Date();
+          const user = await Moralis.User.current();
+    
+          if (currentDate <= event.start && currentDate <= event.end && user) {
+            const hoursCalculated = await diff_hours(event.start, event.end);
+    
+            if (user.get("meetingRoomHours") < hoursCalculated) {
+              notify2();
+              rej();
+              return;
+            }
+    
+            const areaName = await Moralis.Cloud.run("getSalon");
+    
+            // Consultar eventos que se superponen con la nueva reserva
+            const query = new Moralis.Query("Reserves");
+            query.equalTo("areaName", areaName);
+            query.greaterThanOrEqualTo("event.start", event.start);
+            query.lessThanOrEqualTo("event.end", event.end);
+            let conflictingEvents = await query.find();
+    
+            // Verificar si hay eventos que se superponen
+            if (conflictingEvents.length > 0) {
+              notify3();
+              rej();
+              return;
+            }
+    
+            await setTitle(event.title);
+            await setMyEvents([...myEvents, event]);
+    
+            if (user.get("meetingRoomHours") <= 0) {
+              notify2();
+              rej();
+              return;
+            }
+    
+           let res= await handleReserva(event);
+           
+            await calendarRef.current.scheduler.triggerDialog(true, event);
+            setRebuild(!rebuild);
+    
+            await res({
               ...event,
-              event_id: event.event_id || Math.random()
+              event_id: event.event_id || Math.random(),
             });
-       
-        }, 2000);
-        
- 
-      }else{
-        notify()
-           rej();
-      
-      
-      }
-      
-      return
+          } else {
+            notify();
+            rej();
+          }
+        } catch (error) {
+          console.error("Error al confirmar el evento:", error);
+          rej();
+        }
       });
-    }
+    };
     
   const router=useRouter();
   const sessionId=useRouter().query.session_id ;
@@ -399,9 +375,12 @@ setError("")
     
     return formatoISO;
   }
-  
 async function fecthstripe(){
   let user=await Moralis.User.current()
+ console.log(" fecthstripe")
+ await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+
+ console.log("salon ppl "+await Moralis.Cloud.run("getSalon"))
 
   if(sessionId||user.get("sessionId")){
     var session="";
@@ -523,27 +502,31 @@ if(parseFloat(session.amount_total/100)==90){
 
 }
     useEffect(() => {
+    
+        // componentwillunmount in functional component.
+        // Anything in here is fired on component unmount.
+  
       fecthstripe()
-
+    
     }, []);
     
     async function getEvents(usermail){
-
       let user=await Moralis.User.current()
+let salon=await Moralis.Cloud.run("getSalon")
+  const query =await new Moralis.Query("Reserves");
+  console.log("getEvents salon "+salon)
+  await setValues({areaName:salon})
+  if(salon==="meetingRoom"){
+    await query.equalTo("areaName","meetingRoom")
 
-  const query = new Moralis.Query("Reserves");
-  console.log("values.areaName "+values.areaName)
-  if(values.areaName==="meetingRoom"){
-    query.equalTo("areaName","meetingRoom")
-
-  }else  if(values.areaName==="commonRoom"){
-    query.equalTo("areaName","commonRoom")
+  }else if(salon==="commonRoom"){
+    await query.equalTo("areaName","commonRoom")
 
   }else{
-    query.equalTo("areaName","meetingRoom")
+   await query.equalTo("areaName","meetingRoom")
 
   }
-  query.limit(1000)
+  await query.limit(1000)
     let object= await query.find()
     eventos=[]
 
@@ -563,8 +546,10 @@ if(parseFloat(session.amount_total/100)==90){
       }]
    
     }
+    console.log("eventos "+JSON.stringify(salon))
+
     console.log("eventos "+JSON.stringify(eventos))
-    calendarRef.current.scheduler.handleState([...eventos], "events")
+    await  calendarRef.current.scheduler.handleState([...eventos], "events")
   }
 
 
@@ -602,10 +587,11 @@ if(parseFloat(session.amount_total/100)==90){
           </div>
         <Stack spacing={0}>
         <OverviewPlan rebuild={rebuild} difference={16}/>
-
+ 
           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
             Area de Interes
           </Typography>
+          
           <TextField
                   fullWidth
                   name="areaName"
