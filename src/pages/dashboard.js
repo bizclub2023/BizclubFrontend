@@ -318,7 +318,7 @@ console.log("usermail "+usermail)
       }
 
       if(usermail===object[i].attributes.user){
-        if(currentDate>=object[i].attributes.event.start){
+        if(currentDate<=object[i].attributes.event.start){
 
         eventosUser=[...eventosUser,{
           id:i,
@@ -333,9 +333,10 @@ console.log("usermail "+usermail)
       }
    
     }
-    setRowsCourseReserves([...eventosUser])
+    await setRowsCourseReserves([...eventosUser])
+    console.log("eventoseventosUser "+JSON.stringify(usermail))
 
-    console.log("eventos "+JSON.stringify(eventos))
+    console.log("eventoseventosUser "+JSON.stringify(eventosUser))
     calendarRef.current.scheduler.handleState([...eventos], "events")
   }
 
