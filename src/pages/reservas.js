@@ -346,7 +346,7 @@ var areaFinal=""
               return;
             }
     
-           let res= await handleReserva(event);
+           await handleReserva(event);
            
             await calendarRef.current.scheduler.triggerDialog(true, event);
             setRebuild(!rebuild);
