@@ -23,7 +23,6 @@ import { OverviewBudget } from 'src/sections/overview/overview-budget';
 import { ThemeProvider } from '@mui/styles'
 import { createTheme } from '@mui/material';
 import { forwardRef } from 'react';
-
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -359,17 +358,14 @@ console.log("usermail "+usermail)
     
     return new Promise(async (res, rej) => {
 
-let res3=await Moralis.Cloud.run("getUserMail")
 
-      if(res3===""){
-        rej()
-        notify2()
-        return 
-      }
       var currentDate=new Date()
+      const sevenPMStart = new Date(event.start);
+          const sevenPMEnd = new Date(event.end);
+          sevenPMEnd.setHours(19, 0, 0, 0);
+          sevenPMStart.setHours(18, 0, 0, 0);
 
-
-      if(currentDate<=event.start&&currentDate<=event.end){
+      if(currentDate<=event.start&&currentDate<=event.end && (event.start <= sevenPMStart  || event.end <= sevenPMEnd)){
       
 
       setTimeout(async () => {
@@ -391,6 +387,8 @@ let res3=await Moralis.Cloud.run("getUserMail")
               ...event,
               event_id: event.event_id || Math.random()
             });
+            getEvents(userEmail)
+
         }
         
 
@@ -492,7 +490,6 @@ const mytheme =  createTheme({
 
         onRowClick={onRowClick}
         options={{  
-          rowStyle:{paddingTop:50},
           columnResizable:false,
           emptyRowsWhenPaging: false , 
                sorting: true,
@@ -614,7 +611,7 @@ week={{
 weekDays: [0, 1, 2, 3, 4, 5,6], 
 weekStartOn: 6, 
 startHour: 7, 
-endHour: 19,
+endHour: 20,
 step: 60,
 navigation: true,
 disableGoToDay: false

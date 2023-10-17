@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 const stripe = require('stripe')("sk_test_51NV05cGc5cz7uc72E4yYvZZ2odhvKM3OT55PB7o0Uor8wWcAqZepAMvY77mwge9lk9fx8hXNo4fgXWJPfN1RAg4y00Z0xpoCXr");
 
 import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
+import { OverviewPlanExpress } from 'src/sections/overview/overview-plan-express';
 const now = new Date();
 const EVENTS = [
   {
@@ -196,7 +197,7 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
             setError("No tienes Horas de Reserva")
             return
           } else {
-            let hoursCalculated=await diff_hours(event.start,event.end)
+            let hoursCalculated= await diff_hours(event.start,event.end)
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
           }
@@ -218,10 +219,9 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
    reserve.set("user",user.get("email"))  
    let areaName=await Moralis.Cloud.run("getSalon")
    console.log("areaName "+values.areaName)
-   if(areaName!==""){
-  
+   if(areaName!=="") {  
     reserve.set("areaName", areaName )     
-   } else{
+   } else {
     reserve.set("areaName",areas[0].value)     
    } 
   reserve.set("title",JSON.stringify(event.title)  )   
@@ -241,7 +241,6 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
 return true
 
 
-setError("")
 
 
 }
@@ -265,61 +264,115 @@ var areaFinal=""
         ...prevState,
         [event.target.name]: event.target.value
       }));
-
+      console.log("event.target.value "+event.target.value)
       if(event.target.name==='areaName'){
-        Moralis.Cloud.run("setSalon",{room:event.target.value});
+       await Moralis.Cloud.run("setSalon",{room:event.target.value});
+       getEvents()
 
      }
+     console.log("getSalon"+JSON.stringify(Moralis.Cloud.run("getSalon")))
+
     },
     []
     );
     useEffect(() => {
         getEvents()
 
-    }, [values.areaName]);
-
+    }, [values]);
+   
     const areas = [
+      {
+        value: 'shareRoom',
+        label: 'Espacios Compartidos'
+      },
+      {
+        value: 'deskRoom',
+        label: 'Escritorios Dedicados'
+      },
+      {
+        value: 'office2Room',
+        label: 'Oficina Privada para 2 personas'
+      }  ,
+      {
+        value: 'office4Room',
+        label: 'Oficina Privada para 4 personas'
+      },{
+        value: 'office8Room',
+        label: 'Oficina Privada para 8 personas'
+      },
       {
         value: 'meetingRoom',
         label: 'Salon de Reuniones'
-      },/* 
+      },
       {
-        value: 'commonRoom',
-        label: 'Sala de uso compartido'
-      }  */
+        value: 'trainingRoom',
+        label: 'Salon de Entrenamiento'
+      }  
     ];
     const columnsDate = [
       { field: 'id', headerName: 'id', width: 70 },
       { field: 'date', headerName: 'date', width: 500 },
-    
     ];
     var [sessionIdCancel,setSessionId] = useState("");
 
      var [myEvents,setMyEvents] = useState([]);
-     
+     var [hoursQuantity,setHoursQuantity] = useState([]);
+
     function diff_hours(dt2, dt1) 
     {
     var diff =(dt2.getTime() - dt1.getTime()) / 1000;
     diff /= (60 * 60);
     return Math.abs(Math.round(diff));
     }
+
   
     const calendarRef = useRef(null);
     const [rebuild,setRebuild]=useState(false)
     const handleConfirm = async (event, action) => {
       return await new Promise(async (res, rej) => {
         try {
+          
           const currentDate = new Date();
           const user = await Moralis.User.current();
-    
           const sevenPMStart = new Date(event.start);
           const sevenPMEnd = new Date(event.end);
           sevenPMEnd.setHours(19, 0, 0, 0);
           sevenPMStart.setHours(18, 0, 0, 0);
-          if (currentDate <= event.start && currentDate <= event.end && user && (event.start <= sevenPMStart  || event.end <= sevenPMEnd)) {
+
+          console.log("sevenPMEnd "+JSON.stringify(event.start <= sevenPMStart  ))
+
+          console.log("sevenPMEnd "+JSON.stringify(event.end <= sevenPMEnd ))
+
+          if (currentDate <= event.start && currentDate <= event.end && user && (event.start <= sevenPMStart  || event.end <= sevenPMEnd) ) {
             const hoursCalculated = await diff_hours(event.start, event.end);
     
             if (user.get("meetingRoomHours") < hoursCalculated) {
+              
+    const stripe = await getStripe();
+    const { error,  } = await stripe.redirectToCheckout({
+      lineItems:[{
+        price: "price_1NmmfHGc5cz7uc72XfkNheqy",
+        quantity: hoursQuantity,
+      }],
+      mode: "subscription",
+      successUrl: `${window.location.origin}/reservasExpress`,
+      cancelUrl: `${window.location.origin}/reservasExpress`,
+      customerEmail: user?.get("email"),
+
+    });
+
+
+
+
+
+    
+    if (error) {
+       setLoading(false);
+     } else{
+      console.log("entro todo")
+      setLoading(false);
+
+     };
               notify2();
               rej();
               return;
@@ -340,7 +393,9 @@ var areaFinal=""
               rej();
               return;
             }
-    
+            if(user.get("meetingRoomHours") <= 0){
+
+            }
             await setTitle(event.title);
             await setMyEvents([...myEvents, event]);
     
@@ -381,118 +436,20 @@ var areaFinal=""
   }
 async function fecthstripe(){
   let user=await Moralis.User.current()
- console.log(" fecthstripe")
- await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+ 
 
  console.log("salon ppl "+await Moralis.Cloud.run("getSalon"))
 
-  if(sessionId||user.get("sessionId")){
-    var session="";
-    var session2="";
-
-if(sessionId){
-   session = await stripe.checkout.sessions.retrieve(sessionId);
-
-}else if(user.get("sessionId")) {
-   session2 = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+ if(user.get("sessionId")) {
+   let session2 = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
    if(session2.payment_status=="paid"){
-    const query = new Moralis.Query("_User");
-
-
-      query.equalTo("sessionId",sessionId)
-      let total=await query.find()
-      if(total.length>0){
-        console.log("total "+JSON.stringify(total))
-        console.log("total "+JSON.stringify(total[0].attributes.sessionId))
-
-    setSessionId(total[0].attributes.sessionId)
-    
+      return
    }
-   return
-}
  }
 
   if(session.payment_status=="paid"){
-setSessionId(sessionId)
-    
 
-      const fechaEnUnMes = obtenerFechaMas30Dias();
-    const hoy = new Date();
-console.log("entro2")
-   
-        console.log("Exito");
-        user.set("planActive",true)
-        user.set("stripeEmail",session.customer_email)
-        console.log("stripeId "+JSON.stringify(session))
-console.log("stripeId "+session.stripe_id)
-console.log("stripeId "+session.stripeId)
-
-        user.set("planEnd",fechaEnUnMes)
-        user.set("payment_status",session.payment_status)
-        user.set("sessionId",sessionId)
-
-        if(parseFloat(session.amount_total/100)==20){
- 
-            user.set("planName","Explorador")
-            user.set("meetingRoomHours",0);
-            user.set("planActive",true);
-            user.set("planUsers",1);
-
-        }
-        if(parseFloat(session.amount_total/100)==30){
-
-          user.set("planName","Emprendedor Express")
-          user.set("meetingRoomHours",3);
-          user.set("planActive",true);
-          user.set("planUsers",1);
-
-      }
-      if(parseFloat(session.amount_total/100)==40){
-
-        user.set("planName","Visionario Flexible")
-        user.set("meetingRoomHours",5);
-        user.set("planActive",true);
-        user.set("planUsers",1);
-
-    }
-    if(parseFloat(session.amount_total/100)==60){
-
-      user.set("planName","Innovador Dedicado")
-      user.set("meetingRoomHours",8);
-      user.set("planActive",true);
-      user.set("planUsers",1);
-
-  }
-  if(parseFloat(session.amount_total/100)==70){
-
-    user.set("planName","Líder Elite")
-    user.set("meetingRoomHours",8);
-    user.set("planActive",true);
-    user.set("planUsers",2);
-
-
-}
-
-if(parseFloat(session.amount_total/100)==80){
-
-  user.set("planName","Corporativo Vanguardista")
-  user.set("meetingRoomHours",10);
-  user.set("planActive",true);
-  user.set("planUsers",8);
-
-}
-
-if(parseFloat(session.amount_total/100)==90){
-
-  user.set("planName","Titán del Éxito")
-  user.set("meetingRoomHours",10);
-  user.set("planActive",true);
-  user.set("planUsers",4);
-
-}
-       await user.save()
-      
-}else{
+  }else{
 
   if(user.get("planActive")){
   }else{
@@ -504,7 +461,7 @@ if(parseFloat(session.amount_total/100)==90){
 
 }
 
-}
+
     useEffect(() => {
     
         // componentwillunmount in functional component.
@@ -518,23 +475,37 @@ if(parseFloat(session.amount_total/100)==90){
       let user=await Moralis.User.current()
 let salon=await Moralis.Cloud.run("getSalon")
   const query =await new Moralis.Query("Reserves");
-  console.log("getEvents salon "+salon)
-  await setValues({areaName:salon})
+  
   if(salon==="meetingRoom"){
     await query.equalTo("areaName","meetingRoom")
- 
-  }else if(salon==="commonRoom"){
-    await query.equalTo("areaName","commonRoom")
 
-  }else{
-   await query.equalTo("areaName","meetingRoom")
+  } else if(salon==="trainingRoom"){
+    await query.equalTo("areaName","trainingRoom")
+
+  } else if(salon==="office8Room"){
+    await query.equalTo("areaName","office8Room")
+
+  } else if(salon==="office4Room"){
+    await query.equalTo("areaName","office4Room")
+
+  } else if(salon==="office2Room"){
+    await query.equalTo("areaName","office2Room")
+
+  } else if(salon==="deskRoom"){
+    await query.equalTo("areaName","deskRoom")
+
+  } else if(salon==="shareRoom"){
+    await query.equalTo("areaName","shareRoom")
+
+  }  else{
+   await query.equalTo("areaName","shareRoom")
 
   }
   await query.limit(1000)
     let object= await query.find()
     eventos=[]
-
-  if(object){ 
+console.log("object "+JSON.stringify(object))
+  if(object){
     
     for(let i=0;i<object.length;i++){ 
       
@@ -557,7 +528,7 @@ let salon=await Moralis.Cloud.run("getSalon")
   }
 
 
-  }    
+  }   
   const cancelSubscription = async (subscriptionId) => {
     try {
       const canceledSubscription = await stripe.subscriptions.del(subscriptionId);
@@ -582,15 +553,16 @@ let salon=await Moralis.Cloud.run("getSalon")
           py: 8
         }}
       >
-      <Container   maxWidth="lg">
+      <Container maxWidth="lg">
         
-      <div >
+          <div>
             <Typography alignSelf={"center"} variant="h4">
-              RESERVACIONES
+              RESERVACIONES EXPRESS
             </Typography>
           </div>
         <Stack spacing={0}>
-        <OverviewPlan rebuild={rebuild} difference={16}/>
+          
+        <OverviewPlanExpress rebuild={rebuild} difference={16}/>
  
           <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
             Area de Interes
@@ -668,8 +640,7 @@ eventRenderer={(event) => {
   
   if (+event.event_id % 2 === 0) {
 
-    return (
-      <div
+    return (<div
         style={{
           display: "flex",
           flexDirection: "column",

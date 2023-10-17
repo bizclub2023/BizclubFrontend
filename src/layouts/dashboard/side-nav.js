@@ -66,7 +66,7 @@ console.log("session.payment_status "+session.payment_status)
             
   }
   
-  if(user.get("email")=="ernesto20435@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
+  if(user.get("email")=="ricardouzalt1207@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
     await setAdmin(true)
     await setIsCostumer(false)
 
