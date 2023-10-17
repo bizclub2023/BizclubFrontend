@@ -6,12 +6,12 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { AuthConsumer, AuthProvider } from 'src/contexts/auth-context';
 import { useNProgress } from 'src/hooks/use-nprogress';
-import { createTheme } from './theme';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
 import 'simplebar-react/dist/simplebar.min.css';
 
 import "./styles.css";
 import { MoralisProvider } from "react-moralis";
+import { createTheme } from 'src/theme';
 const clientSideEmotionCache = createEmotionCache();
 
 const SplashScreen = () => null;
