@@ -348,11 +348,11 @@ console.log("usermail "+usermail)
     {
       value: 'meetingRoom',
       label: 'Salon de Reuniones'
-    },
+    }/* ,
     {
       value: 'commonRoom',
       label: 'Sala de uso compartido'
-    } 
+    }  */
   ];
   const handleConfirm =  (event, action) => {
     
@@ -387,8 +387,8 @@ console.log("usermail "+usermail)
               ...event,
               event_id: event.event_id || Math.random()
             });
-            getEvents(userEmail)
-
+      await getEvents(await Moralis.Cloud.run("getUserMail"))
+       
         }
         
 
