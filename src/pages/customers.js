@@ -32,16 +32,6 @@ var [companies,setCompanies]=useState([])
 let empty=[]
 let list = [
   {
-    id: '2569ce0d517a7f06d3ea1f24',
-    createdAt: '27/03/2019',
-    description: 'Acceso a espacios de coworking compartidos y servicios básicos por un día. Ideal para profesionales en viajes de negocioso visitantes ocasionales.',
-    logo: 'https://bafybeidwnhdez3yjg6w7gpg7esgtzicbj3l5sqehepd5xng3xafegybpfu.ipfs.nftstorage.link/public-service.png',
-    title: 'Explorador',
-    price: '200.000 COP/MES',
-    avaliable: '200.000 COP/MES'
-
-  },
-  {
     id: 'ed2b900870ceba72d203ec15',
     createdAt: '31/03/2019',
     description: 'Acceso a espacios de coworking compartidos durante el horario comercial, con serviciosbásicos y conexión a intemet de alta velocidad.',
