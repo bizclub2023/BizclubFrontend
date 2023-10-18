@@ -10,7 +10,7 @@ let stripePromise;
 
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe("pk_test_51NV05cGc5cz7uc72xTzSNZNeg3dsIWX9hZo4Y7nZH5WnFF8nuEJJwhSGviE29JHXzm8zovxToQDDVjLzfND57MWj00NdjCWocu");
+    stripePromise = loadStripe("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
   }
 
   return stripePromise;
@@ -22,21 +22,19 @@ const Checkout1 = (props) => {
 
   const [isLoading, setLoading] = useState(false);
   const item = [{
-    price: "price_1NjCXTGc5cz7uc72IOPdAdhG",
+    price: "price_1NihZ4Gc5cz7uc72GZeQPSw9",
     quantity: 1,
-  }
-]
+  }]
 
 
   const redirectToCheckout = async () => {
     setLoading(true);
     let user=await Moralis.User.current()
-if(!user){ 
-       setLoading(false);
+    if(!user){ 
+          setLoading(false);
 
-  return
-}
-    console.log("redirectToCheckout "+props.title);
+      return
+    }
 
   if(props.title){
       
@@ -46,11 +44,9 @@ if(!user){
 
       query.equalTo("planName",props.title)     
       query.equalTo("planActive",true)     
-     let object= await query.find()
-let numberSusbcription=object.length
-console.log(numberSusbcription)
+      let object= await query.find()
+      let numberSusbcription=object.length
       if(props.title=="Explorador"){
-
         if(numberSusbcription>=5){
           console.log("Maximas Subscripciones")
           return 

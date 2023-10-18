@@ -354,7 +354,7 @@ var areaFinal=""
         price: "price_1NmmfHGc5cz7uc72XfkNheqy",
         quantity: hoursQuantity,
       }],
-      mode: "subscription",
+      mode: "payment",
       successUrl: `${window.location.origin}/reservasExpress`,
       cancelUrl: `${window.location.origin}/reservasExpress`,
       customerEmail: user?.get("email"),
@@ -625,7 +625,7 @@ translations={{
   loading: "Loading..."
  }}
 week={{ 
-weekDays: [0, 1, 2, 3, 4, 5,6], 
+weekDays: [0, 1, 2, 3, 4, 5, 6], 
 weekStartOn: 6, 
 startHour: 7, 
 endHour: 20,

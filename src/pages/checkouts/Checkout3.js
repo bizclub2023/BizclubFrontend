@@ -10,7 +10,7 @@ let stripePromise;
 
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe("pk_test_51NV05cGc5cz7uc72xTzSNZNeg3dsIWX9hZo4Y7nZH5WnFF8nuEJJwhSGviE29JHXzm8zovxToQDDVjLzfND57MWj00NdjCWocu");
+    stripePromise = loadStripe("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
   }
 
   return stripePromise;
@@ -22,7 +22,7 @@ const Checkout3 = (props) => {
 
   const [isLoading, setLoading] = useState(false);
   const item = [{
-    price: "price_1NmmPXGc5cz7uc72lfGZECTc",
+    price: "price_1NihcZGc5cz7uc72dhDMhIYq",
     quantity: 1,
   }
 ]
