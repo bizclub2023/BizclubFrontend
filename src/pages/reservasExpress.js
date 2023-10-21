@@ -181,7 +181,7 @@ const {Moralis}=useMoralis()
   const [title,setTitle]=useState([])
  const [error,setError]=useState('')
 let eventos=[]
-const notify = () => toast("Elige la fecha de hoy o dias futuros");
+const notify = () => toast("Elige una hora y fecha valida.");
 const notify2 = () => toast("No tienes Horas de reserva");
 const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
