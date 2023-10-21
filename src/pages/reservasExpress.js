@@ -163,7 +163,15 @@ const useCustomerIds = (customers) => {
     [customers]
   );
 };
+let stripePromise;
 
+const getStripe = () => {
+  if (!stripePromise) {
+    stripePromise = loadStripe("pk_test_51NV05cGc5cz7uc72xTzSNZNeg3dsIWX9hZo4Y7nZH5WnFF8nuEJJwhSGviE29JHXzm8zovxToQDDVjLzfND57MWj00NdjCWocu");
+  }
+
+  return stripePromise;
+};
 const Page = () => {
 
 const {Moralis}=useMoralis()
@@ -188,56 +196,109 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
        
       let user=await Moralis.User.current()
       let active=await user.get("planActive")
+      let hoursCalculated= await diff_hours(event.start,event.end)
 
       let planName=await user.get("planName");
-      if(active){
+      if(true){
 
         if(planName!==""){
-          if(user.get("meetingRoomHours")<=0){
-            setError("No tienes Horas de Reserva")
-            return
+          let hoursCalculated=await diff_hours(event.start,event.end)
+
+      
+          const Reserves=Moralis.Object.extend("Reserves")
+        
+          const reserve=new Reserves() 
+          let uniqueID=parseInt((Date.now()+ Math.random()).toString())
+          reserve.set("uid",uniqueID)       
+        
+          reserve.set("user",user.get("email"))  
+          let areaName=await Moralis.Cloud.run("getSalon")
+          console.log("areaName "+values.areaName)
+          if(areaName!=="") {  
+           reserve.set("areaName", areaName )     
           } else {
-            let hoursCalculated= await diff_hours(event.start,event.end)
+           reserve.set("areaName",areas[0].value)     
+          } 
+         reserve.set("title",JSON.stringify(event.title)  )   
+        let eventitos=[]
+        
+        
+         let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+        
+         reserve.set("event",{
+         
+           event_id: uniqueID2,
+           title: event.title,
+           start: event.start,
+           end: event.end,
+         }) 
+          if(user.get("meetingRoomHours") < hoursCalculated){
+             
+            
+                   
+
+   console.log("hoursCalculated "+hoursCalculated)
+user.set("reservePendingEvent",{
+
+  event_id: uniqueID2,
+  title: event.title,
+  start: event.start,
+  end: event.end,
+})
+user.set("reservePendingUid",uniqueID)       
+
+user.set("reservePendingTitle",JSON.stringify(event.title) )
+user.set("reservePendingAreaName",  {areaName}  )
+user.set("reservePendingHours",hoursCalculated )
+await user.save()
+const stripe = await getStripe();
+console.log("entro aqui1")
+const { error } = await stripe.redirectToCheckout({
+lineItems:[{ 
+price: "price_1O2OqZGc5cz7uc72SFiycL5b",
+quantity: hoursCalculated,
+}],
+
+mode: "payment",
+successUrl: `${window.location.origin}/reservasExpress?session_id={CHECKOUT_SESSION_ID}`,
+cancelUrl: `${window.location.origin}/reservasExpress`,
+customerEmail: user?.get("email"),
+
+});
+
+
+
+
+console.log("entro aqui2")
+
+
+if (error) {
+setLoading(false);
+} else{
+  
+
+
+
+console.log("entro todo")
+setLoading(false);
+
+};
+          } else {
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
+            
+
+        await reserve.save()
+
+
+        await user.save()
           }
-        }
+        
        
-
-
-
-  await user.save()
+  console.log("entro aqui3")
 
       }
-      
-  const Reserves=Moralis.Object.extend("Reserves")
-
-   const reserve=new Reserves() 
-   let uniqueID=parseInt((Date.now()+ Math.random()).toString())
-   reserve.set("uid",uniqueID)       
-
-   reserve.set("user",user.get("email"))  
-   let areaName=await Moralis.Cloud.run("getSalon")
-   console.log("areaName "+values.areaName)
-   if(areaName!=="") {  
-    reserve.set("areaName", areaName )     
-   } else {
-    reserve.set("areaName",areas[0].value)     
-   } 
-  reserve.set("title",JSON.stringify(event.title)  )   
- let eventitos=[]
-
-
-  let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
-
-  reserve.set("event",{
-  
-    event_id: uniqueID2,
-    title: event.title,
-    start: event.start,
-    end: event.end,
-  }) 
-  await reserve.save()
+  }
 return true
 
 
@@ -275,6 +336,7 @@ var areaFinal=""
     },
     []
     );
+    
     useEffect(() => {
         getEvents()
 
@@ -316,7 +378,6 @@ var areaFinal=""
     var [sessionIdCancel,setSessionId] = useState("");
 
      var [myEvents,setMyEvents] = useState([]);
-     var [hoursQuantity,setHoursQuantity] = useState([]);
 
     function diff_hours(dt2, dt1) 
     {
@@ -326,12 +387,14 @@ var areaFinal=""
     }
 
   
+    
     const calendarRef = useRef(null);
     const [rebuild,setRebuild]=useState(false)
     const handleConfirm = async (event, action) => {
       return await new Promise(async (res, rej) => {
         try {
-          
+          console.log("testest2")
+
           const currentDate = new Date();
           const user = await Moralis.User.current();
           const sevenPMStart = new Date(event.start);
@@ -339,44 +402,12 @@ var areaFinal=""
           sevenPMEnd.setHours(19, 0, 0, 0);
           sevenPMStart.setHours(18, 0, 0, 0);
 
-          console.log("sevenPMEnd "+JSON.stringify(event.start <= sevenPMStart  ))
-
-          console.log("sevenPMEnd "+JSON.stringify(event.end <= sevenPMEnd ))
 
           if (currentDate <= event.start && currentDate <= event.end && user && (event.start <= sevenPMStart  || event.end <= sevenPMEnd) ) {
             const hoursCalculated = await diff_hours(event.start, event.end);
-    
-            if (user.get("meetingRoomHours") < hoursCalculated) {
-              
-    const stripe = await getStripe();
-    const { error,  } = await stripe.redirectToCheckout({
-      lineItems:[{
-        price: "price_1NmmfHGc5cz7uc72XfkNheqy",
-        quantity: hoursQuantity,
-      }],
-      mode: "payment",
-      successUrl: `${window.location.origin}/reservasExpress`,
-      cancelUrl: `${window.location.origin}/reservasExpress`,
-      customerEmail: user?.get("email"),
+           
 
-    });
-
-
-
-
-
-    
-    if (error) {
-       setLoading(false);
-     } else{
-      console.log("entro todo")
-      setLoading(false);
-
-     };
-              notify2();
-              rej();
-              return;
-            }
+          
     
             const areaName = await Moralis.Cloud.run("getSalon");
     
@@ -393,17 +424,10 @@ var areaFinal=""
               rej();
               return;
             }
-            if(user.get("meetingRoomHours") <= 0){
-
-            }
             await setTitle(event.title);
             await setMyEvents([...myEvents, event]);
     
-            if (user.get("meetingRoomHours") <= 0) {
-              notify2();
-              rej();
-              return;
-            }
+          
     
            await handleReserva(event);
            
@@ -436,27 +460,58 @@ var areaFinal=""
   }
 async function fecthstripe(){
   let user=await Moralis.User.current()
- 
+  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
 
- console.log("salon ppl "+await Moralis.Cloud.run("getSalon"))
 
- if(user.get("sessionId")) {
-   let session2 = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
-   if(session2.payment_status=="paid"){
-      return
-   }
- }
+if(sessionId){
+ let session = await stripe.checkout.sessions.retrieve(sessionId);
+  console.log("session "+session.payment_status)
+  console.log("session "+user.get("sessionIdExpress"))
+  console.log("session "+sessionId)
+  console.log("session "+user.get("sessionIdExpress")!==sessionId)
+
+if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sessionId.toString()){
+  console.log("session "+"entro")
+
+  console.log("session "+parseFloat(session.amount_total/100))
 
   if(session.payment_status=="paid"){
 
+    //user.set("meetingRoomHours",parseFloat(user.get("meetingRoomHours"))+parseFloat(session.amount_total/100)/1);
+    user.set("sessionIdExpress",sessionId)
+  const Reserves=Moralis.Object.extend("Reserves")
+
+  const reserve=new Reserves() 
+  console.log("entroaqui"+user.get("reservePendingUid"))
+  console.log("entroaqui"+user.get("reservePendingUid"))
+  console.log("entroaqui "+user.get("reservePendingAreaName").areaName )
+  console.log("entroaqui "+user.get("reservePendingTitle"))
+  console.log("entroaqui "+user.get("reservePendingEvent"))
+
+   reserve.set("uid",user.get("reservePendingUid"))       
+   reserve.set("user",user.get("email"))  
+   reserve.set("areaName", user.get("reservePendingAreaName").areaName )     
+   reserve.set("title", user.get("reservePendingTitle") )     
+
+   let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+   //user.set("meetingRoomHours",parseFloat(user.get("meetingRoomHours"))+parseFloat(session.amount_total/100)/1)
+   
+   
+  
+   reserve.set("event",user.get("reservePendingEvent")) 
+
+   await reserve.save()
+await user.save()
+await getEvents()
+console.log("session termino")
+
   }else{
 
-  if(user.get("planActive")){
-  }else{
+ 
 
-  router.push('/services');
-  }
+}
 
+}
 }
 
 }
