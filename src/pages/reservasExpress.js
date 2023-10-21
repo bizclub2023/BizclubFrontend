@@ -232,7 +232,7 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
            start: event.start,
            end: event.end,
          }) 
-          if(user.get("meetingRoomHours") < hoursCalculated){
+          if(user.get("meetingRoomHours")??0 < hoursCalculated){
              
             
                    
@@ -528,9 +528,11 @@ console.log("session termino")
     
     async function getEvents(){
       let user=await Moralis.User.current()
+      await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
+
 let salon=await Moralis.Cloud.run("getSalon")
   const query =await new Moralis.Query("Reserves");
-  
+
   if(salon==="meetingRoom"){
     await query.equalTo("areaName","meetingRoom")
 

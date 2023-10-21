@@ -51,12 +51,12 @@ useEffect(()=>{
               color="text.secondary"
               variant="overline"
             >
-              Plan Actual: {planName}
+              Plan Actual: {planName??"ninguno"}
             </Typography>
             
              
             <Typography variant="h4">
-            Horas restantes en sala de reuniones: {planHours}
+            Horas restantes en sala de reuniones: {planHours??0}
             </Typography>
             <Typography
               color="text.secondary"
