@@ -253,22 +253,41 @@ user.set("reservePendingTitle",JSON.stringify(event.title) )
 user.set("reservePendingAreaName",  {areaName}  )
 user.set("reservePendingHours",hoursCalculated )
 await user.save()
+
+
 const stripe = await getStripe();
 console.log("entro aqui1")
+let stripePrice=""
+if(areaName==="shareRoom"){
+  stripePrice="price_1O45UjGc5cz7uc72D6FHSckP"
+}else if(areaName==="deskRoom"){
+  stripePrice="price_1O45ZOGc5cz7uc72yJ389dnU"
+}else if(areaName==="office2Room"){
+  stripePrice="price_1O45hvGc5cz7uc72vcAhtn6N"
+}else if(areaName==="office4Room"){
+  stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
+}else if(areaName==="office8Room"){
+  stripePrice="price_1O45jdGc5cz7uc72mtqcCsij"
+}else if(areaName==="meetingRoom"){
+  stripePrice="price_1O45kHGc5cz7uc72c1WEAA8L"
+}else if(areaName==="trainingRoom"){
+  stripePrice="price_1O45bCGc5cz7uc72uQXvAerW"
+}
+
+
+
 const { error } = await stripe.redirectToCheckout({
-lineItems:[{ 
-price: "price_1O2OqZGc5cz7uc72SFiycL5b",
-quantity: hoursCalculated,
-}],
-
-mode: "payment",
-successUrl: `${window.location.origin}/reservasExpress?session_id={CHECKOUT_SESSION_ID}`,
-cancelUrl: `${window.location.origin}/reservasExpress`,
-customerEmail: user?.get("email"),
-
-});
-
-
+  lineItems:[{ 
+  price: stripePrice,
+  quantity: hoursCalculated,
+  }],
+  
+  mode: "payment",
+  successUrl: `${window.location.origin}/reservasExpress?session_id={CHECKOUT_SESSION_ID}`,
+  cancelUrl: `${window.location.origin}/reservasExpress`,
+  customerEmail: user?.get("email"),
+  
+  });
 
 
 console.log("entro aqui2")
