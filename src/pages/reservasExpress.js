@@ -276,7 +276,7 @@ if(areaName==="shareRoom"){
 
 
 
-const { error } = await stripe.redirectToCheckout({
+const { error,cancel } = await stripe.redirectToCheckout({
   lineItems:[{ 
   price: stripePrice,
   quantity: hoursCalculated,
@@ -295,14 +295,15 @@ console.log("entro aqui2")
 
 if (error) {
 setLoading(false);
-} else{
-  
+} else if(cancel){
+  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
 
+await getEvents()
 
 
 console.log("entro todo")
 setLoading(false);
-
+return
 };
           } else {
 
