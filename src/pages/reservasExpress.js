@@ -232,7 +232,9 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
            start: event.start,
            end: event.end,
          }) 
-          if(user.get("meetingRoomHours")??0 < hoursCalculated){
+         let meetingHours=user.get("meetingRoomHours")
+         
+          if(!meetingHours||user.get("meetingRoomHours") < hoursCalculated){
              
             
                    
@@ -327,12 +329,12 @@ var areaFinal=""
       }));
       console.log("event.target.value "+event.target.value)
       if(event.target.name==='areaName'){
+        console.log(event.target.value)
        await Moralis.Cloud.run("setSalon",{room:event.target.value});
-       getEvents()
 
+       console.log("getSalon"+JSON.stringify(await Moralis.Cloud.run("getSalon")))
+       await getEvents()
      }
-     console.log("getSalon"+JSON.stringify(Moralis.Cloud.run("getSalon")))
-
     },
     []
     );
@@ -528,9 +530,12 @@ console.log("session termino")
     
     async function getEvents(){
       let user=await Moralis.User.current()
-      await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
 
 let salon=await Moralis.Cloud.run("getSalon")
+if(!salon){
+  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
+salon="shareRoom"
+}
   const query =await new Moralis.Query("Reserves");
 
   if(salon==="meetingRoom"){

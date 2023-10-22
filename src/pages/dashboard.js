@@ -270,15 +270,36 @@ async function getEvents(usermail){
   await Moralis.Cloud.run("setUserEmail",{email:usermail});
 console.log("usermail "+usermail)
   const query = new Moralis.Query("Reserves");
+  let salon=await Moralis.Cloud.run("getSalon")
+  if(!salon){
+    await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
+  salon="shareRoom"
+  }
+ 
   
-  if(await Moralis.Cloud.run("getSalon")==="meetingRoom"){
-    query.equalTo("areaName","meetingRoom")
+  if(salon==="meetingRoom"){
+    await query.equalTo("areaName","meetingRoom")
 
-  }else  if(await Moralis.Cloud.run("getSalon")==="commonRoom"){
-    query.equalTo("areaName","commonRoom")
+  } else if(salon==="trainingRoom"){
+    await query.equalTo("areaName","trainingRoom")
 
-  } else {
-    query.equalTo("areaName","meetingRoom")
+  } else if(salon==="office8Room"){
+    await query.equalTo("areaName","office8Room")
+
+  } else if(salon==="office4Room"){
+    await query.equalTo("areaName","office4Room")
+
+  } else if(salon==="office2Room"){
+    await query.equalTo("areaName","office2Room")
+
+  } else if(salon==="deskRoom"){
+    await query.equalTo("areaName","deskRoom")
+
+  } else if(salon==="shareRoom"){
+    await query.equalTo("areaName","shareRoom")
+
+  }  else{
+   await query.equalTo("areaName","shareRoom")
 
   }
   query.limit(1000)
@@ -345,14 +366,33 @@ console.log("usermail "+usermail)
 
 
    const areas = [
+   
     {
+      value: 'shareRoom',
+      label: 'Espacios Compartidos'
+    },
+    {
+      value: 'deskRoom',
+      label: 'Escritorios Dedicados'
+    },
+    {
+      value: 'office2Room',
+      label: 'Oficina Privada para 2 personas'
+    }  ,
+    {
+      value: 'office4Room',
+      label: 'Oficina Privada para 4 personas'
+    },{
+      value: 'office8Room',
+      label: 'Oficina Privada para 8 personas'
+    }, {
       value: 'meetingRoom',
       label: 'Salon de Reuniones'
-    }/* ,
+    },
     {
-      value: 'commonRoom',
-      label: 'Sala de uso compartido'
-    }  */
+      value: 'trainingRoom',
+      label: 'Salon de Entrenamiento'
+    }  
   ];
   const handleConfirm =  (event, action) => {
     
@@ -417,7 +457,7 @@ console.log("usermail "+usermail)
       
       if(event.target.name==='areaName'){
         Moralis.Cloud.run("setSalon",{room:event.target.value});
-
+        await getEvents(await Moralis.Cloud.run("getUserMail"))
      }
     },
     []
