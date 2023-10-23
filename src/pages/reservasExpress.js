@@ -365,9 +365,10 @@ var areaFinal=""
     }, [values]);
    
     const areas = [
+     
       {
-        value: 'shareRoom',
-        label: 'Espacios Compartidos'
+        value: 'meetingRoom',
+        label: 'Salon de Reuniones'
       },
       {
         value: 'deskRoom',
@@ -383,10 +384,9 @@ var areaFinal=""
       },{
         value: 'office8Room',
         label: 'Oficina Privada para 8 personas'
-      },
-      {
-        value: 'meetingRoom',
-        label: 'Salon de Reuniones'
+      }, {
+        value: 'shareRoom',
+        label: 'Espacios Compartidos'
       },
       {
         value: 'trainingRoom',
@@ -482,7 +482,7 @@ var areaFinal=""
   }
 async function fecthstripe(){
   let user=await Moralis.User.current()
-  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
+  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
 
 
 if(sessionId){
@@ -553,8 +553,8 @@ console.log("session termino")
 
 let salon=await Moralis.Cloud.run("getSalon")
 if(!salon){
-  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
-salon="shareRoom"
+  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+salon="meetingRoom"
 }
   const query =await new Moralis.Query("Reserves");
 
@@ -580,7 +580,7 @@ salon="shareRoom"
     await query.equalTo("areaName","shareRoom")
 
   }  else{
-   await query.equalTo("areaName","shareRoom")
+   await query.equalTo("areaName","meetingRoom")
 
   }
   await query.limit(1000)
