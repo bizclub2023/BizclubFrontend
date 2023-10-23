@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField } from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField, CircularProgress } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { applyPagination } from 'src/utils/apply-pagination';
@@ -177,6 +177,7 @@ const Page = () => {
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isLoading,setLoading]=useState(false)
 
   const [title,setTitle]=useState([])
  const [error,setError]=useState('')
@@ -342,7 +343,7 @@ var areaFinal=""
   });
   const handleChange = useCallback(
     async (event) => {
-     
+     setLoading(true)
       setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
@@ -355,6 +356,8 @@ var areaFinal=""
        console.log("getSalon"+JSON.stringify(await Moralis.Cloud.run("getSalon")))
        await getEvents()
      }
+     setLoading(false)
+
     },
     []
     );
@@ -669,8 +672,6 @@ console.log("object "+JSON.stringify(object))
                     </option>
                   ))}
                 </TextField>
-     
-
 <Scheduler
 events={eventos}
 ref={calendarRef}
@@ -750,7 +751,6 @@ eventRenderer={(event) => {
   return null;
 }}
 />
-         
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
