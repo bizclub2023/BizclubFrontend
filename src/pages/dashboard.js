@@ -366,7 +366,10 @@ console.log("usermail "+usermail)
 
 
    const areas = [
-   
+    {
+      value: 'meetingRoom',
+      label: 'Salon de Reuniones'
+    },
     {
       value: 'shareRoom',
       label: 'Espacios Compartidos'
@@ -385,9 +388,6 @@ console.log("usermail "+usermail)
     },{
       value: 'office8Room',
       label: 'Oficina Privada para 8 personas'
-    }, {
-      value: 'meetingRoom',
-      label: 'Salon de Reuniones'
     },
     {
       value: 'trainingRoom',
