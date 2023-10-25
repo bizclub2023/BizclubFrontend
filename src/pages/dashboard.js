@@ -150,7 +150,7 @@ fetchUser()
   console.log("clickedRow "+clickedRow.email)
   setValues({   userEmail:clickedRow.email,planUsers:clickedRow.planUsers})
   await getEvents(clickedRow.email)
-
+console.log(clickedRow.email)
 
   };
 
@@ -336,6 +336,8 @@ console.log("usermail "+usermail)
           color: usermail===object[i].attributes.user?"blue":"#50b500"
         }]
       }
+      console.log("usermail "+JSON.stringify(usermail))
+      console.log("usermail "+JSON.stringify(object[i].attributes.user))
 
       if(usermail===object[i].attributes.user){
         if(currentDate<=object[i].attributes.event.start){
@@ -366,13 +368,10 @@ console.log("usermail "+usermail)
 
 
    const areas = [
+     
     {
       value: 'meetingRoom',
       label: 'Salon de Reuniones'
-    },
-    {
-      value: 'shareRoom',
-      label: 'Espacios Compartidos'
     },
     {
       value: 'deskRoom',
@@ -388,6 +387,9 @@ console.log("usermail "+usermail)
     },{
       value: 'office8Room',
       label: 'Oficina Privada para 8 personas'
+    }, {
+      value: 'shareRoom',
+      label: 'Espacios Compartidos'
     },
     {
       value: 'trainingRoom',
