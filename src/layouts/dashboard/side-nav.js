@@ -20,7 +20,7 @@ import { items,items2 ,itemsAdmin} from './config';
 import { SideNavItem } from './side-nav-item';
 import {  useMoralis } from 'react-moralis';
 import { useEffect,useState } from 'react';
-const stripe = require('stripe')("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
+const stripe = require('stripe')("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");
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
