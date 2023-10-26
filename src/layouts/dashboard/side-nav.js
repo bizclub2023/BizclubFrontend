@@ -41,7 +41,6 @@ try{
       const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
 
       if(session.payment_status==="paid"){
-console.log("session.payment_status "+session.payment_status)
       await setIsCostumer(true)
       await setIsLoading(false)
       console.log("aqui3 ")
