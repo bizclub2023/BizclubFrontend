@@ -260,19 +260,19 @@ const stripe = await getStripe();
 console.log("entro aqui1")
 let stripePrice=""
 if(areaName==="shareRoom"){
-  stripePrice="price_1O45UjGc5cz7uc72D6FHSckP"
+  stripePrice="price_1O5ZJ2Gc5cz7uc72aYFMTRcG"
 }else if(areaName==="deskRoom"){
-  stripePrice="price_1O45ZOGc5cz7uc72yJ389dnU"
+  stripePrice="price_1O5ZKgGc5cz7uc72Jji9lKJO"
 }else if(areaName==="office2Room"){
-  stripePrice="price_1O45hvGc5cz7uc72vcAhtn6N"
+  stripePrice="price_1O5ZMUGc5cz7uc72hZZ9ABsC"
 }else if(areaName==="office4Room"){
-  stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
+  stripePrice="price_1O5ZNHGc5cz7uc72FUh45r0N"
 }else if(areaName==="office8Room"){
-  stripePrice="price_1O45jdGc5cz7uc72mtqcCsij"
+  stripePrice="price_1O5ZODGc5cz7uc72Dnujt6va"
 }else if(areaName==="meetingRoom"){
-  stripePrice="price_1O45kHGc5cz7uc72c1WEAA8L"
+  stripePrice="price_1O5ZOeGc5cz7uc72Hazu69OP"
 }else if(areaName==="trainingRoom"){
-  stripePrice="price_1O45bCGc5cz7uc72uQXvAerW"
+  stripePrice="price_1O5ZP9Gc5cz7uc72n1JBgvzB"
 }
 
 
