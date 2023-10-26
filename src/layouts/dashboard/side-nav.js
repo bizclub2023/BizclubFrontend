@@ -31,14 +31,15 @@ export const SideNav = (props) => {
   const [isAdmin,setAdmin]=useState(false)
 
   async function init(){
+    let user=await Moralis.User.current()
 
 try{
-    let user=await Moralis.User.current()
 
     if(user){
 
     if(user.get("sessionId")){
       const session = await stripe.checkout.sessions.retrieve(user.get("sessionId"));
+      console.log(session)
 
       if(session.payment_status==="paid"){
       await setIsCostumer(true)
@@ -55,7 +56,7 @@ try{
           await user.save()
         }        
 
-
+console.log("entro aqui")
         await setIsCostumer(false)
 
       }
@@ -75,7 +76,10 @@ try{
 }} catch(e){
   console.log(e.message)
   setIsLoading(false)
+  user.set("sessionId",undefined)
 
+  user.set("planActive",false)
+  await user.save()
   await setAdmin(false)
   await setIsCostumer(false)
 
