@@ -41,15 +41,6 @@ export const itemsAdmin = [
 export const items = [
   
   {
-    title: 'Servicios Profesionales',
-    path: '/services',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
-      </SvgIcon>
-    )
-  },
-  {
     title: 'Coworking',
     path: '/customers',
     icon: (
@@ -57,8 +48,7 @@ export const items = [
         <UsersIcon />
       </SvgIcon>
     )
-  },
-  {
+  },{
     title: 'Reservaciones Express',
     path: '/reservasExpress',
     icon: (
@@ -67,6 +57,16 @@ export const items = [
       </SvgIcon>
     )
   },
+  {
+    title: 'BizMarket Connect',
+    path: '/services',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ShoppingBagIcon />
+      </SvgIcon>
+    )
+  },
+  
   {
     title: 'Account',
     path: '/account',
@@ -82,12 +82,13 @@ export const items = [
 
 export const items2 = [
   
+  
   {
-    title: 'Servicios Profesionales',
-    path: '/services',
+    title: 'Reservaciones Express',
+    path: '/reservasExpress',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <UsersIcon />
       </SvgIcon>
     )
   },
@@ -99,13 +100,12 @@ export const items2 = [
         <UsersIcon />
       </SvgIcon>
     )
-  },
-  {
-    title: 'Reservaciones Express',
-    path: '/reservasExpress',
+  },{
+    title: 'BizMarket Connect',
+    path: '/services',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <ShoppingBagIcon />
       </SvgIcon>
     )
   },
