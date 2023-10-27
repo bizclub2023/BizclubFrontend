@@ -270,7 +270,7 @@ if(areaName==="shareRoom"){
 }else if(areaName==="office8Room"){
   stripePrice="price_1O5ZODGc5cz7uc72Dnujt6va"
 }else if(areaName==="meetingRoom"){
-  stripePrice="price_1O5ZOeGc5cz7uc72Hazu69OP"
+  stripePrice="price_1O5qE9Gc5cz7uc727KAXNumG"
 }else if(areaName==="trainingRoom"){
   stripePrice="price_1O5ZP9Gc5cz7uc72n1JBgvzB"
 }
