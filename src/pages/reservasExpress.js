@@ -282,8 +282,7 @@ const { error,cancel } = await stripe.redirectToCheckout({
   price: stripePrice,
   quantity: hoursCalculated,
   }],
-  
-  mode: "payment",
+   mode: "payment",
   successUrl: `${window.location.origin}/reservasExpress?session_id={CHECKOUT_SESSION_ID}`,
   cancelUrl: `${window.location.origin}/reservasExpress`,
   customerEmail: user?.get("email"),
@@ -297,7 +296,7 @@ console.log("entro aqui2")
 if (error) {
 setLoading(false);
 } else if(cancel){
-  await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
+  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
 
 await getEvents()
 
@@ -486,7 +485,30 @@ var areaFinal=""
 async function fecthstripe(){
   let user=await Moralis.User.current()
   await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+  console.log("reservePendingUid "+user.get("reservePendingUid"))
+if(user.get("reservePendingUid")){
+  let Reserves=Moralis.Object.extend("Reserves")
+  let reserve=new Reserves() 
+  console.log("npm run dev ")
 
+  reserve.set("uid",user.get("reservePendingUid"))       
+  reserve.set("user",user.get("email")) 
+  reserve.set("event", user.get("reservePendingEvent") )     
+ 
+  reserve.set("areaName", user.get("reservePendingAreaName").areaName )     
+  reserve.set("title", user.get("reservePendingTitle") )    
+  console.log("reservePendingUid2 "+user.get("reservePendingTitle"))
+ 
+await reserve.save()
+  user.set("reservePendingUid",undefined)
+  user.set("reservePendingAreaName",undefined)
+  user.set("reservePendingTitle","")
+  user.set("reservePendingEvent",undefined)
+  
+  user.set("reservePendingHours",0)
+await user.save()
+await getEvents()
+}
 
 if(sessionId){
  let session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -504,9 +526,10 @@ if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sess
 
     //user.set("meetingRoomHours",parseFloat(user.get("meetingRoomHours"))+parseFloat(session.amount_total/100)/1);
     user.set("sessionIdExpress",sessionId)
-  const Reserves=Moralis.Object.extend("Reserves")
+    let Reserves=Moralis.Object.extend("Reserves")
 
-  const reserve=new Reserves() 
+    let reserve=new Reserves() 
+
   console.log("entroaqui"+user.get("reservePendingUid"))
   console.log("entroaqui"+user.get("reservePendingUid"))
   console.log("entroaqui "+user.get("reservePendingAreaName").areaName )

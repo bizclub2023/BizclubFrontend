@@ -22,7 +22,7 @@ const Checkout2 = (props) => {
 
   const [isLoading, setLoading] = useState(false);
   const item = [{
-    price: "price_1NihbpGc5cz7uc72gcdvagw5",
+    price: "price_1O5qUiGc5cz7uc72KYPLw81q",
     quantity: 1,
   }
 ]
