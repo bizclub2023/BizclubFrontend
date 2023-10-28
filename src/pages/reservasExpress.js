@@ -497,7 +497,6 @@ if(user.get("reservePendingUid")){
  
   reserve.set("areaName", user.get("reservePendingAreaName").areaName )     
   reserve.set("title", user.get("reservePendingTitle") )    
-  console.log("reservePendingUid2 "+user.get("reservePendingTitle"))
  
 await reserve.save()
   user.set("reservePendingUid",undefined)
@@ -506,8 +505,9 @@ await reserve.save()
   user.set("reservePendingEvent",undefined)
   
   user.set("reservePendingHours",0)
+  await reserve.save()
+
 await user.save()
-await getEvents()
 }
 
 if(sessionId){
@@ -550,7 +550,6 @@ if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sess
 
    await reserve.save()
 await user.save()
-await getEvents()
 console.log("session termino")
 
   }else{
@@ -561,6 +560,7 @@ console.log("session termino")
 
 }
 }
+await getEvents()
 
 }
 
@@ -629,9 +629,6 @@ console.log("object "+JSON.stringify(object))
       }]
    
     }
-    console.log("eventos "+JSON.stringify(salon))
-
-    console.log("eventos "+JSON.stringify(eventos))
     await  calendarRef.current.scheduler.handleState([...eventos], "events")
   }
 
