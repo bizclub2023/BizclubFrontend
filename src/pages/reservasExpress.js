@@ -407,11 +407,11 @@ if(areaName==="shareRoom"){
   stripePrice="price_1O5ZKgGc5cz7uc72Jji9lKJO"
 }else if(areaName==="office2Room"){
   hoursCalculated=1
-  stripePrice="price_1O45hvGc5cz7uc72vcAhtn6N"
+  stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
 }else if(areaName==="office4Room"){
   hoursCalculated=1
 
-  stripePrice="price_1O5ZNHGc5cz7uc72FUh45r0N"
+  stripePrice="price_1O45kHGc5cz7uc72c1WEAA8L"
 }else if(areaName==="office8Room"){
   hoursCalculated=1
 
