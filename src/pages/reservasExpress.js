@@ -418,7 +418,6 @@ if(areaName==="shareRoom"){
   stripePrice="price_1O5ZP9Gc5cz7uc72n1JBgvzB"
 }
 
-
 const { error,cancel, } = await stripe.redirectToCheckout({
   lineItems:[{ 
   price: stripePrice,
@@ -655,13 +654,15 @@ await user.save()
 } */
 
 if(sessionId){
-  console.log("session "+session.payment_status)
+
   console.log("session "+user.get("sessionIdExpress"))
   console.log("session "+sessionId)
   console.log("session "+user.get("sessionIdExpress")!==sessionId)
 
 if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sessionId.toString()){
   console.log("session "+"entro")
+  let session = await stripe.checkout.sessions.retrieve(sessionId);
+  console.log("session "+session.payment_status)
 
   console.log("session "+parseFloat(session.amount_total/100))
 
