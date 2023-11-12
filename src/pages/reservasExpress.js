@@ -168,7 +168,7 @@ let stripePromise;
 
 const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
+    stripePromise = loadStripe("pk_test_51NV05cGc5cz7uc72xTzSNZNeg3dsIWX9hZo4Y7nZH5WnFF8nuEJJwhSGviE29JHXzm8zovxToQDDVjLzfND57MWj00NdjCWocu");
   }
 
   return stripePromise;
@@ -402,17 +402,21 @@ if(areaName==="shareRoom"){
 }else if(areaName==="deskRoom"){
   stripePrice="price_1O5ZKgGc5cz7uc72Jji9lKJO"
 }else if(areaName==="office2Room"){
-  stripePrice="price_1O5ZMUGc5cz7uc72hZZ9ABsC"
+  hoursCalculated=1
+  stripePrice="price_1O45hvGc5cz7uc72vcAhtn6N"
 }else if(areaName==="office4Room"){
+  hoursCalculated=1
+
   stripePrice="price_1O5ZNHGc5cz7uc72FUh45r0N"
 }else if(areaName==="office8Room"){
+  hoursCalculated=1
+
   stripePrice="price_1O5ZODGc5cz7uc72Dnujt6va"
 }else if(areaName==="meetingRoom"){
   stripePrice="price_1O5qE9Gc5cz7uc727KAXNumG"
 }else if(areaName==="trainingRoom"){
   stripePrice="price_1O5ZP9Gc5cz7uc72n1JBgvzB"
 }
-
 
 
 const { error,cancel, } = await stripe.redirectToCheckout({
