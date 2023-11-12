@@ -225,8 +225,7 @@ const CustomEditor = ({ scheduler ,handleReserva}) => {
         const sevenPMEnd = new Date(scheduler.state.end.value);
         sevenPMEnd.setHours(19, 0, 0, 0);
         sevenPMStart.setHours(7, 0, 0, 0);
-        start: scheduler.state.start.value,
-        end: ,
+     
 console.log("asdasd "+JSON.stringify(scheduler.state.start.value))
 console.log("asdasd2 "+JSON.stringify(scheduler.state.end.value))
 console.log("sevenPMEnd "+JSON.stringify(sevenPMEnd))
