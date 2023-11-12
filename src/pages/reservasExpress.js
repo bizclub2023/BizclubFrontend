@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/router';
 const stripe = require('stripe')("pk_live_51NV05cGc5cz7uc72FsRnXnRLG6lH4JRQu1nbngguiQRqotxj3nYOHj7iScTHm1DQGfh38AHrfzzpFvQMzAOWkHp700evWRcuXU");
+import { DialogActions } from "@mui/material";
 
 import { useCallback,useRef, useMemo, useState, useEffect } from 'react';
 import { OverviewPlanExpress } from 'src/sections/overview/overview-plan-express';
@@ -172,16 +173,155 @@ const getStripe = () => {
 
   return stripePromise;
 };
+
+const CustomEditor = ({ scheduler ,handleReserva}) => {
+  const event = scheduler.edited;
+  const {Moralis}=useMoralis()
+
+  // Make your own form/state
+  const [state, setState] = useState({
+    title: event?.title || "",
+    description: event?.description || ""
+  });
+  const [error, setError] = useState("");
+
+  const handleChange = (value, name) => {
+    setState((prev) => {
+      return {
+        ...prev,
+        [name]: value
+      };
+    });
+  };
+  
+  function diff_hours(dt2, dt1) 
+  {
+  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return Math.abs(Math.round(diff));
+  }
+  const handleSubmit = async (res,rej) => {
+    // Your own validation
+    if (state.title.length < 3) {
+      return setError("Min 3 letters");
+    }
+
+
+
+
+
+    try {
+
+      scheduler.loading(true);
+
+      
+        
+       await new Promise(async (res, rej) => {
+
+        const user = await Moralis.User.current();
+        const sevenPMStart = new Date();
+        const sevenPMEnd = new Date();
+        sevenPMEnd.setHours(19, 0, 0, 0);
+        sevenPMStart.setHours(7, 0, 0, 0);
+
+console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
+console.log("sevenPMEnd "+JSON.stringify(sevenPMEnd))
+
+        if (user) {
+          const hoursCalculated = await diff_hours(sevenPMStart, sevenPMEnd);
+         
+
+        console.log("hoursCalculated "+hoursCalculated)
+  
+          const areaName = await Moralis.Cloud.run("getSalon");
+  
+          // Consultar eventos que se superponen con la nueva reserva
+          const query = new Moralis.Query("Reserves");
+          query.equalTo("areaName", areaName);
+          query.greaterThanOrEqualTo("event.start", sevenPMStart);
+          query.lessThanOrEqualTo("event.end", sevenPMEnd);
+          let conflictingEvents = await query.find();
+  
+          // Verificar si hay eventos que se superponen
+          if (conflictingEvents.length > 0) {
+            notify3();
+            rej();
+            return;
+          }
+       //   await setMyEvents([...myEvents, event]);
+       let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+
+       let event={
+         
+        event_id: uniqueID2,
+        title: state.title,
+        start: sevenPMStart,
+        end: sevenPMEnd,
+      }
+  
+         await handleReserva(event);
+         
+          await calendarRef.current.scheduler.triggerDialog(true, event);
+          setRebuild(!rebuild);
+          scheduler.loading(false);
+
+          await res({
+            ...event,
+            event_id: event.event_id || Math.random(),
+          });
+        } else {
+          notify();
+          rej();
+        }
+   
+      scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
+      scheduler.close();
+      })
+    
+    } finally {
+      
+      scheduler.loading(false);
+    }
+  };
+  return (
+    <div>
+      <div style={{ padding: "1rem" }}>
+        <p>Load your custom form/fields</p>
+        <TextField
+          label="Title"
+          value={state.title}
+          onChange={(e) => handleChange(e.target.value, "title")}
+          error={!!error}
+          helperText={error}
+          fullWidth
+        />
+        <TextField
+          label="Description"
+          value={state.description}
+          onChange={(e) => handleChange(e.target.value, "description")}
+          fullWidth
+        />
+      </div>
+      <DialogActions>
+        <Button onClick={scheduler.close}>Cancel</Button>
+        <Button onClick={handleSubmit}>Confirm</Button>
+      </DialogActions>
+    </div>
+  );
+}
 const Page = () => {
 
 const {Moralis}=useMoralis()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isLoading,setLoading]=useState(false)
+  const [eventosdata,setEventos]=useState([])
 
   const [title,setTitle]=useState([])
  const [error,setError]=useState('')
 let eventos=[]
+let eventos2=[]
+
 const notify = () => toast("Elige una hora y fecha valida.");
 const notify2 = () => toast("No tienes Horas de reserva");
 const notify3 = () => toast("Las fechas coinciden con otra reserva");
@@ -203,7 +343,6 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
       if(true){
 
         if(planName!==""){
-          let hoursCalculated=await diff_hours(event.start,event.end)
 
       
           const Reserves=Moralis.Object.extend("Reserves")
@@ -234,13 +373,12 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
            end: event.end,
          }) 
          let meetingHours=user.get("meetingRoomHours")
-         
+         console.log("hoursCalculated3 "+hoursCalculated)
           if(!meetingHours||user.get("meetingRoomHours") < hoursCalculated){
              
             
                    
 
-   console.log("hoursCalculated "+hoursCalculated)
 user.set("reservePendingEvent",{
 
   event_id: uniqueID2,
@@ -277,7 +415,7 @@ if(areaName==="shareRoom"){
 
 
 
-const { error,cancel } = await stripe.redirectToCheckout({
+const { error,cancel, } = await stripe.redirectToCheckout({
   lineItems:[{ 
   price: stripePrice,
   quantity: hoursCalculated,
@@ -294,6 +432,9 @@ console.log("entro aqui2")
 
 
 if (error) {
+  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
+  await getEvents()
+
 setLoading(false);
 } else if(cancel){
   await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
@@ -310,7 +451,7 @@ return
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
             
 
-        await reserve.save()
+      //  await reserve.save()
 
 
         await user.save()
@@ -343,28 +484,23 @@ var areaFinal=""
   const handleChange = useCallback(
     async (event) => {
      setLoading(true)
+     setEventos([])
+
       setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
       }));
-      console.log("event.target.value "+event.target.value)
-      if(event.target.name==='areaName'){
-        console.log(event.target.value)
-       await Moralis.Cloud.run("setSalon",{room:event.target.value});
+      await Moralis.Cloud.run("setSalon",{room:event.target.value});
+      await getEvents()
 
-       console.log("getSalon"+JSON.stringify(await Moralis.Cloud.run("getSalon")))
-       await getEvents()
-     }
+     
+
      setLoading(false)
 
     },
     []
     );
     
-    useEffect(() => {
-        getEvents()
-
-    }, [values]);
    
     const areas = [
      
@@ -411,7 +547,8 @@ var areaFinal=""
     }
 
   
-    
+    const calendarRef2 = useRef(null);
+
     const calendarRef = useRef(null);
     const [rebuild,setRebuild]=useState(false)
     const handleConfirm = async (event, action) => {
@@ -486,10 +623,12 @@ async function fecthstripe(){
   let user=await Moralis.User.current()
   await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
   console.log("reservePendingUid "+user.get("reservePendingUid"))
-if(user.get("reservePendingUid")){
+/* 
+if(user.get("reservePendingUid"&&!sessionId)){
   let Reserves=Moralis.Object.extend("Reserves")
   let reserve=new Reserves() 
   console.log("npm run dev ")
+
 
   reserve.set("uid",user.get("reservePendingUid"))       
   reserve.set("user",user.get("email")) 
@@ -508,10 +647,10 @@ await reserve.save()
   await reserve.save()
 
 await user.save()
-}
+
+} */
 
 if(sessionId){
- let session = await stripe.checkout.sessions.retrieve(sessionId);
   console.log("session "+session.payment_status)
   console.log("session "+user.get("sessionIdExpress"))
   console.log("session "+sessionId)
@@ -547,7 +686,12 @@ if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sess
    
   
    reserve.set("event",user.get("reservePendingEvent")) 
-
+   user.set("reservePendingUid",undefined)
+   user.set("reservePendingAreaName",undefined)
+   user.set("reservePendingTitle","")
+   user.set("reservePendingEvent",undefined)
+   
+   user.set("reservePendingHours",0)
    await reserve.save()
 await user.save()
 console.log("session termino")
@@ -560,7 +704,7 @@ console.log("session termino")
 
 }
 }
-await getEvents()
+ await getEvents()
 
 }
 
@@ -575,65 +719,22 @@ await getEvents()
     }, []);
     
     async function getEvents(){
-      let user=await Moralis.User.current()
-
-let salon=await Moralis.Cloud.run("getSalon")
-if(!salon){
-  await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
-salon="meetingRoom"
-}
-  const query =await new Moralis.Query("Reserves");
-
-  if(salon==="meetingRoom"){
-    await query.equalTo("areaName","meetingRoom")
-
-  } else if(salon==="trainingRoom"){
-    await query.equalTo("areaName","trainingRoom")
-
-  } else if(salon==="office8Room"){
-    await query.equalTo("areaName","office8Room")
-
-  } else if(salon==="office4Room"){
-    await query.equalTo("areaName","office4Room")
-
-  } else if(salon==="office2Room"){
-    await query.equalTo("areaName","office2Room")
-
-  } else if(salon==="deskRoom"){
-    await query.equalTo("areaName","deskRoom")
-
-  } else if(salon==="shareRoom"){
-    await query.equalTo("areaName","shareRoom")
-
-  }  else{
-   await query.equalTo("areaName","meetingRoom")
-
-  }
-  await query.limit(1000)
-    let object= await query.find()
-    eventos=[]
-console.log("object "+JSON.stringify(object))
-  if(object){
-    
-    for(let i=0;i<object.length;i++){ 
       
-      eventos=[...eventos,{
-        event_id: null,
-        title: object[i].attributes.title,
-        start: object[i].attributes.event.start,
-        end: object[i].attributes.event.end,
-        admin_id: 1,
-        editable: false,
-        deletable: false,
-        color: user.get("email")===object[i].attributes.user?"red":"#50b500"
-      }]
-   
-    }
-    await  calendarRef.current.scheduler.handleState([...eventos], "events")
+      let user=await Moralis.User.current()
+      console.log(user.get("email"))
+      let userEmail=user.get("email")
+      const dataEventos = await Moralis.Cloud.run("getEvents",{email:userEmail});
+
+    setEventos(dataEventos)
+
+    console.log("eventos "+JSON.stringify(dataEventos))
+if(dataEventos){
+  await  calendarRef.current.scheduler.handleState([...dataEventos], "events")
+
+}
   }
 
 
-  }   
   const cancelSubscription = async (subscriptionId) => {
     try {
       const canceledSubscription = await stripe.subscriptions.del(subscriptionId);
@@ -692,85 +793,181 @@ console.log("object "+JSON.stringify(object))
                     </option>
                   ))}
                 </TextField>
-<Scheduler
-events={eventos}
-ref={calendarRef}
+              {values.areaName!=="office8Room"&&values.areaName!=="office4Room"&&values.areaName!=="office2Room"?
+              <Scheduler
+              key={"uno"}
+              events={eventosdata}
+              week={{ 
+                weekDays: [0, 1, 2, 3, 4, 5, 6], 
+                weekStartOn: 6, 
+                startHour: 7, 
+                endHour: 20,
+                step: 60,
+                navigation: true,
+                disableGoToDay: false
+                }}
+                day={null}
+                month={null}
+              ref={calendarRef}
+              en
+              navigation={true}
+              view={"week"}
+              translations={{
+                navigation: {
+                month: "Mes",
+                week: "Semana",
+                day: "Dia",
+                today: "Hoy"
+                },
+                form: {
+                addTitle: "Haz una reservacion",
+                editTitle: "Edit Event",
+                confirm: "Confirm",
+                delete: "Delete",
+                cancel: "Cancel"
+                },
+                event: {
+                title: "Title",
+                start: "Start",
+                end: "End",
+                allDay: "All Day"
+               },
+                validation: {
+                required: "Required",
+                invalidEmail: "Invalid Email",
+                onlyNumbers: "Only Numbers Allowed",
+                min: "Minimum {{min}} letters",
+                max: "Maximum {{max}} letters"
+                },
+                moreEvents: "More...",
+                loading: "Loading..."
+               }}
+              
+              onConfirm={handleConfirm}
+              
+              eventRenderer={(event) => {
+               
+                
+                if (+event.event_id % 2 === 0) {
+              
+                  return (<div
+                    key={event.event_id}
 
-view="week"
-translations={{
-  navigation: {
-  month: "Mes",
-  week: "Semana",
-  day: "Dia",
-  today: "Hoy"
-  },
-  form: {
-  addTitle: "Haz una reservacion",
-  editTitle: "Edit Event",
-  confirm: "Confirm",
-  delete: "Delete",
-  cancel: "Cancel"
-  },
-  event: {
-  title: "Title",
-  start: "Start",
-  end: "End",
-  allDay: "All Day"
- },
-  validation: {
-  required: "Required",
-  invalidEmail: "Invalid Email",
-  onlyNumbers: "Only Numbers Allowed",
-  min: "Minimum {{min}} letters",
-  max: "Maximum {{max}} letters"
-  },
-  moreEvents: "More...",
-  loading: "Loading..."
- }}
-week={{ 
-weekDays: [0, 1, 2, 3, 4, 5, 6], 
-weekStartOn: 6, 
-startHour: 7, 
-endHour: 20,
-step: 60,
-navigation: true,
-disableGoToDay: false
-}}
-onConfirm={handleConfirm}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        background: "#757575"
+                      }}
+                    >
+                      <div
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.start.toLocaleTimeString("en-US", {
+                          timeStyle: "short"
+                        })}
+                      </div>
+                      <div>{event.title}</div>
+                      <div
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              />:null} 
+              {values.areaName==="office2Room"||values.areaName==="office4Room"||values.areaName==="office8Room"?
+              <Scheduler
+              key={"uno2"}
 
-eventRenderer={(event) => {
- 
-  
-  if (+event.event_id % 2 === 0) {
+              events={eventosdata}
+              week={null}
+              customEditor={(scheduler) => <CustomEditor handleReserva={handleReserva} scheduler={scheduler} />}
 
-    return (<div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "100%",
-          background: "#757575"
-        }}
-      >
-        <div
-          style={{ height: 20, background: "#ffffffb5", color: "black" }}
-        >
-          {event.start.toLocaleTimeString("en-US", {
-            timeStyle: "short"
-          })}
-        </div>
-        <div>{event.title}</div>
-        <div
-          style={{ height: 20, background: "#ffffffb5", color: "black" }}
-        >
-          {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
-        </div>
-      </div>
-    );
-  }
-  return null;
-}}
-/>
+              navigation={true}
+
+              editable={true}
+                day={null}
+                month={{ 
+                  weekDays: [0, 1, 2, 3, 4, 5, 6], 
+                  weekStartOn: 6, 
+                  startHour: 7, 
+                  endHour: 20,
+                  step: 1340,
+                  navigation: false,
+                  disableGoToDay: false
+                  }}
+              ref={calendarRef2}
+              en
+              view={"week"}
+              translations={{
+                navigation: {
+                month: "Mes",
+                week: "Semana",
+                day: "Dia",
+                today: "Hoy"
+                },
+                form: {
+                addTitle: "Haz una reservacion",
+                editTitle: "Edit Event",
+                confirm: "Confirm",
+                delete: "Delete",
+                cancel: "Cancel"
+                },
+                event: {
+                title: "Title",
+                start: "Start",
+                end: "End",
+                allDay: "All Day"
+               },
+                validation: {
+                required: "Required",
+                invalidEmail: "Invalid Email",
+                onlyNumbers: "Only Numbers Allowed",
+                min: "Minimum {{min}} letters",
+                max: "Maximum {{max}} letters"
+                },
+                moreEvents: "More...",
+                loading: "Loading..."
+               }}
+              
+              onConfirm={handleConfirm}
+              
+              eventRenderer={(event) => {
+               
+                
+                if (+event.event_id % 2 === 0) {
+              
+                  return (<div
+                  key={event.event_id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        background: "#757575"
+                      }}
+                    >
+                      <div
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.start.toLocaleTimeString("en-US", {
+                          timeStyle: "short"
+                        })}
+                      </div>
+                      <div>{event.title}</div>
+                     
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              />:null}
+
         <ToastContainer />
                 {error!==""?  <Alert variant="outlined" severity="error">{error}</Alert>:null}
 
