@@ -407,15 +407,15 @@ if(areaName==="shareRoom"){
   stripePrice="price_1O45ZOGc5cz7uc72yJ389dnU"
 }else if(areaName==="office2Room"){
   hoursCalculated=1
-  stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
+  stripePrice="price_1O45hvGc5cz7uc72vcAhtn6N"
 }else if(areaName==="office4Room"){
   hoursCalculated=1
 
-  stripePrice="price_1O45kHGc5cz7uc72c1WEAA8L"
+  stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
 }else if(areaName==="office8Room"){
   hoursCalculated=1
 
-  stripePrice="price_1O5ZODGc5cz7uc72Dnujt6va"
+  stripePrice="price_1O45jdGc5cz7uc72mtqcCsij"
 }else if(areaName==="meetingRoom"){
   stripePrice="price_1O5qE9Gc5cz7uc727KAXNumG"
 }else if(areaName==="trainingRoom"){
