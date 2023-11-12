@@ -177,6 +177,7 @@ const getStripe = () => {
 const CustomEditor = ({ scheduler ,handleReserva}) => {
   const event = scheduler.edited;
   const {Moralis}=useMoralis()
+  const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
   // Make your own form/state
   const [state, setState] = useState({
