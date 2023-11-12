@@ -404,7 +404,7 @@ let stripePrice=""
 if(areaName==="shareRoom"){
   stripePrice="price_1O5ZJ2Gc5cz7uc72aYFMTRcG"
 }else if(areaName==="deskRoom"){
-  stripePrice="price_1O5ZKgGc5cz7uc72Jji9lKJO"
+  stripePrice="price_1O45ZOGc5cz7uc72yJ389dnU"
 }else if(areaName==="office2Room"){
   hoursCalculated=1
   stripePrice="price_1O45jGGc5cz7uc72AirdUmP8"
