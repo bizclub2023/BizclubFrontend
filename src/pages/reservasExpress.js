@@ -572,7 +572,6 @@ var areaFinal=""
 
 
           if (currentDate <= event.start && currentDate <= event.end && user && (event.start <= sevenPMStart  || event.end <= sevenPMEnd) ) {
-            const hoursCalculated = await diff_hours(event.start, event.end);
            
 
           
@@ -581,17 +580,23 @@ var areaFinal=""
     
             // Consultar eventos que se superponen con la nueva reserva
             const query = new Moralis.Query("Reserves");
-            query.equalTo("areaName", areaName);
-            query.greaterThanOrEqualTo("event.start", event.start);
-            query.lessThanOrEqualTo("event.end", event.end);
+            await query.equalTo("areaName", areaName);
+            await query.greaterThanOrEqualTo("event.start", new Date(event.start));
+            await query.lessThanOrEqualTo("event.end", new Date(event.end));
             let conflictingEvents = await query.find();
-    
+            console.log("event.start "+JSON.stringify(new Date(event.start)))
+            console.log("event.end "+JSON.stringify(new Date(event.end)))
+
+            console.log("areaName "+JSON.stringify(areaName))
+
+            console.log("conflictingEvents "+JSON.stringify(conflictingEvents))
             // Verificar si hay eventos que se superponen
             if (conflictingEvents.length > 0) {
               notify3();
               rej();
               return;
             }
+            
             await setTitle(event.title);
             await setMyEvents([...myEvents, event]);
     
@@ -821,6 +826,7 @@ if(dataEventos){
               en
               navigation={true}
               view={"week"}
+              hourFormat='12'
               translations={{
                 navigation: {
                 month: "Mes",
