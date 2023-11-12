@@ -177,7 +177,6 @@ const getStripe = () => {
 const CustomEditor = ({ scheduler ,handleReserva}) => {
   const event = scheduler.edited;
   const {Moralis}=useMoralis()
-  const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
   // Make your own form/state
   const [state, setState] = useState({
@@ -201,6 +200,8 @@ const CustomEditor = ({ scheduler ,handleReserva}) => {
   diff /= (60 * 60);
   return Math.abs(Math.round(diff));
   }
+  const notify3 = () => toast("Las fechas coinciden con otra reserva");
+
   const handleSubmit = async (res,rej) => {
     // Your own validation
     if (state.title.length < 3) {
@@ -220,13 +221,16 @@ const CustomEditor = ({ scheduler ,handleReserva}) => {
        await new Promise(async (res, rej) => {
 
         const user = await Moralis.User.current();
-        const sevenPMStart = new Date();
-        const sevenPMEnd = new Date();
+        const sevenPMStart = new Date(scheduler.state.start.value);
+        const sevenPMEnd = new Date(scheduler.state.end.value);
         sevenPMEnd.setHours(19, 0, 0, 0);
         sevenPMStart.setHours(7, 0, 0, 0);
-
-console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
+        start: scheduler.state.start.value,
+        end: ,
+console.log("asdasd "+JSON.stringify(scheduler.state.start.value))
+console.log("asdasd2 "+JSON.stringify(scheduler.state.end.value))
 console.log("sevenPMEnd "+JSON.stringify(sevenPMEnd))
+console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
 
         if (user) {
           const hoursCalculated = await diff_hours(sevenPMStart, sevenPMEnd);
