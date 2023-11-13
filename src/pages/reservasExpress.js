@@ -370,8 +370,7 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
       if(true){
 
         if(planName!==""){
-
-      
+       
         
           let uniqueID=parseInt((Date.now()+ Math.random()).toString())
         
@@ -392,7 +391,6 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
 
             console.log("reservePendingEvent.start "+event.start)
     
-
 user.set("reservePendingEvent",{
 
   event_id: uniqueID2,
@@ -465,18 +463,40 @@ return
 };
           } else {
 
+            let Reserves=Moralis.Object.extend("Reserves")
+
+            const reserve=new Reserves() 
 
 
+            reserve.set("uid",uniqueID)       
+        
+            reserve.set("user",user.get("email"))  
+            console.log("areaName "+values.areaName)
+            if(areaName!=="") {  
+             reserve.set("areaName", areaName )     
+            } else {
+             reserve.set("areaName",areas[0].value)     
+            } 
+           reserve.set("title",JSON.stringify(event.title)  )   
+          
+          
+          
+           reserve.set("event",{
+           
+             event_id: uniqueID2,
+             title: event.title,
+             start: event.start,
+             end: event.end,
+           }) 
 
 
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
             
 
-      //  await reserve.save()
+        await reserve.save()
 
 
-        await user.save()
           }
         
        
