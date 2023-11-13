@@ -66,12 +66,12 @@ console.log("entro aqui")
             
   }
   
+          
   if(user.get("email")=="ricardouzalt1207@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
     await setAdmin(true)
     await setIsCostumer(false)
 
           }
-          
     await setIsLoading(false)
 }} catch(e){
   console.log(e.message)
@@ -94,13 +94,7 @@ console.log("entro aqui")
   useEffect(() => {
     init()
 
-    const interval = setInterval(() => {
-
-      init()
-
-    }, 5000);
-    return () => clearInterval(interval);
-
+  
   }, []);
   const content = (
     <Scrollbar

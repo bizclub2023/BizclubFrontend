@@ -38,6 +38,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { DialogActions } from "@mui/material";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -173,8 +174,6 @@ console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
   
      //    await handleReserva(event);
          
-          await calendarRef.current.scheduler.triggerDialog(true, event);
-          setRebuild(!rebuild);
           scheduler.loading(false);
 
           await res({
@@ -186,7 +185,7 @@ console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
           rej();
         }
    
-      scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
+      //scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
       scheduler.close();
       })
     
@@ -310,8 +309,9 @@ const fetchUser=async (e)=>{
   
   setValues({   userEmail:clickedRow.email,planUsers:clickedRow.planUsers})
 await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email})
+await Moralis.Cloud.run("setRoom",{salon:"meetingRoom"})
 
-  await getEvents()
+await getEvents()
 console.log(clickedRow.email)
 
   };
@@ -547,12 +547,12 @@ console.log("entro!")
               event_id: event.event_id || Math.random()
             });
 
-      await getEvents()
        
         }
         
 
      
+        await getEvents()
       }, 2000);
       
 

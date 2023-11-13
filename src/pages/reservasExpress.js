@@ -223,13 +223,40 @@ const CustomEditor = ({ scheduler ,handleReserva}) => {
         const user = await Moralis.User.current();
         const sevenPMStart = new Date(scheduler.state.start.value);
         const sevenPMEnd = new Date(scheduler.state.end.value);
-        sevenPMEnd.setHours(19, 0, 0, 0);
-        sevenPMStart.setHours(7, 0, 0, 0);
+
      
-console.log("asdasd "+JSON.stringify(scheduler.state.start.value))
+        sevenPMStart.setHours(7, 0, 0, 0);
+        sevenPMEnd.setHours(19, 0, 0, 0);
+
+ var fecha1 = new Date(sevenPMStart);
+
+        // Obtener los componentes de la fecha
+        var diaSemana1 = fecha1.toLocaleDateString('en-US', { weekday: 'long' });
+        var mes1 = fecha1.toLocaleDateString('en-US', { month: 'long' });
+        var dia1 = fecha1.getDate();
+        var año1 = fecha1.getFullYear();
+        var hora1 = fecha1.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+        
+        // Crear una cadena de fecha más entendible
+        var fechaLegible1 = diaSemana1 + ', ' + mes1 + ' ' + dia1 + ', ' + año1 + ' ' + hora1;
+        var fecha2 = new Date(sevenPMEnd);
+
+          // Obtener los componentes de la fecha
+          var diaSemana2 = fecha2.toLocaleDateString('en-US', { weekday: 'long' });
+          var mes2 = fecha2.toLocaleDateString('en-US', { month: 'long' });
+          var dia2 = fecha2.getDate();
+          var año2 = fecha2.getFullYear();
+          var hora2 = fecha2.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+          
+          // Crear una cadena de fecha más entendible
+          var fechaLegible2 = diaSemana2 + ', ' + mes2 + ' ' + dia2 + ', ' + año2 + ' ' + hora2;
+          
+console.log("fechaLegible1 "+JSON.stringify(fecha1))
+console.log("fechaLegible2 "+JSON.stringify(fecha2))
+
 console.log("asdasd2 "+JSON.stringify(scheduler.state.end.value))
-console.log("sevenPMEnd "+JSON.stringify(sevenPMEnd))
-console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
+console.log("sevenPMEnd "+JSON.stringify(new Date(sevenPMEnd)))
+console.log("sevenPMStart "+JSON.stringify(new Date(sevenPMStart)))
 
         if (user) {
           const hoursCalculated = await diff_hours(sevenPMStart, sevenPMEnd);
@@ -333,10 +360,6 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
     async function handleReserva(event){
 
 
-      if(title===""){
-        setError("Falta la reserva")
-        return
-      }    
 
        
       let user=await Moralis.User.current()
@@ -349,46 +372,33 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
         if(planName!==""){
 
       
-          const Reserves=Moralis.Object.extend("Reserves")
         
-          const reserve=new Reserves() 
           let uniqueID=parseInt((Date.now()+ Math.random()).toString())
-          reserve.set("uid",uniqueID)       
         
-          reserve.set("user",user.get("email"))  
           let areaName=await Moralis.Cloud.run("getSalon")
           console.log("areaName "+values.areaName)
-          if(areaName!=="") {  
-           reserve.set("areaName", areaName )     
-          } else {
-           reserve.set("areaName",areas[0].value)     
-          } 
-         reserve.set("title",JSON.stringify(event.title)  )   
-        let eventitos=[]
+        
         
         
          let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
-        
-         reserve.set("event",{
-         
-           event_id: uniqueID2,
-           title: event.title,
-           start: event.start,
-           end: event.end,
-         }) 
+       
+      
          let meetingHours=user.get("meetingRoomHours")
          console.log("hoursCalculated3 "+hoursCalculated)
           if(areaName==="office8Room"||areaName==="office4Room"||areaName==="office2Room"||!meetingHours||user.get("meetingRoomHours") < hoursCalculated){
              
             
-                   
+            console.log("reservePendingEvent.end "+event.end)
+
+            console.log("reservePendingEvent.start "+event.start)
+    
 
 user.set("reservePendingEvent",{
 
   event_id: uniqueID2,
   title: event.title,
-  start: event.start,
-  end: event.end,
+  start: new Date(event.start),
+  end: new Date(event.end,)
 })
 user.set("reservePendingUid",uniqueID)       
 
@@ -422,7 +432,7 @@ if(areaName==="shareRoom"){
   stripePrice="price_1O5ZP9Gc5cz7uc72n1JBgvzB"
 }
 
-const { error,cancel, } = await stripe.redirectToCheckout({
+const { error,cancel } = await stripe.redirectToCheckout({
   lineItems:[{ 
   price: stripePrice,
   quantity: hoursCalculated,
@@ -454,6 +464,11 @@ setLoading(false);
 return
 };
           } else {
+
+
+
+
+
 
             user.set("meetingRoomHours",user.get("meetingRoomHours")-hoursCalculated)
             
@@ -567,8 +582,8 @@ var areaFinal=""
           const user = await Moralis.User.current();
           const sevenPMStart = new Date(event.start);
           const sevenPMEnd = new Date(event.end);
+          sevenPMStart.setHours(7, 0, 0, 0);
           sevenPMEnd.setHours(19, 0, 0, 0);
-          sevenPMStart.setHours(18, 0, 0, 0);
 
 
           if (currentDate <= event.start && currentDate <= event.end && user && (event.start <= sevenPMStart  || event.end <= sevenPMEnd) ) {
@@ -716,7 +731,7 @@ let areanew=user?.get("reservePendingAreaName")?.areaName??"meetingRoom"
 
    let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
    //user.set("meetingRoomHours",parseFloat(user.get("meetingRoomHours"))+parseFloat(session.amount_total/100)/1)
-   
+   console.log("reservePendingEvent "+JSON.stringify(user.get("reservePendingEvent")))
    
   
    reserve.set("event",user.get("reservePendingEvent")) 
@@ -761,7 +776,7 @@ console.log("session termino")
       let userEmail=user.get("email")
       const dataEventos = await Moralis.Cloud.run("getEvents",{email:userEmail});
 
-    setEventos(dataEventos)
+   await setEventos(dataEventos)
 
     console.log("eventos "+JSON.stringify(dataEventos))
 if(dataEventos){
@@ -926,7 +941,6 @@ if(dataEventos){
               customEditor={(scheduler) => <CustomEditor handleReserva={handleReserva} scheduler={scheduler} />}
 
               navigation={true}
-
               editable={true}
                 day={null}
                 month={{ 
