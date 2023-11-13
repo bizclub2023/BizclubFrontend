@@ -290,7 +290,7 @@ console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
   return (
     <div>
       <div style={{ padding: "1rem" }}>
-        <p>Load your custom form/fields</p>
+        <p>Titulo y descripcion de la reserva</p>
         <TextField
           label="Title"
           value={state.title}
@@ -378,7 +378,7 @@ const notify3 = () => toast("Las fechas coinciden con otra reserva");
          }) 
          let meetingHours=user.get("meetingRoomHours")
          console.log("hoursCalculated3 "+hoursCalculated)
-          if(!meetingHours||user.get("meetingRoomHours") < hoursCalculated){
+          if(areaName==="office8Room"||areaName==="office4Room"||areaName==="office2Room"||!meetingHours||user.get("meetingRoomHours") < hoursCalculated){
              
             
                    
@@ -579,24 +579,41 @@ var areaFinal=""
             const areaName = await Moralis.Cloud.run("getSalon");
     
             // Consultar eventos que se superponen con la nueva reserva
-            const query = new Moralis.Query("Reserves");
+            let query = new Moralis.Query("Reserves");
             await query.equalTo("areaName", areaName);
-            await query.greaterThanOrEqualTo("event.start", new Date(event.start));
-            await query.lessThanOrEqualTo("event.end", new Date(event.end));
+            query.limit(1000)
             let conflictingEvents = await query.find();
             console.log("event.start "+JSON.stringify(new Date(event.start)))
             console.log("event.end "+JSON.stringify(new Date(event.end)))
-
+        
             console.log("areaName "+JSON.stringify(areaName))
 
             console.log("conflictingEvents "+JSON.stringify(conflictingEvents))
             // Verificar si hay eventos que se superponen
             if (conflictingEvents.length > 0) {
-              notify3();
-              rej();
-              return;
-            }
+              for (let i = 0; i < conflictingEvents.length; i++) {
+                const existingEvent = conflictingEvents[i].attributes.event;
             
+                // Verificar si hay coincidencia exacta
+                if (existingEvent&&
+                  existingEvent.start.getTime() === new Date(event.start).getTime() &&
+                  existingEvent.end.getTime() === new Date(event.end).getTime()
+                ) {
+                  notify3();
+                  rej();
+                  return;
+                }
+            
+                // Verificar si hay superposición
+                if (existingEvent&&
+                  existingEvent.start < new Date(event.end) &&
+                  existingEvent.end > new Date(event.start)
+                ) {
+                  notify3();
+                  rej();
+                  return;
+                }
+              }}
             await setTitle(event.title);
             await setMyEvents([...myEvents, event]);
     
@@ -682,16 +699,19 @@ if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sess
     let Reserves=Moralis.Object.extend("Reserves")
 
     let reserve=new Reserves() 
+    if(user?.get("reservePendingAreaName")){
+      
+let areanew=user?.get("reservePendingAreaName")?.areaName??"meetingRoom"
 
   console.log("entroaqui"+user.get("reservePendingUid"))
   console.log("entroaqui"+user.get("reservePendingUid"))
-  console.log("entroaqui "+user.get("reservePendingAreaName").areaName )
+  console.log("entroaqui "+areanew )
   console.log("entroaqui "+user.get("reservePendingTitle"))
   console.log("entroaqui "+user.get("reservePendingEvent"))
-
+ 
    reserve.set("uid",user.get("reservePendingUid"))       
    reserve.set("user",user.get("email"))  
-   reserve.set("areaName", user.get("reservePendingAreaName").areaName )     
+   reserve.set("areaName", areanew)     
    reserve.set("title", user.get("reservePendingTitle") )     
 
    let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
@@ -704,12 +724,14 @@ if(!user.get("sessionIdExpress")||user.get("sessionIdExpress").toString()!==sess
    user.set("reservePendingAreaName",undefined)
    user.set("reservePendingTitle","")
    user.set("reservePendingEvent",undefined)
-   
+   user.set("sessionIdExpress",undefined)
+
    user.set("reservePendingHours",0)
    await reserve.save()
 await user.save()
 console.log("session termino")
 
+}
   }else{
 
  

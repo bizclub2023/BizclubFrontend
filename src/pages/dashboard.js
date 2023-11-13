@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField,Card,Avatar ,CardContent} from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography,Grid,TextField,Card,Avatar ,CardContent, CircularProgress} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { applyPagination } from 'src/utils/apply-pagination';
@@ -58,6 +58,169 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
+
+const CustomEditor = ({ scheduler ,handleReserva}) => {
+  const event = scheduler.edited;
+  const {Moralis}=useMoralis()
+
+  // Make your own form/state
+  const [state, setState] = useState({
+    title: event?.title || "",
+    description: event?.description || ""
+  });
+  const [error, setError] = useState("");
+
+  const handleChange = (value, name) => {
+    setState((prev) => {
+      return {
+        ...prev,
+        [name]: value
+      };
+    });
+  };
+  
+  function diff_hours(dt2, dt1) 
+  {
+  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return Math.abs(Math.round(diff));
+  }
+  const notify3 = () => toast("Las fechas coinciden con otra reserva");
+
+  const handleSubmit = async (res,rej) => {
+    // Your own validation
+    if (state.title.length < 3) {
+      return setError("Min 3 letters");
+    }
+
+
+
+
+
+    try {
+
+      scheduler.loading(true);
+
+      
+        
+       await new Promise(async (res, rej) => {
+
+        const user = await Moralis.User.current();
+        const sevenPMStart = new Date(scheduler.state.start.value);
+        const sevenPMEnd = new Date(scheduler.state.end.value);
+        sevenPMEnd.setHours(19, 0, 0, 0);
+        sevenPMStart.setHours(7, 0, 0, 0);
+     
+console.log("asdasd "+JSON.stringify(scheduler.state.start.value))
+console.log("asdasd2 "+JSON.stringify(scheduler.state.end.value))
+console.log("sevenPMEnd "+JSON.stringify(sevenPMEnd))
+console.log("sevenPMStart "+JSON.stringify(sevenPMStart))
+
+        if (user) {
+          const hoursCalculated = await diff_hours(sevenPMStart, sevenPMEnd);
+         
+
+        console.log("hoursCalculated "+hoursCalculated)
+  
+          const areaName = await Moralis.Cloud.run("getRoom");
+  
+          // Consultar eventos que se superponen con la nueva reserva
+          let query = new Moralis.Query("Reserves");
+          await query.equalTo("areaName", areaName);
+          query.limit(1000)
+          let conflictingEvents = await query.find();
+          console.log("event.start "+JSON.stringify(new Date(scheduler.state.start.value)))
+          console.log("event.end "+JSON.stringify(new Date(scheduler.state.end.value)))
+      
+          console.log("areaName "+JSON.stringify(areaName))
+
+          console.log("conflictingEvents "+JSON.stringify(conflictingEvents))
+          // Verificar si hay eventos que se superponen
+          if (conflictingEvents.length > 0) {
+            for (let i = 0; i < conflictingEvents.length; i++) {
+              const existingEvent = conflictingEvents[i].attributes.event;
+          
+              // Verificar si hay coincidencia exacta
+              if (
+                existingEvent.start.getTime() === new Date(scheduler.state.start.value).getTime() &&
+                existingEvent.end.getTime() === new Date(scheduler.state.end.value).getTime()
+              ) {
+                notify3();
+                rej();
+                return;
+              }
+          
+              // Verificar si hay superposición
+              if (
+                existingEvent.start < new Date(event.end) &&
+                existingEvent.end > new Date(event.start)
+              ) {
+                notify3();
+                rej();
+                return;
+              }
+            }}
+       //   await setMyEvents([...myEvents, event]);
+       let uniqueID2=parseInt((Date.now()+ Math.random()).toString())
+
+       let event={
+         
+        event_id: uniqueID2,
+        title: state.title,
+        start: sevenPMStart,
+        end: sevenPMEnd,
+      }
+  
+     //    await handleReserva(event);
+         
+          await calendarRef.current.scheduler.triggerDialog(true, event);
+          setRebuild(!rebuild);
+          scheduler.loading(false);
+
+          await res({
+            ...event,
+            event_id: event.event_id || Math.random(),
+          });
+        } else {
+          notify();
+          rej();
+        }
+   
+      scheduler.onConfirm(added_updated_event, event ? "edit" : "create");
+      scheduler.close();
+      })
+    
+    } finally {
+      
+      scheduler.loading(false);
+    }
+  };
+  return (
+    <div>
+      <div style={{ padding: "1rem" }}>
+        <p>Titulo y descripcion de la reserva</p>
+        <TextField
+          label="Title"
+          value={state.title}
+          onChange={(e) => handleChange(e.target.value, "title")}
+          error={!!error}
+          helperText={error}
+          fullWidth
+        />
+        <TextField
+          label="Description"
+          value={state.description}
+          onChange={(e) => handleChange(e.target.value, "description")}
+          fullWidth
+        />
+      </div>
+      <DialogActions>
+        <Button onClick={scheduler.close}>Cancel</Button>
+        <Button onClick={handleSubmit}>Confirm</Button>
+      </DialogActions>
+    </div>
+  );
+}
 const Page = () => {
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
@@ -130,16 +293,12 @@ const [values, setValues] = useState({
 const fetchUser=async (e)=>{
   await Moralis.Cloud.run("setSalon",{room:"meetingRoom"});
 }
-
-useEffect(()=>{
-fetchUser()
-},[])
   useEffect(() => {
-    getEvents(userEmail)
     fetchData()
     fetchUsuarios()
 
-  }, [values.areaName]);
+    fetchUser()
+  }, []);
 
   const onRowClick = async (e, clickedRow) => {
 
@@ -148,8 +307,11 @@ fetchUser()
     setPlanHours(clickedRow.meetingRoomHours);
   setUserEmail(clickedRow.email)
   console.log("clickedRow "+clickedRow.email)
+  
   setValues({   userEmail:clickedRow.email,planUsers:clickedRow.planUsers})
-  await getEvents(clickedRow.email)
+await Moralis.Cloud.run("setUserEmail",{email:clickedRow.email})
+
+  await getEvents()
 console.log(clickedRow.email)
 
   };
@@ -165,6 +327,8 @@ console.log(clickedRow.email)
   return Math.abs(Math.round(diff));
   
  } 
+ const [eventosdata,setEventos]=useState([])
+
  var [rowsCourseReserves,setRowsCourseReserves]=useState([])
 
    var [rowsCourse,setRowsCourse]=useState([])
@@ -262,108 +426,24 @@ const customersIds = useCustomerIds(customers);
   return userCorreo
 }
 const customersSelection = useSelection(customersIds);
- 
-async function getEvents(usermail){
-  if(usermail===""){
-    return
-  }
-  await Moralis.Cloud.run("setUserEmail",{email:usermail});
-console.log("usermail "+usermail)
-  const query = new Moralis.Query("Reserves");
-  let salon=await Moralis.Cloud.run("getSalon")
-  if(!salon){
-    await Moralis.Cloud.run("setSalon",{room:"shareRoom"});
-  salon="shareRoom"
-  }
- 
-  
-  if(salon==="meetingRoom"){
-    await query.equalTo("areaName","meetingRoom")
+const calendarRef2 = useRef(null);
 
-  } else if(salon==="trainingRoom"){
-    await query.equalTo("areaName","trainingRoom")
+async function getEvents(){
+console.log("entro!")
+  let salon=await Moralis.Cloud.run("getRoom")
 
-  } else if(salon==="office8Room"){
-    await query.equalTo("areaName","office8Room")
+  console.log("salon! "+salon)
 
-  } else if(salon==="office4Room"){
-    await query.equalTo("areaName","office4Room")
+ let res= await Moralis.Cloud.run("getEventsAdmin");
 
-  } else if(salon==="office2Room"){
-    await query.equalTo("areaName","office2Room")
+    await setRowsCourseReserves([...res.eventosUser])
+    await setEventos([...res.eventos])
 
-  } else if(salon==="deskRoom"){
-    await query.equalTo("areaName","deskRoom")
-
-  } else if(salon==="shareRoom"){
-    await query.equalTo("areaName","shareRoom")
-
-  }  else{
-   await query.equalTo("areaName","shareRoom")
-
-  }
-  query.limit(1000)
-
-    let object= await query.find()
-    eventos=[]
-    let eventosUser=[]
-
-  if(object){
-    let currentDate=new Date()
-
-    for(let i=0;i<object.length;i++){ 
-      if(currentDate>=object[i].attributes.event.start){
-
-      eventos=[...eventos,{
-        event_id: null,
-        title: object[i].attributes.title,
-        start: object[i].attributes.event.start,
-        end: object[i].attributes.event.end,
-        admin_id: 1,
-        editable: false,
-        deletable: false,
-        color: usermail===object[i].attributes.user?"red":"#50b500"
-      }]
-    } else {
-        eventos=[...eventos,{
-          event_id: null,
-          title: object[i].attributes.title,
-          start: object[i].attributes.event.start,
-          end: object[i].attributes.event.end,
-          admin_id: 1,
-          editable: false,
-          deletable: false,
-          color: usermail===object[i].attributes.user?"blue":"#50b500"
-        }]
-      }
-      console.log("usermail "+JSON.stringify(usermail))
-      console.log("usermail "+JSON.stringify(object[i].attributes.user))
-
-      if(usermail===object[i].attributes.user){
-        if(currentDate<=object[i].attributes.event.start){
-
-        eventosUser=[...eventosUser,{
-          id:i,
-          title: object[i].attributes.title,
-          start: object[i].attributes.event.start.toString(),
-          end: (object[i].attributes.event.end).toString(),
-          user:object[i].attributes.user,      
-          room:object[i].attributes.areaName==="meetingRoom"?"SalaReuniones":"SalonComun",
-          }]
-          
-        }
-      }
-   
-    }
-    await setRowsCourseReserves([...eventosUser])
-    console.log("eventoseventosUser "+JSON.stringify(usermail))
-
-    console.log("eventoseventosUser "+JSON.stringify(eventosUser))
-    calendarRef.current.scheduler.handleState([...eventos], "events")
+    console.log("eventoseventosUser "+JSON.stringify(res.eventosUser))
+   await calendarRef.current.scheduler.handleState([...res.eventos], "events")
   }
 
 
-  }   
    const [rebuild,setRebuild]=useState(false)
 
 
@@ -415,6 +495,43 @@ console.log("usermail "+usermail)
         await  setTitle(event.title)
         await setMyEvents([...myEvents,event])
       console.log(JSON.stringify(event))
+        // Consultar eventos que se superponen con la nueva reserva
+        let query = new Moralis.Query("Reserves");
+        console.log("values.areaName "+JSON.stringify(values.areaName))
+
+        await query.equalTo("areaName", values.areaName);
+        query.limit(1000)
+        let conflictingEvents = await query.find();
+        console.log("event.start "+JSON.stringify(new Date(event.start)))
+        console.log("event.end "+JSON.stringify(new Date(event.end)))
+    
+
+        console.log("conflictingEvents "+JSON.stringify(conflictingEvents))
+        // Verificar si hay eventos que se superponen
+        if (conflictingEvents.length > 0) {
+          for (let i = 0; i < conflictingEvents.length; i++) {
+            const existingEvent = conflictingEvents[i].attributes.event;
+        
+            // Verificar si hay coincidencia exacta
+            if (existingEvent&&
+              existingEvent.start.getTime() === new Date(event.start).getTime() &&
+              existingEvent.end.getTime() === new Date(event.end).getTime()
+            ) {
+              notify3();
+              rej();
+              return;
+            }
+        
+            // Verificar si hay superposición
+            if (
+              existingEvent.start < new Date(event.end) &&
+              existingEvent.end > new Date(event.start)
+            ) {
+              notify3();
+              rej();
+              return;
+            }
+          }}
         let res2= await Moralis.Cloud.run("getUserEmail",{event:event});
       console.log("res2 "+JSON.stringify(res2))
         if(!res2.success) {
@@ -429,7 +546,8 @@ console.log("usermail "+usermail)
               ...event,
               event_id: event.event_id || Math.random()
             });
-      await getEvents(await Moralis.Cloud.run("getUserMail"))
+
+      await getEvents()
        
         }
         
@@ -448,18 +566,21 @@ console.log("usermail "+usermail)
     return
   })
   }
-  
+  const [isLoading,setLoading]=useState(false)
+
   const handleChange = useCallback(
     async (event) => {
-     
+     setLoading(true)
       setValues((prevState) => ({
         ...prevState,
         [event.target.name]: event.target.value
       }));
       
       if(event.target.name==='areaName'){
-        Moralis.Cloud.run("setSalon",{room:event.target.value});
-        await getEvents(await Moralis.Cloud.run("getUserMail"))
+        await Moralis.Cloud.run("setRoom",{salon:event.target.value});
+        await getEvents()
+        setLoading(false)
+
      }
     },
     []
@@ -607,93 +728,197 @@ const mytheme =  createTheme({
                 >
                   {areas.map((option) => (
                     <option
-                      key={option.value}
+                      key={option.value+" text"}
                       value={option.value}
                     >
                       {option.label}
                     </option>
                   ))}
                 </TextField>
-<Scheduler
-events={eventos}
-ref={calendarRef}
+{!isLoading?<div>
 
-view="week"
-translations={{
-  navigation: {
-  month: "Mes",
-  week: "Semana",
-  day: "Dia",
-  today: "Hoy"
-  }, 
-  form: {
-  addTitle: "Haz una reservacion",
-  editTitle: "Edit Event",
-  confirm: "Confirm",
-  delete: "Delete",
-  cancel: "Cancel"
-  },
-  event: {
-  title: "Title",
-  start: "Start",
-  end: "End",
-  allDay: "All Day"
- },
-  validation: {
-  required: "Required",
-  invalidEmail: "Invalid Email",
-  onlyNumbers: "Only Numbers Allowed",
-  min: "Minimum {{min}} letters",
-  max: "Maximum {{max}} letters"
-  },
-  moreEvents: "More...",
-  loading: "Loading..."
- }}
-week={{ 
-weekDays: [0, 1, 2, 3, 4, 5,6], 
-weekStartOn: 6, 
-startHour: 7, 
-endHour: 20,
-step: 60,
-navigation: true,
-disableGoToDay: false
-}}
+  {values.areaName!=="office8Room"&&values.areaName!=="office4Room"&&values.areaName!=="office2Room"?
+              <Scheduler
+              key={"uno"}
+              events={eventosdata}
+              week={{ 
+                weekDays: [0, 1, 2, 3, 4, 5, 6], 
+                weekStartOn: 6, 
+                startHour: 7, 
+                endHour: 20,
+                step: 60,
+                navigation: true,
+                disableGoToDay: false
+                }}
+                day={null}
+                month={null}
+              ref={calendarRef}
+              en
+              navigation={true}
+              view={"week"}
+              hourFormat='12'
+              translations={{
+                navigation: {
+                month: "Mes",
+                week: "Semana",
+                day: "Dia",
+                today: "Hoy"
+                },
+                form: {
+                addTitle: "Haz una reservacion",
+                editTitle: "Edit Event",
+                confirm: "Confirm",
+                delete: "Delete",
+                cancel: "Cancel"
+                },
+                event: {
+                title: "Title",
+                start: "Start",
+                end: "End",
+                allDay: "All Day"
+               },
+                validation: {
+                required: "Required",
+                invalidEmail: "Invalid Email",
+                onlyNumbers: "Only Numbers Allowed",
+                min: "Minimum {{min}} letters",
+                max: "Maximum {{max}} letters"
+                },
+                moreEvents: "More...",
+                loading: "Loading..."
+               }}
+              
+              onConfirm={handleConfirm}
+              
+              eventRenderer={(event) => {
+               
+                
+                if (+event.event_id % 2 === 0) {
+              
+                  return (<div
+                    key={event.event_id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        background: "#757575"
+                      }}
+                    >
+                      <div
+                         key={event.event_id+"123"}
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.start.toLocaleTimeString("en-US", {
+                          timeStyle: "short"
+                        })}
+                      </div>
+                      <div key={event.event_id+"1223"}
+>{event.title}</div>
+                      <div key={event.event_id+"1243"}
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              />:null} 
+              {values.areaName==="office2Room"||values.areaName==="office4Room"||values.areaName==="office8Room"?
+              <Scheduler
+              key={"uno2"}
 
-onConfirm={handleConfirm}
-eventRenderer={(event) => {
- 
-  
-  if (event.event_id % 2 === 0) {
+              events={eventosdata}
+              week={null}
+              customEditor={(scheduler) => <CustomEditor handleReserva={null} scheduler={scheduler} />}
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "100%",
-          background: "#757575"
-        }}
-      >
-        <div
-          style={{ height: 20, background: "#ffffffb5", color: "black" }}
-        >
-          {event.start.toLocaleTimeString("en-US", {
-            timeStyle: "short"
-          })}
-        </div>
-        <div>{event.title}</div>
-        <div
-          style={{ height: 20, background: "#ffffffb5", color: "black" }}
-        >
-          {event.end.toLocaleTimeString("en-US", { timeStyle: "short" })}
-        </div>
-      </div>
-    );
-  }
-  return null;
-}}
-/>
+              navigation={true}
+
+              editable={true}
+                day={null}
+                month={{ 
+                  weekDays: [0, 1, 2, 3, 4, 5, 6], 
+                  weekStartOn: 6, 
+                  startHour: 7, 
+                  endHour: 20,
+                  step: 1340,
+                  navigation: false,
+                  disableGoToDay: false
+                  }}
+              ref={calendarRef2}
+              en
+              view={"week"}
+              translations={{
+                navigation: {
+                month: "Mes",
+                week: "Semana",
+                day: "Dia",
+                today: "Hoy"
+                },
+                form: {
+                addTitle: "Haz una reservacion",
+                editTitle: "Edit Event",
+                confirm: "Confirm",
+                delete: "Delete",
+                cancel: "Cancel"
+                },
+                event: {
+                title: "Title",
+                start: "Start",
+                end: "End",
+                allDay: "All Day"
+               },
+                validation: {
+                required: "Required",
+                invalidEmail: "Invalid Email",
+                onlyNumbers: "Only Numbers Allowed",
+                min: "Minimum {{min}} letters",
+                max: "Maximum {{max}} letters"
+                },
+                moreEvents: "More...",
+                loading: "Loading..."
+               }}
+              
+              onConfirm={handleConfirm}
+              
+              eventRenderer={(event) => {
+               
+                
+                if (+event.event_id % 2 === 0) {
+              
+                  return (<div
+
+                  key={event.event_id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                        background: "#757575"
+                      }}
+                    >
+                      <div
+                                          key={event.event_id+"123"}
+
+                        style={{ height: 20, background: "#ffffffb5", color: "black" }}
+                      >
+                        {event.start.toLocaleTimeString("en-US", {
+                          timeStyle: "short"
+                        })}
+                      </div>
+                      <div                     key={event.event_id+"1223"}
+>{event.title}</div>
+                     
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              />:null}
+</div>:<CircularProgress/>}
+                
         <Stack spacing={0}>
       
           <Box style={{marginTop:30,marginBottom:50,maxHeight:700}}>
