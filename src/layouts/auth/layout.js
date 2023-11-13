@@ -77,7 +77,7 @@ export const Layout = (props) => {
             height="100%"
 
             style={{flex:1,height:'100%',justifyContent:"center",alignItems:'center',textAlign:"center",width:"100%"}}
-            image="https://bafybeidvpvjd3dw7eugiundb5nptk5ooahyxsei7d2jteufecdyjkrjdqy.ipfs.nftstorage.link/image%2012%20(1).webp"
+            image="https://bafybeicum4u65ycjsiaet4m6h34riw4k5hcezxgg66vmiw6wfsukodghmq.ipfs.nftstorage.link/"
 
             alt="Bizclub"
            >
