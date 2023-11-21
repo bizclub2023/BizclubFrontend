@@ -90,6 +90,8 @@ return
     const handleSubmit = async (event) => {
 
     setLoading(true)
+    const user = await Moralis.User.current();
+
     user.set("username",username)
     user.set("phone",phone)
 await user.save()

@@ -67,7 +67,7 @@ console.log("entro aqui")
   }
   
           
-  if(user.get("email")=="ricardouzalt1207@gmail.com"||user.get("email")=="karlaisaparedes11@gmail.com"||user.get("email")=="golfredo.pf@gmail.com"){
+  if(user.get("email")==="golfredo.pf@gmail.com"||user.get("email")==="karlaisaparedes11@gmail.com"||user.get("email")==="ricardouzalt1207@gmail.com"){
     await setAdmin(true)
     await setIsCostumer(false)
 
